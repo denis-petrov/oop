@@ -1,10 +1,11 @@
-// CopyFile.cpp : This file contains the 'main' function. Program execution begins and ends there.
+п»ї// CopyFile.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>
 #include <fstream>
 #include <optional>
 #include <string>
+#include "CopyFile.h"
 
 struct Args 
 {
@@ -16,6 +17,8 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 {
 	if (argc != 3) 
 	{
+		std::cout << "Invalid argument count.\n";
+		std::cout << "Usage: CopyFile.exe <input file name> <output file name>.\n";
 		return std::nullopt;
 	}
 	Args args;
@@ -25,19 +28,29 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
+void CopyStreams(std::ifstream& input, std::ofstream& output)
+{
+	// РљРѕРїРёСЂСѓРµРј СЃРѕРґРµСЂР¶РёРјРѕРµ РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р° РІ РІС‹С…РѕРґРЅРѕР№
+	char ch;
+	while (input.get(ch))
+	{
+		if (!output.put(ch))
+		{
+			break;
+		}
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	auto args = ParseArgs(argc, argv);
-	// Проверка правильности аргуметов командной строки
+	// РџСЂРѕРІРµСЂРєР° РїСЂР°РІРёР»СЊРЅРѕСЃС‚Рё Р°СЂРіСѓРјРµС‚РѕРІ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 	if (!args) 
 	{
-		std::cout << "Invalid argument count.\n";
-		std::cout << "Usage: CopyFile.exe <input file name> <output file name>.\n";
-
 		return 1;
 	}
 
-	// Открываем входной файл
+	// РћС‚РєСЂС‹РІР°РµРј РІС…РѕРґРЅРѕР№ С„Р°Р№Р»
 	std::ifstream input;
 	input.open(args->inputFileName);
 	if (!input.is_open()) 
@@ -46,7 +59,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// Открываем выходной файл
+	// РћС‚РєСЂС‹РІР°РµРј РІС‹С…РѕРґРЅРѕР№ С„Р°Р№Р»
 	std::ofstream output;
 	output.open(args->outputFileName);
 	if (!output.is_open()) 
@@ -55,15 +68,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// Копируем содержимое входного файла в выходной
-	char ch;
-	while (input.get(ch)) 
-	{
-		if (!output.put(ch)) 
-		{
-			break;
-		}
-	}
+	CopyStreams(input, output);
 
 	if (input.bad()) 
 	{
