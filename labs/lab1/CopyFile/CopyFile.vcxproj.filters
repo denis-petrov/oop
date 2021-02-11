@@ -21,10 +21,17 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />
+    <Text Include="Empty.txt" />
+    <Text Include="NonEmptyFile.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CopyFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tests.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
