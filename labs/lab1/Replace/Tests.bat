@@ -1,35 +1,42 @@
 @echo off
 
 REM Path to tested program passed through the first(1-st) command line argument
-SET MyProgram="%~1"
+SET Program="%~1"
 
 REM Protect from run without argument, which sets the path to the program
-if %MyProgram%=="" (
+if %Program%=="" (
 	echo Please specify path to program
 	exit /B 1
 )
 
-REM Copy empty file
-%MyProgram% Empty.txt "%TEMP%\output.txt" "" "" || goto err
-fc Empty.txt "%TEMP%\output.txt" > nul || goto err
+REM If command args correct then expected 0 return code
+%Program% test-data\RiskTaking.txt "%TEMP%\output.txt" we bananas
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\RiskTaking-replace-we-with-bananas.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 1 passed
 
-REM replace non-empty file
-%MyProgram% NonEmptyFile.txt "%TEMP%\output.txt" "are" "is" || goto err
-fc NonEmptyFile.txt "%TEMP%\output.txt" > nul || goto err
+REM If command args correct then expected 0 return code
+%Program% test-data\SmartEnergy.txt "%TEMP%\output.txt" to and
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\SmartEnergy-replace-to-with-and.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 2 passed
 
-REM Copy missing file should fail
-%MyProgram% MissingFile.txt "%TEMP%\output.txt" && goto err
+REM If command args correct then expected 0 return code
+%Program% test-data\StupidInput.txt "%TEMP%\output.txt" Mama Child
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\StupidInput-replace-Mama-with-Child.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 3 passed
 
-REM If output file is not specified, program must fail
-%MyProgram% MissingFile.txt && goto err
+REM If command args correct then expected 0 return code
+%Program% test-data\Empty.txt "%TEMP%\output.txt" "" ""
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\Empty.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 4 passed
 
-REM If input and output files is not specified, program must fail
-%MyProgram% && goto err
-echo Test 5 passed
 
 REM Tests pass success
 echo All tests passed successfuly
@@ -38,5 +45,5 @@ exit /B 0
 
 REM Tests pass with errors
 :err
-echo Test faild
+echo Testing failed
 exit /B 1
