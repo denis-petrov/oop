@@ -1,4 +1,4 @@
-// Replace.cpp : This file contains the 'main' function. Program execution begins and ends there.
+ï»¿// Replace.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>
@@ -34,13 +34,13 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     auto args = ParseArgs(argc, argv);
-	// Ïðîâåðêà ïðàâèëüíîñòè àðãóìåòîâ êîìàíäíîé ñòðîêè
+	// ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ÑÑ‚Ð¸ Ð°Ñ€Ð³ÑƒÐ¼ÐµÑ‚Ð¾Ð² ÐºÐ¾Ð¼Ð°Ð½Ð´Ð½Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸
 	if (!args)
 	{
 		return 1;
 	}
 
-	// Îòêðûâàåì âõîäíîé ôàéë
+	// ÐžÑ‚ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ð²Ñ…Ð¾Ð´Ð½Ð¾Ð¹ Ñ„Ð°Ð¹Ð»
 	std::ifstream input;
 	input.open(args->inputFileName);
 	if (!input.is_open())
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// Îòêðûâàåì âûõîäíîé ôàéë
+	// ÐžÑ‚ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ð²Ñ‹Ñ…Ð¾Ð´Ð½Ð¾Ð¹ Ñ„Ð°Ð¹Ð»
 	std::ofstream output;
 	output.open(args->outputFileName);
 	if (!output.is_open())
