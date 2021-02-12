@@ -5,6 +5,7 @@
 #include <fstream>
 #include <optional>
 #include <string>
+#include "Replace.h"
 
 struct Args
 {
@@ -29,6 +30,38 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	args.replaceString = argv[4];
 
 	return args;
+}
+
+std::string ReplaceString(std::string& line, std::string& searchString, std::string& replacementString)
+{
+	size_t positionSearch = 0;
+	size_t searchLength = searchString.length();
+	std::string result = line;
+	while (true)
+	{
+		positionSearch = result.find(searchString);
+		if (positionSearch != std::string::npos)
+		{
+			result.replace(positionSearch, searchLength, replacementString);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return result;
+}
+
+void CopyFileWithReplacedStrings(std::ifstream& input, std::ofstream& output,
+	std::string& searchString, std::string& replacementString
+) {
+	// Производим замену искомой строки на заменяемую
+	std::string line;
+	while (std::getline(input, line))
+	{
+		output << ReplaceString(line, searchString, replacementString) << "\n";
+	}
 }
 
 int main(int argc, char* argv[])
@@ -58,7 +91,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	//main code
+	CopyFileWithReplacedStrings(input, output, args->searchSrting, args->replaceString);
 
 	if (input.bad())
 	{
