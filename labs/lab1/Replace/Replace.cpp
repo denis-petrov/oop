@@ -11,7 +11,7 @@ struct Args
 {
 	std::string inputFileName;
 	std::string outputFileName;
-	std::string searchSrting;
+	std::string searchString;
 	std::string replaceString;
 };
 
@@ -26,23 +26,26 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	Args args;
 	args.inputFileName = argv[1];
 	args.outputFileName = argv[2];
-	args.searchSrting = argv[3];
+	args.searchString = argv[3];
 	args.replaceString = argv[4];
 
 	return args;
 }
 
-std::string ReplaceString(std::string& line, std::string& searchString, std::string& replacementString)
+std::string ReplaceString(const std::string& line, const std::string& searchString, const std::string& replacementString)
 {
-	size_t positionSearch = 0;
+	size_t pos = 0;
+	size_t foundPos = 0;
 	size_t searchLength = searchString.length();
-	std::string result = line;
+	std::string result;
 	while (true)
 	{
-		positionSearch = result.find(searchString);
-		if (positionSearch != std::string::npos)
+		foundPos = line.find(searchString, pos);
+		result.append(line, pos, foundPos - pos);
+		if (foundPos != std::string::npos)
 		{
-			result.replace(positionSearch, searchLength, replacementString);
+			result.append(replacementString);
+			pos = foundPos + searchLength;
 		}
 		else
 		{
@@ -54,13 +57,15 @@ std::string ReplaceString(std::string& line, std::string& searchString, std::str
 }
 
 void CopyFileWithReplacedStrings(std::ifstream& input, std::ofstream& output,
-	std::string& searchString, std::string& replacementString
-) {
+	const std::string& searchString, const std::string& replacementString) {
 	// Производим замену искомой строки на заменяемую
 	std::string line;
 	while (std::getline(input, line))
 	{
-		output << ReplaceString(line, searchString, replacementString) << "\n";
+		if (!(output << ReplaceString(line, searchString, replacementString) << "\n"))
+		{
+			break;
+		}
 	}
 }
 
@@ -91,7 +96,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	CopyFileWithReplacedStrings(input, output, args->searchSrting, args->replaceString);
+	CopyFileWithReplacedStrings(input, output, args->searchString, args->replaceString);
 
 	if (input.bad())
 	{
