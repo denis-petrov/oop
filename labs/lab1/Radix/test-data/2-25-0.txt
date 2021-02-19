@@ -1,0 +1,2 @@
+Value in 2 notation = 0
+Value in 25 noation = 0

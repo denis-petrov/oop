@@ -10,32 +10,71 @@ if %Program%=="" (
 )
 
 REM If command args correct then expected 0 return code
-%Program% test-data\RiskTaking.txt "%TEMP%\output.txt" we bananas
+%Program% 2 25 0 "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\RiskTaking-replace-we-with-bananas.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\2-25-0.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 1 passed
 
 REM If command args correct then expected 0 return code
-%Program% test-data\SmartEnergy.txt "%TEMP%\output.txt" to and
+%Program% 2 25 101011 "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\SmartEnergy-replace-to-with-and.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\2-25-101011.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 2 passed
 
-REM If command args correct then expected 0 return code
-%Program% test-data\StupidInput.txt "%TEMP%\output.txt" Mama Child
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\StupidInput-replace-Mama-with-Child.txt > nul
+REM If command args correct then expected 1 return code
+%Program% 36 18 ZZZZZZZ "%TEMP%\output.txt"
+fc.exe "%TEMP%\output.txt" test-data\36-18-ZZZZZZZ.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 3 passed
 
 REM If command args correct then expected 0 return code
-%Program% test-data\Empty.txt "%TEMP%\output.txt" "" ""
+%Program% 10 16 10 "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\Empty.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\10-16-10.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 4 passed
+
+REM If command args correct then expected 0 return code
+%Program% 16 8 C8 "%TEMP%\output.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\16-8-C8.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 5 passed
+
+REM If command args correct then expected 1 return code
+%Program% 10 8 BB "%TEMP%\output.txt"
+fc.exe "%TEMP%\output.txt" test-data\10-8-BB.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 6 passed
+
+REM If command args correct then expected 0 return code
+%Program% 4 4 33 "%TEMP%\output.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\4-4-33.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 7 passed
+
+REM If command args correct then expected 0 return code
+%Program% 10 16 -10 "%TEMP%\output.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\10-16--10.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 8 passed
+
+REM If command args correct then expected 0 return code
+%Program% 10 16 -1@@0+ "%TEMP%\output.txt"
+fc.exe "%TEMP%\output.txt" test-data\10-16--1@@0+.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 9 passed
+
+REM If command args correct then expected 0 return code
+%Program% 2 36 11111111111 "%TEMP%\output.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\2-36-11111111111.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 10 passed
 
 
 REM Tests pass success
