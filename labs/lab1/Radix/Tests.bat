@@ -63,7 +63,7 @@ fc.exe "%TEMP%\output.txt" test-data\10-16--10.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 8 passed
 
-REM If command args correct then expected 0 return code
+REM If command args correct then expected 1 return code
 %Program% 10 16 -1@@0+ "%TEMP%\output.txt"
 fc.exe "%TEMP%\output.txt" test-data\10-16--1@@0+.txt > nul
 if ERRORLEVEL 1 goto err

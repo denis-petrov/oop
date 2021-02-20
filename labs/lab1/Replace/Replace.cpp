@@ -20,7 +20,7 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	if (argc != 5)
 	{
 		std::cout << "Invalid argument count.\n";
-		std::cout << "Usage: CopyFile.exe <input file name> <output file name> <search string> <replace string>.\n";
+		std::cout << "Usage: Replace.exe <input file name> <output file name> <search string> <replace string>.\n";
 		return std::nullopt;
 	}
 	Args args;
