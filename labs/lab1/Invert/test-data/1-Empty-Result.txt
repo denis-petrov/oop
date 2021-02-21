@@ -1,0 +1,4 @@
+Error, while read <matrix file1> 
+The dimension of the matrix must be 3 by 3.
+Symbols must be numbers and be only digits from 0 to 9.
+Please try again.

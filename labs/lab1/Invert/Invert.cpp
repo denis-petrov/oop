@@ -154,19 +154,27 @@ int main(int argc, char* argv[])
 		{
 			if (!(input >> matrix[i][j]))
 			{
-				std::cout << "Error, while read " << args->inputFileName << "\n";
-				std::cout << "The dimension of the matrix must be 3 by 3" << "\n";
+				if (!(output << "Error, while read <matrix file1> \n"
+							 << "The dimension of the matrix must be 3 by 3.\n"
+							 << "Symbols must be numbers and be only digits from 0 to 9.\n"
+							 << "Please try again.\n"))
+				{
+					return 1;
+				}
 				return 1;
 			}
 		}
 		std::getline(input, line);
 	}
-	std::cout << "\n\n";
 
 	int matrixDeterminant = CalculateDeterminantThreeOnThree(matrix);
 	if (matrixDeterminant == 0)
 	{
-		std::cout << "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
+		if (!(output << "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n"))
+		{
+			std::cout << "Error, while write to " << args->outputFileName << "\n";
+			return 1;
+		}
 		return 1;
 	}
 	else
@@ -182,9 +190,13 @@ int main(int argc, char* argv[])
 		{
 			for (size_t j = 0; j < 3; j++)
 			{
-				std::cout << result[i][j] << " ";
+				if (!(output << result[i][j] << " "))
+				{
+					std::cout << "Error, while write to " << args->outputFileName << "\n";
+					return 1;
+				}
 			}
-			std::cout << "\n";
+			output << "\n";
 		}
 	}
 
