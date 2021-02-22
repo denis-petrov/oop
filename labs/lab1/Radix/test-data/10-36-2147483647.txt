@@ -1,0 +1,2 @@
+Value in 10 notation = 2147483647
+Value in 36 noation = ZIK0ZJ

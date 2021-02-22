@@ -1,3 +1,2 @@
 Value in 16 notation = C8
-Value in 10 notation = 200
 Value in 8 noation = 310

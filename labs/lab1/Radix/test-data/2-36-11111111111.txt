@@ -1,3 +1,2 @@
 Value in 2 notation = 11111111111
-Value in 10 notation = 2047
 Value in 36 noation = 1KV

@@ -1,0 +1,2 @@
+Value in 10 notation = -2147483648
+Value in 36 noation = -ZIK0ZK

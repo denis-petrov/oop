@@ -1,3 +1,2 @@
 Value in 4 notation = 33
-Value in 10 notation = 15
 Value in 4 noation = 33

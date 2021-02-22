@@ -1,3 +1,2 @@
 Value in 2 notation = 101011
-Value in 10 notation = 43
 Value in 25 noation = 1I
