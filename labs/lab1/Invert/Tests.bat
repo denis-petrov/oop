@@ -35,6 +35,19 @@ fc.exe "%TEMP%\output.txt" test-data\4-LessZeroDeterminant-Result.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 4 passed
 
+REM If command args correct then expected 0 return code
+%Program% test-data\5-Tabs.txt "%TEMP%\output.txt" 
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" test-data\5-Tabs-Result.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 5 passed
+
+REM If command args correct then expected 1 return code
+%Program% test-data\6-IncorrectSymbols.txt "%TEMP%\output.txt" 
+fc.exe "%TEMP%\output.txt" test-data\6-IncorrectSymbols-Result.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 6 passed
+
 REM Tests pass success
 echo All tests passed successfuly
 exit /B 0

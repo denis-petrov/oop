@@ -8,10 +8,21 @@
 #include <optional>
 #include <string>
 
+const int MINOR_SIZE = 2;
+const int MATRIX_SIZE = 3;
+
+typedef int (*Matrix)[MATRIX_SIZE][MATRIX_SIZE];
+
 struct Args
 {
 	std::string inputFileName;
 	std::string outputFileName;
+};
+
+struct Error
+{
+	bool wasError;
+	std::string message;
 };
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
@@ -29,12 +40,53 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-int CalculateDeterminantTwoOnTwo(const int (&matrix)[2][2])
+double** InitializeMatrix()
+{
+	double** matrix = new double*[MATRIX_SIZE];
+	for (int i = 0; i < MATRIX_SIZE; i++)
+		matrix[i] = new double[MATRIX_SIZE];
+
+	return matrix;
+}
+
+double** InitializeMinor()
+{
+	double** matrix = new double*[MATRIX_SIZE];
+	for (int i = 0; i < MATRIX_SIZE; i++)
+		matrix[i] = new double[MATRIX_SIZE];
+
+	return matrix;
+}
+
+double** ReadInputDataToMatrix(std::ifstream& input, Error& error)
+{
+	double** matrix = InitializeMatrix();
+
+	std::string line;
+	for (int i = 0; i < MATRIX_SIZE; i++)
+	{
+		for (int j = 0; j < MATRIX_SIZE; j++)
+		{
+			if (!(input >> matrix[i][j]))
+			{
+				error.wasError = true;
+				error.message = (std::string) "Error, while read <matrix file1> \nThe dimension of the matrix must be 3 by 3." + "\n"
+					+ (std::string) "Symbols must be numbers and be only digits from 0 to 9.\n";
+				break;
+			}
+		}
+		std::getline(input, line);
+	}
+
+	return matrix;
+}
+
+double CalculateDeterminantMatrixTwoOnTwo(double**& matrix)
 {
 	return ((matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]));
 }
 
-int CalculateDeterminantThreeOnThree(const int (&matrix)[3][3])
+int CalculateDeterminantMatrixThreeOnThree(const double**& matrix)
 {
 	int firstTriangle = (matrix[0][0] * matrix[1][1] * matrix[2][2])
 		+ (matrix[2][0] * matrix[0][1] * matrix[1][2])
@@ -47,13 +99,15 @@ int CalculateDeterminantThreeOnThree(const int (&matrix)[3][3])
 	return (firstTriangle - secondTriangle);
 }
 
-void FindMinor(const int& exceptRow, const int& exceptColumn, const int (&matrix)[3][3], int (&minor)[2][2])
+double** FindMinor(const int& exceptRow, const int& exceptColumn, const double**& matrix)
 {
+	double** minor = InitializeMatrix();
+
 	int k = 0;
 	int t = 0;
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
-		for (size_t j = 0; j < 3; j++)
+		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
 			if ((i != exceptRow) && (j != exceptColumn))
 			{
@@ -70,63 +124,112 @@ void FindMinor(const int& exceptRow, const int& exceptColumn, const int (&matrix
 			}
 		}
 	}
+	return minor;
 }
 
-void TransposeMatrix(int (&transposeMatrix)[3][3])
+double** TransposeMatrix(double**& matrix)
 {
-	int tempMatrix[3][3]{};
+	double** transposeMatrix = InitializeMatrix();
 
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
-		for (size_t j = 0; j < 3; j++)
+		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			tempMatrix[i][j] = transposeMatrix[j][i];
+			transposeMatrix[i][j] = matrix[j][i];
 		}
 	}
-	for (size_t i = 0; i < 3; i++)
-	{
-		for (size_t j = 0; j < 3; j++)
-		{
-			transposeMatrix[i][j] = tempMatrix[i][j];
-		}
-	}
+
+	return transposeMatrix;
 }
 
-void CalculateComplementMatrix(const int (&matrix)[3][3], int (&complementMatrix)[3][3])
+double** CalculateComplementMatrix(const double**& matrix)
 {
-	for (size_t i = 0; i < 3; i++)
+	double** complementMatrix = InitializeMatrix();
+
+	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
-		for (size_t j = 0; j < 3; j++)
+		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			int minor[2][2];
-			FindMinor(i, j, matrix, minor);
-			complementMatrix[i][j] = std::pow((-1), (i + j)) * CalculateDeterminantTwoOnTwo(minor);
+			double** minor = FindMinor(i, j, matrix);
+			complementMatrix[i][j] = std::pow((-1), (i + j)) * CalculateDeterminantMatrixTwoOnTwo(minor);
 		}
 	}
+
+	return complementMatrix;
 }
 
-void CalculateInverseMatrix(const int& matrixDeterminant, const int (&tempMatrix)[3][3], double (&result)[3][3])
+double** CalculateInverseMatrix(const int& matrixDeterminant, double**& transposeMatrix)
 {
+	double** inverseMatrix = InitializeMatrix();
+
 	double inverseDeterminant = (static_cast<double>(1) / matrixDeterminant);
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
-		for (size_t j = 0; j < 3; j++)
+		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			result[i][j] = std::round((inverseDeterminant * tempMatrix[i][j]) * 1000) / 1000;
+			inverseMatrix[i][j] = std::round((inverseDeterminant * transposeMatrix[i][j]) * 1000) / 1000;
 		}
+	}
+
+	return inverseMatrix;
+}
+
+double** InvertMatrix(const double**& matrix, Error& error)
+{
+	double** result = InitializeMatrix();
+
+	int matrixDeterminant = CalculateDeterminantMatrixThreeOnThree(matrix);
+	if (matrixDeterminant == 0)
+	{
+		error.message = "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
+		error.wasError = true;
+	}
+	else
+	{
+		double** tempMatrix = CalculateComplementMatrix(matrix);
+		tempMatrix = TransposeMatrix(tempMatrix);
+
+		result = CalculateInverseMatrix(matrixDeterminant, tempMatrix);
+	}
+
+	return result;
+}
+
+Error PrintMatrixToOutput(std::ofstream& output, const double**& matrix, Error& error)
+{
+	for (size_t i = 0; i < MATRIX_SIZE; i++)
+	{
+		for (size_t j = 0; j < MATRIX_SIZE; j++)
+		{
+			if (!(output << matrix[i][j] << " "))
+			{
+				error.message = "Error, while write to output file.\n";
+				error.wasError = true;
+				break;
+			}
+		}
+		output << "\n";
+	}
+
+	return error;
+}
+
+void PrintMessageToOutput(std::ofstream& output, Error& error)
+{
+	if (!(output << error.message))
+	{
+		std::cout << "Error, while write to output file.\n";
 	}
 }
 
 int main(int argc, char* argv[])
 {
 	auto args = ParseArgs(argc, argv);
-	// Проверка правильности аргуметов командной строки
 	if (!args)
 	{
 		return 1;
 	}
 
-	// Открываем входной файл
 	std::ifstream input;
 	input.open(args->inputFileName);
 	if (!input.is_open())
@@ -135,69 +238,36 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// Открываем выходной файл
 	std::ofstream output;
 	output.open(args->outputFileName);
 	if (!output.is_open())
 	{
-		std::cout << "Failed to open '" << args->outputFileName << "' for writing.\n";
+		std::cout << "Failed to open '" << args->outputFileName << "' for reading.\n";
 		return 1;
 	}
 
-	// инициализация массива
-	int matrix[3][3]{};
+	Error error;
+	error.wasError = false;
 
-	std::string line;
-	for (int i = 0; i < 3; i++)
+	const double** inputMatrix = const_cast<const double**>(ReadInputDataToMatrix(input, error));
+	if (error.wasError)
 	{
-		for (int j = 0; j < 3; j++)
-		{
-			if (!(input >> matrix[i][j]))
-			{
-				if (!(output << "Error, while read <matrix file1> \n"
-							 << "The dimension of the matrix must be 3 by 3.\n"
-							 << "Symbols must be numbers and be only digits from 0 to 9.\n"
-							 << "Please try again.\n"))
-				{
-					return 1;
-				}
-				return 1;
-			}
-		}
-		std::getline(input, line);
-	}
-
-	int matrixDeterminant = CalculateDeterminantThreeOnThree(matrix);
-	if (matrixDeterminant == 0)
-	{
-		if (!(output << "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n"))
-		{
-			std::cout << "Error, while write to " << args->outputFileName << "\n";
-			return 1;
-		}
+		PrintMessageToOutput(output, error);
 		return 1;
 	}
-	else
+
+	const double** invertMatrix = const_cast<const double**>(InvertMatrix(inputMatrix, error));
+	if (error.wasError)
 	{
-		int tempMatrix[3][3];
-		CalculateComplementMatrix(matrix, tempMatrix);
-		TransposeMatrix(tempMatrix);
+		PrintMessageToOutput(output, error);
+		return 1;
+	}
 
-		double result[3][3];
-		CalculateInverseMatrix(matrixDeterminant, tempMatrix, result);
-
-		for (size_t i = 0; i < 3; i++)
-		{
-			for (size_t j = 0; j < 3; j++)
-			{
-				if (!(output << result[i][j] << " "))
-				{
-					std::cout << "Error, while write to " << args->outputFileName << "\n";
-					return 1;
-				}
-			}
-			output << "\n";
-		}
+	PrintMatrixToOutput(output, invertMatrix, error);
+	if (error.wasError)
+	{
+		PrintMessageToOutput(output, error);
+		return 1;
 	}
 
 	if (input.bad())
