@@ -5,6 +5,7 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <queue> 
 
 struct Args
 {
@@ -24,12 +25,14 @@ struct Cell
 	int column;
 };
 
+enum Path
+{
+	EMPTY, WALL, FILL, START,
+};
+
 const int FIELD_SIZE = 100;
 const int QUEUE_SIZE = 10000;
-const int EMPTY = ' ';
-const int WALL = '#';
-const int FILL = '.';
-const int START = 'O';
+
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
 {
@@ -54,18 +57,18 @@ void PrintMessageToOutput(std::ofstream& output, const Error& error)
 	}
 }
 
-char** InitializeMatrix()
+Path** InitializeMatrix()
 {
-	char** matrix = new char*[FIELD_SIZE];
+	Path** matrix = new Path*[FIELD_SIZE];
 	for (int i = 0; i < FIELD_SIZE; i++)
-		matrix[i] = new char[FIELD_SIZE];
+		matrix[i] = new Path[FIELD_SIZE];
 
 	return matrix;
 }
 
-char** FillMatrixByEmptyData()
+Path** FillMatrixByEmptyData()
 {
-	char** result = InitializeMatrix();
+	Path** result = InitializeMatrix();
 
 	for (int i = 0; i < FIELD_SIZE; ++i)
 	{
@@ -83,9 +86,9 @@ bool IsLessCharInLineThenNeed(const int & postition, const int & lineLength)
 	return (postition == (lineLength - 1)) && (postition < FIELD_SIZE);
 }
 
-char** ReadMatrixFromInputFile(std::ifstream& input, Error & error) 
+Path** ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 {
-	char** result = FillMatrixByEmptyData();
+	Path** result = FillMatrixByEmptyData();
 
 	std::string line;
 	size_t row = 0;
@@ -122,7 +125,7 @@ char** ReadMatrixFromInputFile(std::ifstream& input, Error & error)
 	return result;
 }
 
-void PrintMatrix(char**& matrix)
+void PrintMatrix(Path**& matrix)
 {
 	for (size_t i = 0; i < FIELD_SIZE; i++)
 	{
@@ -139,38 +142,30 @@ bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& 
 	return (currentRow != startRow) && (currentColumn != startColumn);
 }
 
-char** CrawlingTheArea(char**& field, const int & row, const int & column, Error & error)
+Path** CrawlingTheArea(Path**& field, const int& row, const int& column)
 {
-	Cell queue[QUEUE_SIZE];
-	int indexQueue;
-	queue[indexQueue] = Cell{ row, column };
-	indexQueue++;
+	std::queue<Cell> queue;
+	queue.push(Cell{ row, column });
 
-	while (indexQueue != 0)
+	while (!queue.empty())
 	{
-		Cell currentCell = queue[0];
-		indexQueue--;
-
-		if (indexQueue == (QUEUE_SIZE - 1))
-		{
-			error.wasError = true;
-			error.message = "Overflow queue.\n";
-		}
+		/*Cell currentCell = queue.pop();
 
 		if (IsNotCellStart(currentCell.row, currentCell.column, row, column))
 		{
 			field[currentCell.row][currentCell.column] = FILL;
 		}
 
-		if (field[]) // проверить на граничные значение и уйти в заполнение
+		if (field[]) 
 		{
-		}
+		}*/
 	}
+	return field;
 }
 
-char** FillAllArea(char** & field) 
+Path** FillAllArea(Path**& field)
 {
-	char** fillField = FillMatrixByEmptyData();
+	Path** fillField = FillMatrixByEmptyData();
 
 	for (size_t i = 0; i < FIELD_SIZE; i++)
 	{
@@ -212,7 +207,7 @@ int main(int argc, char* argv[])
 	Error error;
 	error.wasError = false;
 
-	char** inputMatrix = ReadMatrixFromInputFile(input, error);
+	Path** inputMatrix = ReadMatrixFromInputFile(input, error);
 
 	if (error.wasError)
 	{
@@ -220,7 +215,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	char** fillField = FillAllArea(inputMatrix);
+	Path** fillField = FillAllArea(inputMatrix);
 
 	PrintMatrix(inputMatrix);
 	
