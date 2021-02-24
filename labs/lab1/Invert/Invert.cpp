@@ -49,11 +49,11 @@ double** InitializeMatrix()
 
 double** InitializeMinor()
 {
-	double** matrix = new double*[MATRIX_SIZE];
-	for (int i = 0; i < MATRIX_SIZE; i++)
-		matrix[i] = new double[MATRIX_SIZE];
+	double** minor = new double*[MINOR_SIZE];
+	for (int i = 0; i < MINOR_SIZE; i++)
+		minor[i] = new double[MINOR_SIZE];
 
-	return matrix;
+	return minor;
 }
 
 double** ReadInputDataToMatrix(std::ifstream& input, Error& error)
@@ -70,16 +70,19 @@ double** ReadInputDataToMatrix(std::ifstream& input, Error& error)
 				error.wasError = true;
 				error.message = (std::string) "Error, while read <matrix file1> \nThe dimension of the matrix must be 3 by 3." + "\n"
 					+ (std::string) "Symbols must be numbers and be only digits from 0 to 9.\n";
-				break;
+				return matrix;
 			}
 		}
-		std::getline(input, line);
+		if (!(std::getline(input, line)))
+		{
+			return matrix;
+		}
 	}
 
 	return matrix;
 }
 
-double CalculateDeterminantMatrixTwoOnTwo(double**& matrix)
+double CalculateDeterminantMatrixTwoOnTwo(const double**& matrix)
 {
 	return ((matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]));
 }
@@ -99,7 +102,7 @@ int CalculateDeterminantMatrixThreeOnThree(const double**& matrix)
 
 double** FindMinor(const int& exceptRow, const int& exceptColumn, const double**& matrix)
 {
-	double** minor = InitializeMatrix();
+	double** minor = InitializeMinor();
 
 	int k = 0;
 	int t = 0;
@@ -148,7 +151,7 @@ double** CalculateComplementMatrix(const double**& matrix)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			double** minor = FindMinor(i, j, matrix);
+			const double** minor = const_cast<const double**>(FindMinor(i, j, matrix));
 			complementMatrix[i][j] = std::pow((-1), (i + j)) * CalculateDeterminantMatrixTwoOnTwo(minor);
 		}
 	}
@@ -181,19 +184,16 @@ double** InvertMatrix(const double**& matrix, Error& error)
 	{
 		error.message = "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
 		error.wasError = true;
-	}
-	else
-	{
-		double** tempMatrix = CalculateComplementMatrix(matrix);
-		tempMatrix = TransposeMatrix(tempMatrix);
-
-		result = CalculateInverseMatrix(matrixDeterminant, tempMatrix);
+		return result;
 	}
 
-	return result;
+	double** complemntMatrix = CalculateComplementMatrix(matrix);
+	double** transposedComplementMatrix = TransposeMatrix(complemntMatrix);
+
+	return CalculateInverseMatrix(matrixDeterminant, transposedComplementMatrix);
 }
 
-Error PrintMatrixToOutput(std::ofstream& output, const double**& matrix, Error& error)
+Error PrintMatrixToOutputReturnError(std::ofstream& output, const double**& matrix, Error& error)
 {
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
@@ -212,11 +212,16 @@ Error PrintMatrixToOutput(std::ofstream& output, const double**& matrix, Error& 
 	return error;
 }
 
+void PrintWasWriteError()
+{
+	std::cout << "Failed to write data to output.\n";
+}
+
 void PrintMessageToOutput(std::ofstream& output, Error& error)
 {
 	if (!(output << error.message))
 	{
-		std::cout << "Error, while write to output file.\n";
+		PrintWasWriteError();
 	}
 }
 
@@ -261,22 +266,15 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	PrintMatrixToOutput(output, invertMatrix, error);
-	if (error.wasError)
+	if (PrintMatrixToOutputReturnError(output, invertMatrix, error).wasError)
 	{
-		PrintMessageToOutput(output, error);
-		return 1;
-	}
-
-	if (input.bad())
-	{
-		std::cout << "Failed to read data from input file.\n";
+		PrintWasWriteError();
 		return 1;
 	}
 
 	if (!output.flush())
 	{
-		std::cout << "Failed to write data to output.\n";
+		PrintWasWriteError();
 		return 1;
 	}
 
