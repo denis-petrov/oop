@@ -6,7 +6,6 @@
 #include <optional>
 #include <queue>
 #include <string>
-#include <tuple>
 
 struct Args
 {
@@ -40,7 +39,7 @@ enum Field
 
 struct WrappedField
 {
-	Field field[FIELD_SIZE][FIELD_SIZE]{NO_DATA};
+	Field field[FIELD_SIZE][FIELD_SIZE]{ NO_DATA };
 };
 
 struct Tuple
@@ -72,53 +71,20 @@ void PrintMessageToOutput(std::ofstream& output, const Error& error)
 		std::cout << "Error, while write to output file.\n";
 	}
 }
-//
-//WrappedPath FillMatrixByEmptyData()
-//{
-//	WrappedPath wrappedPath{};
-//
-//	for (int i = 0; i < FIELD_SIZE; ++i)
-//	{
-//		for (int j = 0; j < FIELD_SIZE; ++j)
-//		{
-//			wrappedPath.path[i][j] = NO_DATA;
-//		}
-//	}
-//
-//	return wrappedPath;
-//}
-//
-//bool IsLessCharInLineThenNeed(const int & postition, const int & lineLength)
-//{
-//	return (postition == (lineLength - 1)) && (postition < FIELD_SIZE);
-//}
-//
-//
-//
-//bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
-//{
-//	return (currentRow != startRow) && (currentColumn != startColumn);
-//}
-//
-//bool IsAbleGoTop(const int& row, const int& column, const Path& field)
-//{
-//	if ((row != 0) && (field[row - 1][column] == EMPTY))
-//	{
-//		return true;
-//	}
-//	return false;
-//}
-//
-//bool IsAbleGoBottom(const int& row, const int& column, const Path& field)
-//{
-//	if ((row != FIELD_SIZE) && (field[row + 1][column] == EMPTY))
-//	{
-//		return true;
-//	}
-//	return false;
-//}
-//
-//
+
+WrappedField CopyField(const WrappedField& wrappedField)
+{
+	WrappedField copy{};
+
+	for (size_t i = 0; i < FIELD_SIZE; i++)
+	{
+		for (size_t j = 0; j < FIELD_SIZE; j++)
+		{
+			copy.field[i][j] = wrappedField.field[i][j];
+		}
+	}
+	return copy;
+}
 
 void PrintField(const WrappedField& wrappedField)
 {
@@ -126,24 +92,22 @@ void PrintField(const WrappedField& wrappedField)
 	{
 		for (size_t j = 0; j < FIELD_SIZE; j++)
 		{
-			std::cout << wrappedField.field[i][j] << " ";
+			if (wrappedField.field[i][j] == WALL)
+			{
+				std::cout << '#';
+			}
+			if (wrappedField.field[i][j] == START)
+			{
+				std::cout << 'O';
+			}
+			if (wrappedField.field[i][j] == FILL)
+			{
+				std::cout << '.';
+			}
 		}
 		std::cout << std::endl;
 	}
 }
-
-//WrappedField InitializeFieldByNoData()
-//{
-//	WrappedField wrappedField{};
-//	for (size_t i = 0; i < FIELD_SIZE; i++)
-//	{
-//		for (size_t j = 0; j < FIELD_SIZE; j++)
-//		{
-//			wrappedField.field[i][j] = NO_DATA;
-//		}
-//	}
-//	return wrappedField;
-//}
 
 Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 {
@@ -187,9 +151,50 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 	return { wrappedResult, startCells, countStarts };
 }
 
+bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
+{
+	return (currentRow != startRow) && (currentColumn != startColumn);
+}
+
+bool IsAbleGoTop(const int& row, const int& column, const WrappedField& wrappedField)
+{
+	if ((0 < row < FIELD_SIZE) && (wrappedField.field[row - 1][column] == EMPTY))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool IsAbleGoBottom(const int& row, const int& column, const WrappedField& wrappedField)
+{
+	if ((0 < row < FIELD_SIZE) && (wrappedField.field[row + 1][column] == EMPTY))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool IsAbleGoLeft(const int& row, const int& column, const WrappedField& wrappedField)
+{
+	if ((0 < column < FIELD_SIZE) && (wrappedField.field[row][column - 1] == EMPTY))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool IsAbleGoRight(const int& row, const int& column, const WrappedField& wrappedField)
+{
+	if ((0 < column < FIELD_SIZE) && (wrappedField.field[row][column + 1] == EMPTY))
+	{
+		return true;
+	}
+	return false;
+}
+
 WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, const int& column)
 {
-	WrappedField area{};
+	WrappedField area{ CopyField(wrappedField) };
 
 	std::queue<Cell> queue;
 	queue.push(Cell{ row, column });
@@ -202,25 +207,25 @@ WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, c
 		int curRow = currentCell.row;
 		int curCol = currentCell.column;
 
-		/*if (IsNotCellStart(curRow, curCol, row, column))
-		{
+		if (IsNotCellStart(curRow, curCol, row, column))
 			area.field[curRow][curCol] = FILL;
-		}
 
-		if (IsAbleGoTop(curRow, curCol, area.field))
-		{
-			queue.field({ curRow - 1, curCol });
-		}
+		if (IsAbleGoTop(curRow, curCol, area))
+			queue.push({ curRow - 1, curCol });
 
-		if (IsAbleGoBottom(curRow, curCol, area.field))
-		{
+		if (IsAbleGoBottom(curRow, curCol, area))
 			queue.push({ curRow + 1, curCol });
-		}*/
+
+		if (IsAbleGoLeft(curRow, curCol, area))
+			queue.push({ curRow, curCol - 1 });
+
+		if (IsAbleGoRight(curRow, curCol, area))
+			queue.push({ curRow, curCol + 1 });
 	}
-	return CrawlingTheArea
+	return area;
 }
 
-WrappedField FillField(const WrappedField& wrappedField, Cell* starts, const int & countStarts)
+WrappedField FillField(const WrappedField& wrappedField, Cell*(&starts), const int& countStarts)
 {
 	WrappedField fillField{};
 	for (size_t i = 0; i < countStarts; i++)
@@ -265,7 +270,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	//field = FillField(field, starts, countStarts);
+	field = FillField(field, starts, countStarts);
 
 	PrintField(field);
 
