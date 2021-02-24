@@ -176,7 +176,7 @@ WrappedMatrix InvertMatrix(const Matrix& matrix, Error& error)
 	{
 		error.message = "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
 		error.wasError = true;
-		return {};
+		return WrappedMatrix{};
 	}
 
 	WrappedMatrix complemntMatrix = CalculateComplementMatrix(matrix);

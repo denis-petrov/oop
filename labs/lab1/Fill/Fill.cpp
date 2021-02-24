@@ -4,8 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include <optional>
+#include <queue>
 #include <string>
-#include <queue> 
+#include <tuple>
 
 struct Args
 {
@@ -25,14 +26,29 @@ struct Cell
 	int column;
 };
 
-enum Path
+const int FIELD_SIZE = 100;
+const int COUNT_CELLS = FIELD_SIZE * FIELD_SIZE;
+
+enum Field
 {
-	EMPTY, WALL, FILL, START,
+	NO_DATA,
+	EMPTY,
+	WALL = '#',
+	FILL = '.',
+	START = 'O',
 };
 
-const int FIELD_SIZE = 100;
-const int QUEUE_SIZE = 10000;
+struct WrappedField
+{
+	Field field[FIELD_SIZE][FIELD_SIZE]{NO_DATA};
+};
 
+struct Tuple
+{
+	WrappedField wrappedField;
+	Cell* startCells;
+	int countStarts;
+};
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
 {
@@ -56,126 +72,160 @@ void PrintMessageToOutput(std::ofstream& output, const Error& error)
 		std::cout << "Error, while write to output file.\n";
 	}
 }
+//
+//WrappedPath FillMatrixByEmptyData()
+//{
+//	WrappedPath wrappedPath{};
+//
+//	for (int i = 0; i < FIELD_SIZE; ++i)
+//	{
+//		for (int j = 0; j < FIELD_SIZE; ++j)
+//		{
+//			wrappedPath.path[i][j] = NO_DATA;
+//		}
+//	}
+//
+//	return wrappedPath;
+//}
+//
+//bool IsLessCharInLineThenNeed(const int & postition, const int & lineLength)
+//{
+//	return (postition == (lineLength - 1)) && (postition < FIELD_SIZE);
+//}
+//
+//
+//
+//bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
+//{
+//	return (currentRow != startRow) && (currentColumn != startColumn);
+//}
+//
+//bool IsAbleGoTop(const int& row, const int& column, const Path& field)
+//{
+//	if ((row != 0) && (field[row - 1][column] == EMPTY))
+//	{
+//		return true;
+//	}
+//	return false;
+//}
+//
+//bool IsAbleGoBottom(const int& row, const int& column, const Path& field)
+//{
+//	if ((row != FIELD_SIZE) && (field[row + 1][column] == EMPTY))
+//	{
+//		return true;
+//	}
+//	return false;
+//}
+//
+//
 
-Path** InitializeMatrix()
-{
-	Path** matrix = new Path*[FIELD_SIZE];
-	for (int i = 0; i < FIELD_SIZE; i++)
-		matrix[i] = new Path[FIELD_SIZE];
-
-	return matrix;
-}
-
-Path** FillMatrixByEmptyData()
-{
-	Path** result = InitializeMatrix();
-
-	for (int i = 0; i < FIELD_SIZE; ++i)
-	{
-		for (int j = 0; j < FIELD_SIZE; ++j)
-		{
-			result[i][j] = EMPTY;
-		}
-	}
-
-	return result;
-}
-
-bool IsLessCharInLineThenNeed(const int & postition, const int & lineLength) 
-{
-	return (postition == (lineLength - 1)) && (postition < FIELD_SIZE);
-}
-
-Path** ReadMatrixFromInputFile(std::ifstream& input, Error& error)
-{
-	Path** result = FillMatrixByEmptyData();
-
-	std::string line;
-	size_t row = 0;
-	while (std::getline(input, line))
-	{
-		if (row == FIELD_SIZE)
-		{
-			return result;
-		}
-		for (size_t i = 0; i < line.length(); i++)
-		{	
-			if (i == FIELD_SIZE)
-			{
-				break;
-			}
-			if (IsLessCharInLineThenNeed(i, line.length()))
-			{
-				error.wasError = true;
-				error.message = "Field must need to be 100 by 100.\n";
-				break;
-			}
-			if (line[i] == WALL)
-			{
-				result[row][i] = WALL;
-			}
-			if (line[i] == START)
-			{
-				result[row][i] = START;
-			}
-		}
-		row++;
-	}
-
-	return result;
-}
-
-void PrintMatrix(Path**& matrix)
+void PrintField(const WrappedField& wrappedField)
 {
 	for (size_t i = 0; i < FIELD_SIZE; i++)
 	{
 		for (size_t j = 0; j < FIELD_SIZE; j++)
 		{
-			std::cout << matrix[i][j] << " ";
+			std::cout << wrappedField.field[i][j] << " ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
+//WrappedField InitializeFieldByNoData()
+//{
+//	WrappedField wrappedField{};
+//	for (size_t i = 0; i < FIELD_SIZE; i++)
+//	{
+//		for (size_t j = 0; j < FIELD_SIZE; j++)
+//		{
+//			wrappedField.field[i][j] = NO_DATA;
+//		}
+//	}
+//	return wrappedField;
+//}
+
+Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 {
-	return (currentRow != startRow) && (currentColumn != startColumn);
+	WrappedField wrappedResult{};
+	Cell startCells[COUNT_CELLS]{};
+	int countStarts = 0;
+
+	std::string line;
+	int row = 0;
+	while (std::getline(input, line))
+	{
+		for (int column = 0; column < line.length(); column++)
+		{
+			if ((row == FIELD_SIZE) && (column == FIELD_SIZE))
+			{
+				return { wrappedResult, startCells, countStarts };
+			}
+			if (column == FIELD_SIZE)
+			{
+				break;
+			}
+
+			if (line[column] == WALL)
+			{
+				wrappedResult.field[row][column] = WALL;
+			}
+			else if (line[column] == START)
+			{
+				startCells[countStarts] = { row, column };
+				countStarts++;
+				wrappedResult.field[row][column] = START;
+			}
+			else
+			{
+				wrappedResult.field[row][column] = EMPTY;
+			}
+		}
+		row++;
+	}
+
+	return { wrappedResult, startCells, countStarts };
 }
 
-Path** CrawlingTheArea(Path**& field, const int& row, const int& column)
+WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, const int& column)
 {
+	WrappedField area{};
+
 	std::queue<Cell> queue;
 	queue.push(Cell{ row, column });
 
 	while (!queue.empty())
 	{
-		/*Cell currentCell = queue.pop();
+		Cell currentCell = queue.front();
+		queue.pop();
 
-		if (IsNotCellStart(currentCell.row, currentCell.column, row, column))
+		int curRow = currentCell.row;
+		int curCol = currentCell.column;
+
+		/*if (IsNotCellStart(curRow, curCol, row, column))
 		{
-			field[currentCell.row][currentCell.column] = FILL;
+			area.field[curRow][curCol] = FILL;
 		}
 
-		if (field[]) 
+		if (IsAbleGoTop(curRow, curCol, area.field))
 		{
+			queue.field({ curRow - 1, curCol });
+		}
+
+		if (IsAbleGoBottom(curRow, curCol, area.field))
+		{
+			queue.push({ curRow + 1, curCol });
 		}*/
 	}
-	return field;
+	return CrawlingTheArea
 }
 
-Path** FillAllArea(Path**& field)
+WrappedField FillField(const WrappedField& wrappedField, Cell* starts, const int & countStarts)
 {
-	Path** fillField = FillMatrixByEmptyData();
-
-	for (size_t i = 0; i < FIELD_SIZE; i++)
+	WrappedField fillField{};
+	for (size_t i = 0; i < countStarts; i++)
 	{
-		for (size_t j = 0; j < FIELD_SIZE; j++)
-		{
-			if (field[i][j] == START)
-			{
-				fillField = CrawlingTheArea(field, i, j);
-			}
-		}
+		fillField = CrawlingTheArea(wrappedField, starts[countStarts].row, starts[countStarts].column);
 	}
 	return fillField;
 }
@@ -207,7 +257,7 @@ int main(int argc, char* argv[])
 	Error error;
 	error.wasError = false;
 
-	Path** inputMatrix = ReadMatrixFromInputFile(input, error);
+	auto [field, starts, countStarts] = ReadMatrixFromInputFile(input, error);
 
 	if (error.wasError)
 	{
@@ -215,10 +265,10 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	Path** fillField = FillAllArea(inputMatrix);
+	//field = FillField(field, starts, countStarts);
 
-	PrintMatrix(inputMatrix);
-	
+	PrintField(field);
+
 	if (input.bad())
 	{
 		std::cout << "Failed to read data from input file.\n";
