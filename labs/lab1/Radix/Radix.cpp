@@ -29,6 +29,7 @@ const int ASCII_A = 65;
 const int ASCII_Z = 90;
 const int COEF_FOR_CONVERT_LETTER = 55;
 const int INCORRECT_SYMBOL = -1;
+const int DEFAULT_NOTATION_VALUE = 0;
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
 {
@@ -56,7 +57,7 @@ int ConvertNotationFromStringToInt(const std::string& notation, std::ofstream & 
 	catch (std::invalid_argument& e)
 	{
 		output << "Invalid <" << notation << "> value.\n";
-		return INCORRECT_SYMBOL;
+		return DEFAULT_NOTATION_VALUE;
 	}
 }
 
@@ -65,12 +66,22 @@ int ValidationNotation(const int& notation, std::ofstream& output)
 	if (!(notation >= 2 && notation <= 36))
 	{
 		output << "Value of <" << notation << "> isn't more than 2 and less then 36. \n";
-		return INCORRECT_SYMBOL;
+		return DEFAULT_NOTATION_VALUE;
 	}
 	else
 	{
 		return notation;
 	}
+}
+
+int EnsureNotationCorrect(const std::string& notation, std::ofstream& output)
+{
+	int tempNotation = ConvertNotationFromStringToInt(notation, output);
+	if (tempNotation != DEFAULT_NOTATION_VALUE)
+	{
+		return ValidationNotation(tempNotation, output);
+	}
+	return DEFAULT_NOTATION_VALUE;
 }
 
 char IntToSymbol(const int value)
@@ -252,16 +263,9 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	int sourceNotation = ConvertNotationFromStringToInt(args->sourceNotation, output);
-	int destinationNotation = ConvertNotationFromStringToInt(args->destinationNotation, output);
-	if ((sourceNotation == INCORRECT_SYMBOL) || (destinationNotation == INCORRECT_SYMBOL))
-	{
-		return 1;
-	}
-
-	sourceNotation = ValidationNotation(sourceNotation, output);
-	destinationNotation = ValidationNotation(destinationNotation, output);
-	if ((sourceNotation == INCORRECT_SYMBOL) || (destinationNotation == INCORRECT_SYMBOL))
+	int sourceNotation = EnsureNotationCorrect(args->sourceNotation, output);
+	int destinationNotation = EnsureNotationCorrect(args->destinationNotation, output);
+	if ((sourceNotation == DEFAULT_NOTATION_VALUE) || (destinationNotation == DEFAULT_NOTATION_VALUE))
 	{
 		return 1;
 	}
