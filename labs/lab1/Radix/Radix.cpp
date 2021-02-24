@@ -47,7 +47,7 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-int ConvertNotationFromStringToInt(const std::string& notation)
+int ConvertNotationFromStringToInt(const std::string& notation, std::ofstream & output)
 {
 	try
 	{
@@ -55,17 +55,17 @@ int ConvertNotationFromStringToInt(const std::string& notation)
 	}
 	catch (std::invalid_argument& e)
 	{
-		std::cout << "Invalid <" << notation << ">  value.\n";
-		return 1;
+		output << "Invalid <" << notation << "> value.\n";
+		return INCORRECT_SYMBOL;
 	}
 }
 
-int ValidationNotation(const int& notation)
+int ValidationNotation(const int& notation, std::ofstream& output)
 {
 	if (!(notation >= 2 && notation <= 36))
 	{
-		std::cout << "Value of <source notation> isn't more than 2 and less then 36. \n";
-		return 1;
+		output << "Value of <" << notation << "> isn't more than 2 and less then 36. \n";
+		return INCORRECT_SYMBOL;
 	}
 	else
 	{
@@ -252,11 +252,19 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	int sourceNotation = ConvertNotationFromStringToInt(args->sourceNotation);
-	int destinationNotation = ConvertNotationFromStringToInt(args->destinationNotation);
+	int sourceNotation = ConvertNotationFromStringToInt(args->sourceNotation, output);
+	int destinationNotation = ConvertNotationFromStringToInt(args->destinationNotation, output);
+	if ((sourceNotation == INCORRECT_SYMBOL) || (destinationNotation == INCORRECT_SYMBOL))
+	{
+		return 1;
+	}
 
-	sourceNotation = ValidationNotation(sourceNotation);
-	destinationNotation = ValidationNotation(destinationNotation);
+	sourceNotation = ValidationNotation(sourceNotation, output);
+	destinationNotation = ValidationNotation(destinationNotation, output);
+	if ((sourceNotation == INCORRECT_SYMBOL) || (destinationNotation == INCORRECT_SYMBOL))
+	{
+		return 1;
+	}
 
 	Error error;
 	error.wasError = false;
@@ -271,8 +279,11 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		output << "Value in " << args->sourceNotation << " notation = " << args->value << "\n"
-			   << "Value in " << args->destinationNotation << " noation = " << valueInRadixNotation << "\n";
+		if (!(output << "Value in " << args->sourceNotation << " notation = " << args->value << "\n"
+					 << "Value in " << args->destinationNotation << " noation = " << valueInRadixNotation << "\n"))
+		{
+			return 1;
+		}
 	}
 
 	if (!output.flush())

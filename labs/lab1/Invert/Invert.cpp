@@ -11,8 +11,6 @@
 const int MINOR_SIZE = 2;
 const int MATRIX_SIZE = 3;
 
-typedef int (*Matrix)[MATRIX_SIZE][MATRIX_SIZE];
-
 struct Args
 {
 	std::string inputFileName;

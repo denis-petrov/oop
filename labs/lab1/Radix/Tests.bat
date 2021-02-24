@@ -96,11 +96,23 @@ fc.exe "%TEMP%\output.txt" test-data\10-36--2147483648.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 13 passed
 
-REM If command args correct then expected 0 return code
+REM If command args correct then expected 1 return code
 %Program% 10 36 -21474836499999999999999 "%TEMP%\output.txt"
 fc.exe "%TEMP%\output.txt" test-data\10-36--21474836499999999999999.txt > nul
 if ERRORLEVEL 1 goto err
 echo Test 14 passed
+
+REM If command args correct then expected 1 return code
+%Program% @@ 0 89 "%TEMP%\output.txt"
+fc.exe "%TEMP%\output.txt" test-data\@@-0-89.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 15 passed
+
+REM If command args correct then expected 1 return code
+%Program% 87 -12 81009 "%TEMP%\output.txt"
+fc.exe "%TEMP%\output.txt" test-data\87--12-81009.txt > nul
+if ERRORLEVEL 1 goto err
+echo Test 16 passed
 
 REM Tests pass success
 echo All tests passed successfuly
