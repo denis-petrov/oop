@@ -6,6 +6,7 @@
 #include <optional>
 #include <queue>
 #include <string>
+#include <vector>
 
 struct Args
 {
@@ -26,7 +27,7 @@ struct Cell
 };
 
 const int FIELD_SIZE = 100;
-const int COUNT_CELLS = FIELD_SIZE * FIELD_SIZE;
+const int MAX_SIZE = 16382;
 
 enum Field
 {
@@ -45,8 +46,7 @@ struct WrappedField
 struct Tuple
 {
 	WrappedField wrappedField;
-	Cell* startCells;
-	int countStarts;
+	std::vector<Cell> startCells;
 };
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
@@ -96,13 +96,17 @@ void PrintField(const WrappedField& wrappedField)
 			{
 				std::cout << '#';
 			}
-			if (wrappedField.field[i][j] == START)
+			else if (wrappedField.field[i][j] == START)
 			{
 				std::cout << 'O';
 			}
-			if (wrappedField.field[i][j] == FILL)
+			else if (wrappedField.field[i][j] == FILL)
 			{
 				std::cout << '.';
+			}
+			else
+			{
+				std::cout << ' ';
 			}
 		}
 		std::cout << std::endl;
@@ -112,8 +116,7 @@ void PrintField(const WrappedField& wrappedField)
 Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 {
 	WrappedField wrappedResult{};
-	Cell startCells[COUNT_CELLS]{};
-	int countStarts = 0;
+	std::vector<Cell> startCells;
 
 	std::string line;
 	int row = 0;
@@ -123,7 +126,7 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 		{
 			if ((row == FIELD_SIZE) && (column == FIELD_SIZE))
 			{
-				return { wrappedResult, startCells, countStarts };
+				return { wrappedResult, startCells };
 			}
 			if (column == FIELD_SIZE)
 			{
@@ -136,8 +139,7 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 			}
 			else if (line[column] == START)
 			{
-				startCells[countStarts] = { row, column };
-				countStarts++;
+				startCells.push_back({ row, column });
 				wrappedResult.field[row][column] = START;
 			}
 			else
@@ -148,7 +150,7 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
 		row++;
 	}
 
-	return { wrappedResult, startCells, countStarts };
+	return { wrappedResult, startCells };
 }
 
 bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
@@ -192,12 +194,12 @@ bool IsAbleGoRight(const int& row, const int& column, const WrappedField& wrappe
 	return false;
 }
 
-WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, const int& column)
+WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& rowStart, const int& columnStart)
 {
 	WrappedField area{ CopyField(wrappedField) };
 
 	std::queue<Cell> queue;
-	queue.push(Cell{ row, column });
+	queue.push(Cell{ rowStart, columnStart });
 
 	while (!queue.empty())
 	{
@@ -207,7 +209,7 @@ WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, c
 		int curRow = currentCell.row;
 		int curCol = currentCell.column;
 
-		if (IsNotCellStart(curRow, curCol, row, column))
+		if (IsNotCellStart(curRow, curCol, rowStart, columnStart))
 			area.field[curRow][curCol] = FILL;
 
 		if (IsAbleGoTop(curRow, curCol, area))
@@ -225,12 +227,12 @@ WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& row, c
 	return area;
 }
 
-WrappedField FillField(const WrappedField& wrappedField, Cell*(&starts), const int& countStarts)
+WrappedField FillField(const WrappedField& wrappedField, const std::vector<Cell> (&starts))
 {
 	WrappedField fillField{};
-	for (size_t i = 0; i < countStarts; i++)
+	for (size_t i = 0; i < starts.size(); i++)
 	{
-		fillField = CrawlingTheArea(wrappedField, starts[countStarts].row, starts[countStarts].column);
+		fillField = CrawlingTheArea(wrappedField, starts[i].row, starts[i].column);
 	}
 	return fillField;
 }
@@ -262,7 +264,7 @@ int main(int argc, char* argv[])
 	Error error;
 	error.wasError = false;
 
-	auto [field, starts, countStarts] = ReadMatrixFromInputFile(input, error);
+	auto [field, starts] = ReadMatrixFromInputFile(input, error);
 
 	if (error.wasError)
 	{
@@ -270,7 +272,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	field = FillField(field, starts, countStarts);
+	field = FillField(field, starts);
 
 	PrintField(field);
 
