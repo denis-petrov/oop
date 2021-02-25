@@ -14,12 +14,6 @@ struct Args
 	std::string outputFileName;
 };
 
-struct Error
-{
-	bool wasError;
-	std::string message;
-};
-
 struct Cell
 {
 	int row;
@@ -27,7 +21,6 @@ struct Cell
 };
 
 const int FIELD_SIZE = 100;
-const int MAX_SIZE = 16382;
 
 enum Field
 {
@@ -62,14 +55,6 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	args.outputFileName = argv[2];
 
 	return args;
-}
-
-void PrintMessageToOutput(std::ofstream& output, const Error& error)
-{
-	if (!(output << error.message))
-	{
-		std::cout << "Error, while write to output file.\n";
-	}
 }
 
 WrappedField CopyField(const WrappedField& wrappedField)
@@ -113,7 +98,7 @@ void PrintField(const WrappedField& wrappedField)
 	}
 }
 
-Tuple ReadMatrixFromInputFile(std::ifstream& input, Error& error)
+Tuple ReadMatrixFromInputFile(std::ifstream& input)
 {
 	WrappedField wrappedResult{};
 	std::vector<Cell> startCells;
@@ -160,7 +145,7 @@ bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& 
 
 bool IsAbleGoTop(const int& row, const int& column, const WrappedField& wrappedField)
 {
-	if ((0 < row < FIELD_SIZE) && (wrappedField.field[row - 1][column] == EMPTY))
+	if ((0 < row) && (wrappedField.field[row - 1][column] == EMPTY))
 	{
 		return true;
 	}
@@ -178,7 +163,7 @@ bool IsAbleGoBottom(const int& row, const int& column, const WrappedField& wrapp
 
 bool IsAbleGoLeft(const int& row, const int& column, const WrappedField& wrappedField)
 {
-	if ((0 < column < FIELD_SIZE) && (wrappedField.field[row][column - 1] == EMPTY))
+	if ((0 < column) && (wrappedField.field[row][column - 1] == EMPTY))
 	{
 		return true;
 	}
@@ -187,7 +172,7 @@ bool IsAbleGoLeft(const int& row, const int& column, const WrappedField& wrapped
 
 bool IsAbleGoRight(const int& row, const int& column, const WrappedField& wrappedField)
 {
-	if ((0 < column < FIELD_SIZE) && (wrappedField.field[row][column + 1] == EMPTY))
+	if ((column < FIELD_SIZE) && (wrappedField.field[row][column + 1] == EMPTY))
 	{
 		return true;
 	}
@@ -261,16 +246,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	Error error;
-	error.wasError = false;
-
-	auto [field, starts] = ReadMatrixFromInputFile(input, error);
-
-	if (error.wasError)
-	{
-		PrintMessageToOutput(output, error);
-		return 1;
-	}
+	auto [field, starts] = ReadMatrixFromInputFile(input);
 
 	field = FillField(field, starts);
 
