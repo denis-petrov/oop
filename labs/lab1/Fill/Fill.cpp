@@ -7,7 +7,6 @@
 #include <queue>
 #include <string>
 #include <vector>
-#include "Fill.h"
 
 struct Args
 {
@@ -39,7 +38,7 @@ enum Field
 
 struct WrappedField
 {
-	Field field[FIELD_SIZE][FIELD_SIZE]{};
+	Field field[FIELD_SIZE][FIELD_SIZE];
 };
 
 struct Tuple
