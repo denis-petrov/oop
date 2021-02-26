@@ -7,11 +7,18 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include "Fill.h"
 
 struct Args
 {
 	std::string inputFileName;
 	std::string outputFileName;
+};
+
+struct Error
+{
+	bool wasError;
+	std::string message;
 };
 
 struct Cell
@@ -24,7 +31,6 @@ const int FIELD_SIZE = 100;
 
 enum Field
 {
-	NO_DATA,
 	EMPTY,
 	WALL = '#',
 	FILL = '.',
@@ -33,7 +39,7 @@ enum Field
 
 struct WrappedField
 {
-	Field field[FIELD_SIZE][FIELD_SIZE]{ NO_DATA };
+	Field field[FIELD_SIZE][FIELD_SIZE]{};
 };
 
 struct Tuple
@@ -57,44 +63,19 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-WrappedField CopyField(const WrappedField& wrappedField)
-{
-	WrappedField copy{};
-
-	for (size_t i = 0; i < FIELD_SIZE; i++)
-	{
-		for (size_t j = 0; j < FIELD_SIZE; j++)
-		{
-			copy.field[i][j] = wrappedField.field[i][j];
-		}
-	}
-	return copy;
-}
-
-void PrintField(const WrappedField& wrappedField)
+void PrintField(const WrappedField& wrappedField, std::ofstream& output, Error& error)
 {
 	for (size_t i = 0; i < FIELD_SIZE; i++)
 	{
 		for (size_t j = 0; j < FIELD_SIZE; j++)
 		{
-			if (wrappedField.field[i][j] == WALL)
+			if (!(output << (char)wrappedField.field[i][j]))
 			{
-				std::cout << '#';
-			}
-			else if (wrappedField.field[i][j] == START)
-			{
-				std::cout << 'O';
-			}
-			else if (wrappedField.field[i][j] == FILL)
-			{
-				std::cout << '.';
-			}
-			else
-			{
-				std::cout << ' ';
+				error.message = "Unable write to output file.\n";
+				error.wasError = 1;
 			}
 		}
-		std::cout << std::endl;
+		output << std::endl;
 	}
 }
 
@@ -105,31 +86,27 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input)
 
 	std::string line;
 	int row = 0;
-	while (std::getline(input, line))
+	while (std::getline(input, line) && (row != FIELD_SIZE))
 	{
 		for (int column = 0; column < line.length(); column++)
 		{
-			if ((row == FIELD_SIZE) && (column == FIELD_SIZE))
-			{
-				return { wrappedResult, startCells };
-			}
 			if (column == FIELD_SIZE)
 			{
 				break;
 			}
 
-			if (line[column] == WALL)
+			if (line[column] == Field::WALL)
 			{
-				wrappedResult.field[row][column] = WALL;
+				wrappedResult.field[row][column] = Field::WALL;
 			}
-			else if (line[column] == START)
+			else if (line[column] == Field::START)
 			{
 				startCells.push_back({ row, column });
-				wrappedResult.field[row][column] = START;
+				wrappedResult.field[row][column] = Field::START;
 			}
 			else
 			{
-				wrappedResult.field[row][column] = EMPTY;
+				wrappedResult.field[row][column] = Field::EMPTY;
 			}
 		}
 		row++;
@@ -138,52 +115,24 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input)
 	return { wrappedResult, startCells };
 }
 
-bool IsNotCellStart(const int& currentRow, const int& currentColumn, const int& startRow, const int& startColumn)
+bool IsEmptyCell(const int& row, const int& column, const WrappedField& wrappedField)
 {
-	return (currentRow != startRow) && (currentColumn != startColumn);
+	return ((0 <= row) && (row < FIELD_SIZE) && (0 <= column) && (column < FIELD_SIZE) && (wrappedField.field[row][column] == Field::EMPTY));
 }
 
-bool IsAbleGoTop(const int& row, const int& column, const WrappedField& wrappedField)
+void GoToNextCellIfEmptyAndPushToQueue(const int& curRow, const int& curCol, WrappedField& wrappedField, std::queue<Cell>& queue)
 {
-	if ((0 < row) && (wrappedField.field[row - 1][column] == EMPTY))
+	if (IsEmptyCell(curRow, curCol, wrappedField))
 	{
-		return true;
+		wrappedField.field[curRow][curCol] = Field::FILL;
+		queue.push({ curRow, curCol });
 	}
-	return false;
 }
 
-bool IsAbleGoBottom(const int& row, const int& column, const WrappedField& wrappedField)
+void CrawlingTheArea(WrappedField& wrappedField, const int& rowStart, const int& columnStart)
 {
-	if ((0 < row < FIELD_SIZE) && (wrappedField.field[row + 1][column] == EMPTY))
-	{
-		return true;
-	}
-	return false;
-}
-
-bool IsAbleGoLeft(const int& row, const int& column, const WrappedField& wrappedField)
-{
-	if ((0 < column) && (wrappedField.field[row][column - 1] == EMPTY))
-	{
-		return true;
-	}
-	return false;
-}
-
-bool IsAbleGoRight(const int& row, const int& column, const WrappedField& wrappedField)
-{
-	if ((column < FIELD_SIZE) && (wrappedField.field[row][column + 1] == EMPTY))
-	{
-		return true;
-	}
-	return false;
-}
-
-WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& rowStart, const int& columnStart)
-{
-	WrappedField area{ CopyField(wrappedField) };
-
 	std::queue<Cell> queue;
+	wrappedField.field[rowStart][columnStart] = Field::FILL;
 	queue.push(Cell{ rowStart, columnStart });
 
 	while (!queue.empty())
@@ -194,32 +143,20 @@ WrappedField CrawlingTheArea(const WrappedField& wrappedField, const int& rowSta
 		int curRow = currentCell.row;
 		int curCol = currentCell.column;
 
-		if (IsNotCellStart(curRow, curCol, rowStart, columnStart))
-			area.field[curRow][curCol] = FILL;
-
-		if (IsAbleGoTop(curRow, curCol, area))
-			queue.push({ curRow - 1, curCol });
-
-		if (IsAbleGoBottom(curRow, curCol, area))
-			queue.push({ curRow + 1, curCol });
-
-		if (IsAbleGoLeft(curRow, curCol, area))
-			queue.push({ curRow, curCol - 1 });
-
-		if (IsAbleGoRight(curRow, curCol, area))
-			queue.push({ curRow, curCol + 1 });
+		GoToNextCellIfEmptyAndPushToQueue(curRow - 1, curCol, wrappedField, queue);
+		GoToNextCellIfEmptyAndPushToQueue(curRow + 1, curCol, wrappedField, queue);
+		GoToNextCellIfEmptyAndPushToQueue(curRow, curCol - 1, wrappedField, queue);
+		GoToNextCellIfEmptyAndPushToQueue(curRow, curCol + 1, wrappedField, queue);
 	}
-	return area;
 }
 
-WrappedField FillField(const WrappedField& wrappedField, const std::vector<Cell> (&starts))
+void FillField(WrappedField& wrappedField, const std::vector<Cell> (&starts))
 {
-	WrappedField fillField{};
 	for (size_t i = 0; i < starts.size(); i++)
 	{
-		fillField = CrawlingTheArea(wrappedField, starts[i].row, starts[i].column);
+		CrawlingTheArea(wrappedField, starts[i].row, starts[i].column);
+		wrappedField.field[starts[i].row][starts[i].column] = Field::START;
 	}
-	return fillField;
 }
 
 int main(int argc, char* argv[])
@@ -248,9 +185,18 @@ int main(int argc, char* argv[])
 
 	auto [field, starts] = ReadMatrixFromInputFile(input);
 
-	field = FillField(field, starts);
+	Error error;
+	error.wasError = false;
 
-	PrintField(field);
+	FillField(field, starts);
+
+	PrintField(field, output, error);
+
+	if (error.wasError)
+	{
+		std::cout << error.message << std::endl;
+		return 1;
+	}
 
 	if (input.bad())
 	{
