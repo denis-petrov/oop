@@ -28,17 +28,19 @@ struct Cell
 
 const int FIELD_SIZE = 100;
 
-enum Field
+enum CharTypes
 {
-	EMPTY,
+	EMPTY = ' ',
 	WALL = '#',
 	FILL = '.',
 	START = 'O',
 };
 
+typedef char Field[FIELD_SIZE][FIELD_SIZE];
+
 struct WrappedField
 {
-	Field field[FIELD_SIZE][FIELD_SIZE];
+	Field items;
 };
 
 struct Tuple
@@ -68,7 +70,7 @@ void PrintField(const WrappedField& wrappedField, std::ofstream& output, Error& 
 	{
 		for (size_t j = 0; j < FIELD_SIZE; j++)
 		{
-			if (!(output << (char)wrappedField.field[i][j]))
+			if (!(output << (char)wrappedField.items[i][j]))
 			{
 				error.message = "Unable write to output file.\n";
 				error.wasError = 1;
@@ -84,31 +86,46 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input)
 	std::vector<Cell> startCells;
 
 	std::string line;
-	int row = 0;
-	while (std::getline(input, line) && (row != FIELD_SIZE))
+	for (int row = 0; row < FIELD_SIZE; row++)
 	{
-		for (int column = 0; column < line.length(); column++)
+		if (std::getline(input, line))
 		{
-			if (column == FIELD_SIZE)
+			for (int column = 0; column < FIELD_SIZE; column++)
 			{
-				break;
-			}
-
-			if (line[column] == Field::WALL)
-			{
-				wrappedResult.field[row][column] = Field::WALL;
-			}
-			else if (line[column] == Field::START)
-			{
-				startCells.push_back({ row, column });
-				wrappedResult.field[row][column] = Field::START;
-			}
-			else
-			{
-				wrappedResult.field[row][column] = Field::EMPTY;
+				if (column == FIELD_SIZE)
+				{
+					break;
+				}
+				
+				if (column < line.length())
+				{
+					if (line[column] == CharTypes::WALL)
+					{
+						wrappedResult.items[row][column] = CharTypes::WALL;
+					}
+					else if (line[column] == CharTypes::START)
+					{
+						startCells.push_back({ row, column });
+						wrappedResult.items[row][column] = CharTypes::START;
+					}
+					else
+					{
+						wrappedResult.items[row][column] = CharTypes::EMPTY;
+					}
+				}
+				else
+				{
+					wrappedResult.items[row][column] = CharTypes::EMPTY;
+				}
 			}
 		}
-		row++;
+		else
+		{
+			for (int column = 0; column < FIELD_SIZE; column++)
+			{
+				wrappedResult.items[row][column] = CharTypes::EMPTY;
+			}
+		}
 	}
 
 	return { wrappedResult, startCells };
@@ -116,14 +133,14 @@ Tuple ReadMatrixFromInputFile(std::ifstream& input)
 
 bool IsEmptyCell(const int& row, const int& column, const WrappedField& wrappedField)
 {
-	return ((0 <= row) && (row < FIELD_SIZE) && (0 <= column) && (column < FIELD_SIZE) && (wrappedField.field[row][column] == Field::EMPTY));
+	return ((0 <= row) && (row < FIELD_SIZE) && (0 <= column) && (column < FIELD_SIZE) && (wrappedField.items[row][column] == CharTypes::EMPTY));
 }
 
 void GoToNextCellIfEmptyAndPushToQueue(const int& curRow, const int& curCol, WrappedField& wrappedField, std::queue<Cell>& queue)
 {
 	if (IsEmptyCell(curRow, curCol, wrappedField))
 	{
-		wrappedField.field[curRow][curCol] = Field::FILL;
+		wrappedField.items[curRow][curCol] = CharTypes::FILL;
 		queue.push({ curRow, curCol });
 	}
 }
@@ -131,7 +148,7 @@ void GoToNextCellIfEmptyAndPushToQueue(const int& curRow, const int& curCol, Wra
 void CrawlingTheArea(WrappedField& wrappedField, const int& rowStart, const int& columnStart)
 {
 	std::queue<Cell> queue;
-	wrappedField.field[rowStart][columnStart] = Field::FILL;
+	wrappedField.items[rowStart][columnStart] = CharTypes::FILL;
 	queue.push(Cell{ rowStart, columnStart });
 
 	while (!queue.empty())
@@ -149,12 +166,12 @@ void CrawlingTheArea(WrappedField& wrappedField, const int& rowStart, const int&
 	}
 }
 
-void FillField(WrappedField& wrappedField, const std::vector<Cell> (&starts))
+void FillField(WrappedField& wrappedField, const std::vector<Cell>(&starts))
 {
 	for (size_t i = 0; i < starts.size(); i++)
 	{
 		CrawlingTheArea(wrappedField, starts[i].row, starts[i].column);
-		wrappedField.field[starts[i].row][starts[i].column] = Field::START;
+		wrappedField.items[starts[i].row][starts[i].column] = CharTypes::START;
 	}
 }
 

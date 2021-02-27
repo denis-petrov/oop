@@ -27,18 +27,21 @@ REM If command args correct then expected 0 return code
 %Program% test-data\3-test.txt "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" test-data\3-test-result.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 3 passed
 
 REM If command args correct then expected 0 return code
 %Program% test-data\4-test.txt "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" test-data\4-test-result.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 4 passed
 
 REM If command args correct then expected 0 return code
 %Program% test-data\5-test.txt "%TEMP%\output.txt"
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" test-data\5-test-result.txt > nul
+if ERRORLEVEL 1 goto err
 echo Test 5 passed
 
 REM Tests pass success
