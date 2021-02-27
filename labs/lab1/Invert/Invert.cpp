@@ -11,17 +11,17 @@
 const int MINOR_SIZE = 2;
 const int MATRIX_SIZE = 3;
 
-typedef double Matrix[MATRIX_SIZE][MATRIX_SIZE];
-typedef double Minor[MINOR_SIZE][MINOR_SIZE];
+typedef double Matrix3x3[MATRIX_SIZE][MATRIX_SIZE];
+typedef double Matrix2x2[MINOR_SIZE][MINOR_SIZE];
 
-struct WrappedMatrix
+struct WrappedMatrix3x3
 {
-	Matrix matrix;
+	Matrix3x3 items;
 };
 
-struct WrappedMinor
+struct WrappedMatrix2x2
 {
-	Minor minor;
+	Matrix2x2 items;
 };
 
 struct Args
@@ -51,38 +51,38 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-WrappedMatrix ReadInputDataToMatrix(std::ifstream& input, Error& error)
+WrappedMatrix3x3 ReadInputDataToMatrix(std::ifstream& input, Error& error)
 {
-	WrappedMatrix wrappedMatrix{};
+	WrappedMatrix3x3 wrappedMatrix3x3{};
 
 	std::string line;
 	for (int i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (int j = 0; j < MATRIX_SIZE; j++)
 		{
-			if (!(input >> wrappedMatrix.matrix[i][j]))
+			if (!(input >> wrappedMatrix3x3.items[i][j]))
 			{
 				error.wasError = true;
 				error.message = (std::string) "Error, while read <matrix file1> \nThe dimension of the matrix must be 3 by 3." + "\n"
 					+ (std::string) "Symbols must be numbers and be only digits from 0 to 9.\n";
-				return wrappedMatrix;
+				return wrappedMatrix3x3;
 			}
 		}
 		if (!(std::getline(input, line)))
 		{
-			return wrappedMatrix;
+			return wrappedMatrix3x3;
 		}
 	}
 
-	return wrappedMatrix;
+	return wrappedMatrix3x3;
 }
 
-double CalculateDeterminantMinorTwoOnTwo(const Minor& minor)
+double CalculateDeterminantMatrix2x2(const Matrix2x2& minor)
 {
 	return ((minor[0][0] * minor[1][1]) - (minor[1][0] * minor[0][1]));
 }
 
-int CalculateDeterminantMatrixThreeOnThree(const Matrix& matrix)
+int CalculateDeterminantMatrix3x3(const Matrix3x3& matrix)
 {
 	int firstTriangle = (matrix[0][0] * matrix[1][1] * matrix[2][2])
 		+ (matrix[2][0] * matrix[0][1] * matrix[1][2])
@@ -95,9 +95,9 @@ int CalculateDeterminantMatrixThreeOnThree(const Matrix& matrix)
 	return (firstTriangle - secondTriangle);
 }
 
-WrappedMinor FindMinor(const int& exceptRow, const int& exceptColumn, const Matrix& matrix)
+WrappedMatrix2x2 FindMinor(const int& exceptRow, const int& exceptColumn, const Matrix3x3& matrix)
 {
-	WrappedMinor wrappedMinor{};
+	WrappedMatrix2x2 wrappedMatrix2x2{};
 
 	int k = 0;
 	int t = 0;
@@ -107,7 +107,7 @@ WrappedMinor FindMinor(const int& exceptRow, const int& exceptColumn, const Matr
 		{
 			if ((i != exceptRow) && (j != exceptColumn))
 			{
-				wrappedMinor.minor[t][k] = matrix[i][j];
+				wrappedMatrix2x2.items[t][k] = matrix[i][j];
 				if ((k == 1) && (t == 0))
 				{
 					t = 1;
@@ -120,72 +120,72 @@ WrappedMinor FindMinor(const int& exceptRow, const int& exceptColumn, const Matr
 			}
 		}
 	}
-	return wrappedMinor;
+	return wrappedMatrix2x2;
 }
 
-WrappedMatrix TransposeMatrix(const Matrix& matrix)
+WrappedMatrix3x3 TransposeMatrix(const Matrix3x3& matrix)
 {
-	WrappedMatrix wrappedTronspesedMatrix{};
+	WrappedMatrix3x3 wrappedTronspesedMatrix{};
 
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			wrappedTronspesedMatrix.matrix[i][j] = matrix[j][i];
+			wrappedTronspesedMatrix.items[i][j] = matrix[j][i];
 		}
 	}
 
 	return wrappedTronspesedMatrix;
 }
 
-WrappedMatrix CalculateComplementMatrix(const Matrix& matrix)
+WrappedMatrix3x3 CalculateComplementMatrix(const Matrix3x3& matrix)
 {
-	WrappedMatrix wrappedComplementMatrix{};
+	WrappedMatrix3x3 wrappedComplementMatrix{};
 
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			wrappedComplementMatrix.matrix[i][j] = std::pow((-1), (i + j)) * CalculateDeterminantMinorTwoOnTwo(FindMinor(i, j, matrix).minor);
+			wrappedComplementMatrix.items[i][j] = std::pow((-1), (i + j)) * CalculateDeterminantMatrix2x2(FindMinor(i, j, matrix).items);
 		}
 	}
 
 	return wrappedComplementMatrix;
 }
 
-WrappedMatrix CalculateInverseMatrix(const int& matrixDeterminant, const Matrix& transposeMatrix)
+WrappedMatrix3x3 CalculateInverseMatrix(const int& matrixDeterminant, const Matrix3x3& transposeMatrix)
 {
-	WrappedMatrix wrappedInverseMatrix{};
+	WrappedMatrix3x3 wrappedInverseMatrix{};
 
 	double inverseDeterminant = (static_cast<double>(1) / matrixDeterminant);
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			wrappedInverseMatrix.matrix[i][j] = std::round((inverseDeterminant * transposeMatrix[i][j]) * 1000) / 1000;
+			wrappedInverseMatrix.items[i][j] = std::round((inverseDeterminant * transposeMatrix[i][j]) * 1000) / 1000;
 		}
 	}
 
 	return wrappedInverseMatrix;
 }
 
-WrappedMatrix InvertMatrix(const Matrix& matrix, Error& error)
+WrappedMatrix3x3 InvertMatrix(const Matrix3x3& matrix, Error& error)
 {
-	int matrixDeterminant = CalculateDeterminantMatrixThreeOnThree(matrix);
+	int matrixDeterminant = CalculateDeterminantMatrix3x3(matrix);
 	if (matrixDeterminant == 0)
 	{
 		error.message = "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
 		error.wasError = true;
-		return WrappedMatrix{};
+		return WrappedMatrix3x3{};
 	}
 
-	WrappedMatrix complemntMatrix = CalculateComplementMatrix(matrix);
-	WrappedMatrix transposedComplementMatrix = TransposeMatrix(complemntMatrix.matrix);
+	WrappedMatrix3x3 complemntMatrix = CalculateComplementMatrix(matrix);
+	WrappedMatrix3x3 transposedComplementMatrix = TransposeMatrix(complemntMatrix.items);
 
-	return CalculateInverseMatrix(matrixDeterminant, transposedComplementMatrix.matrix);
+	return CalculateInverseMatrix(matrixDeterminant, transposedComplementMatrix.items);
 }
 
-Error PrintMatrixToOutputReturnError(std::ofstream& output, const Matrix& matrix, Error& error)
+Error PrintMatrixToOutputReturnError(std::ofstream& output, const Matrix3x3& matrix, Error& error)
 {
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
@@ -244,21 +244,21 @@ int main(int argc, char* argv[])
 	Error error;
 	error.wasError = false;
 
-	WrappedMatrix inputMatrix = ReadInputDataToMatrix(input, error);
+	WrappedMatrix3x3 inputMatrix = ReadInputDataToMatrix(input, error);
 	if (error.wasError)
 	{
 		PrintMessageToOutput(output, error);
 		return 1;
 	}
 
-	WrappedMatrix invertMatrix = InvertMatrix(inputMatrix.matrix, error);
+	WrappedMatrix3x3 invertMatrix = InvertMatrix(inputMatrix.items, error);
 	if (error.wasError)
 	{
 		PrintMessageToOutput(output, error);
 		return 1;
 	}
 
-	if (PrintMatrixToOutputReturnError(output, invertMatrix.matrix, error).wasError)
+	if (PrintMatrixToOutputReturnError(output, invertMatrix.items, error).wasError)
 	{
 		PrintWasWriteError();
 		return 1;
