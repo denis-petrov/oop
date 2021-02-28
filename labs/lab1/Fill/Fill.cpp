@@ -136,7 +136,7 @@ bool IsEmptyCell(const int& row, const int& column, const WrappedField& wrappedF
 	return ((0 <= row) && (row < FIELD_SIZE) && (0 <= column) && (column < FIELD_SIZE) && (wrappedField.items[row][column] == CharTypes::EMPTY));
 }
 
-void GoToNextCellIfEmptyAndPushToQueue(const int& curRow, const int& curCol, WrappedField& wrappedField, std::queue<Cell>& queue)
+void GoToNextCellIfEmpty(const int& curRow, const int& curCol, WrappedField& wrappedField, std::queue<Cell>& queue)
 {
 	if (IsEmptyCell(curRow, curCol, wrappedField))
 	{
@@ -159,10 +159,10 @@ void CrawlingTheArea(WrappedField& wrappedField, const int& rowStart, const int&
 		int curRow = currentCell.row;
 		int curCol = currentCell.column;
 
-		GoToNextCellIfEmptyAndPushToQueue(curRow - 1, curCol, wrappedField, queue);
-		GoToNextCellIfEmptyAndPushToQueue(curRow + 1, curCol, wrappedField, queue);
-		GoToNextCellIfEmptyAndPushToQueue(curRow, curCol - 1, wrappedField, queue);
-		GoToNextCellIfEmptyAndPushToQueue(curRow, curCol + 1, wrappedField, queue);
+		GoToNextCellIfEmpty(curRow - 1, curCol, wrappedField, queue);
+		GoToNextCellIfEmpty(curRow + 1, curCol, wrappedField, queue);
+		GoToNextCellIfEmpty(curRow, curCol - 1, wrappedField, queue);
+		GoToNextCellIfEmpty(curRow, curCol + 1, wrappedField, queue);
 	}
 }
 
