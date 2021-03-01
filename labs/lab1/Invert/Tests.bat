@@ -10,41 +10,41 @@ if %Program%=="" (
 )
 
 REM If command args correct then expected 1 return code
-%Program% test-data\1-Empty.txt "%TEMP%\output.txt" 
-fc.exe "%TEMP%\output.txt" test-data\1-Empty-Result.txt > nul
+%Program% test-data\1-Empty.txt > "%TEMP%\output.txt" 
+fc.exe "%TEMP%\output.txt" test-data\1-Empty-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 1 passed
 
 REM If command args correct then expected 0 return code
-%Program% test-data\2-Correct.txt "%TEMP%\output.txt" 
+%Program% test-data\2-Correct.txt > "%TEMP%\output.txt" 
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\2-Correct-Result.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\2-Correct-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 2 passed
 
 REM If command args correct then expected 1 return code
-%Program% test-data\3-Zero-Determinant.txt "%TEMP%\output.txt" 
-fc.exe "%TEMP%\output.txt" test-data\3-Zero-Determinant-Result.txt > nul
+%Program% test-data\3-Zero-Determinant.txt > "%TEMP%\output.txt" 
+fc.exe "%TEMP%\output.txt" test-data\3-Zero-Determinant-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 3 passed
 
 REM If command args correct then expected 0 return code
-%Program% test-data\4-LessZeroDeterminant.txt "%TEMP%\output.txt" 
+%Program% test-data\4-LessZeroDeterminant.txt > "%TEMP%\output.txt" 
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\4-LessZeroDeterminant-Result.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\4-LessZeroDeterminant-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 4 passed
 
 REM If command args correct then expected 0 return code
-%Program% test-data\5-Tabs.txt "%TEMP%\output.txt" 
+%Program% test-data\5-Tabs.txt > "%TEMP%\output.txt" 
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\output.txt" test-data\5-Tabs-Result.txt > nul
+fc.exe "%TEMP%\output.txt" test-data\5-Tabs-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 5 passed
 
 REM If command args correct then expected 1 return code
-%Program% test-data\6-IncorrectSymbols.txt "%TEMP%\output.txt" 
-fc.exe "%TEMP%\output.txt" test-data\6-IncorrectSymbols-Result.txt > nul
+%Program% test-data\6-IncorrectSymbols.txt > "%TEMP%\output.txt" 
+fc.exe "%TEMP%\output.txt" test-data\6-IncorrectSymbols-Result.txt > null
 if ERRORLEVEL 1 goto err
 echo Test 6 passed
 

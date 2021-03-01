@@ -27,7 +27,6 @@ struct WrappedMatrix2x2
 struct Args
 {
 	std::string inputFileName;
-	std::string outputFileName;
 };
 
 struct Error
@@ -38,15 +37,14 @@ struct Error
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
 {
-	if (argc != 3)
+	if (argc != 2)
 	{
 		std::cout << "Invalid argument count.\n";
-		std::cout << "Usage: Invert.exe <matrix file1> <output file name>.\n";
+		std::cout << "Usage: Invert.exe <matrix file1>.\n";
 		return std::nullopt;
 	}
 	Args args;
 	args.inputFileName = argv[1];
-	args.outputFileName = argv[2];
 
 	return args;
 }
@@ -82,40 +80,40 @@ double CalculateDeterminantMatrix2x2(const Matrix2x2& minor)
 	return ((minor[0][0] * minor[1][1]) - (minor[1][0] * minor[0][1]));
 }
 
-int CalculateDeterminantMatrix3x3(const Matrix3x3& matrix)
+double CalculateDeterminantMatrix3x3(const Matrix3x3& matrix)
 {
-	int firstTriangle = (matrix[0][0] * matrix[1][1] * matrix[2][2])
+	double firstTriangle = (matrix[0][0] * matrix[1][1] * matrix[2][2])
 		+ (matrix[2][0] * matrix[0][1] * matrix[1][2])
 		+ (matrix[1][0] * matrix[2][1] * matrix[0][2]);
 
-	int secondTriangle = (matrix[2][0] * matrix[1][1] * matrix[0][2])
+	double secondTriangle = (matrix[2][0] * matrix[1][1] * matrix[0][2])
 		+ (matrix[1][0] * matrix[0][1] * matrix[2][2])
 		+ (matrix[0][0] * matrix[2][1] * matrix[1][2]);
 
 	return (firstTriangle - secondTriangle);
 }
 
-WrappedMatrix2x2 FindMinor(const int& exceptRow, const int& exceptColumn, const Matrix3x3& matrix)
+WrappedMatrix2x2 FindMinor(const int exceptRow, const int exceptColumn, const Matrix3x3& matrix)
 {
 	WrappedMatrix2x2 wrappedMatrix2x2{};
 
-	int k = 0;
-	int t = 0;
+	int row = 0;
+	int column = 0;
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
 			if ((i != exceptRow) && (j != exceptColumn))
 			{
-				wrappedMatrix2x2.items[t][k] = matrix[i][j];
-				if ((k == 1) && (t == 0))
+				wrappedMatrix2x2.items[row][column] = matrix[i][j];
+				if ((column == 1) && (row == 0))
 				{
-					t = 1;
-					k = 0;
+					row = 1;
+					column = 0;
 				}
 				else
 				{
-					k++;
+					column++;
 				}
 			}
 		}
@@ -153,7 +151,7 @@ WrappedMatrix3x3 CalculateComplementMatrix(const Matrix3x3& matrix)
 	return wrappedComplementMatrix;
 }
 
-WrappedMatrix3x3 CalculateInverseMatrix(const int& matrixDeterminant, const Matrix3x3& transposeMatrix)
+WrappedMatrix3x3 CalculateInverseMatrix(const double matrixDeterminant, const Matrix3x3& transposeMatrix)
 {
 	WrappedMatrix3x3 wrappedInverseMatrix{};
 
@@ -171,7 +169,7 @@ WrappedMatrix3x3 CalculateInverseMatrix(const int& matrixDeterminant, const Matr
 
 WrappedMatrix3x3 InvertMatrix(const Matrix3x3& matrix, Error& error)
 {
-	int matrixDeterminant = CalculateDeterminantMatrix3x3(matrix);
+	double matrixDeterminant = CalculateDeterminantMatrix3x3(matrix);
 	if (matrixDeterminant == 0)
 	{
 		error.message = "Determinant = 0, then inverse matrix doesn't exist. \nPlease try again. \n";
@@ -185,35 +183,15 @@ WrappedMatrix3x3 InvertMatrix(const Matrix3x3& matrix, Error& error)
 	return CalculateInverseMatrix(matrixDeterminant, transposedComplementMatrix.items);
 }
 
-Error PrintMatrixToOutputReturnError(std::ofstream& output, const Matrix3x3& matrix, Error& error)
+void PrintMatrix(const Matrix3x3& matrix)
 {
 	for (size_t i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (size_t j = 0; j < MATRIX_SIZE; j++)
 		{
-			if (!(output << matrix[i][j] << " "))
-			{
-				error.message = "Error, while write to output file.\n";
-				error.wasError = true;
-				break;
-			}
+			std::cout << matrix[i][j] << " ";
 		}
-		output << "\n";
-	}
-
-	return error;
-}
-
-void PrintWasWriteError()
-{
-	std::cout << "Failed to write data to output.\n";
-}
-
-void PrintMessageToOutput(std::ofstream& output, Error& error)
-{
-	if (!(output << error.message))
-	{
-		PrintWasWriteError();
+		std::cout << "\n";
 	}
 }
 
@@ -233,42 +211,24 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::ofstream output;
-	output.open(args->outputFileName);
-	if (!output.is_open())
-	{
-		std::cout << "Failed to open '" << args->outputFileName << "' for reading.\n";
-		return 1;
-	}
-
 	Error error;
 	error.wasError = false;
 
 	WrappedMatrix3x3 inputMatrix = ReadInputDataToMatrix(input, error);
 	if (error.wasError)
 	{
-		PrintMessageToOutput(output, error);
+		std::cout << error.message;
 		return 1;
 	}
 
 	WrappedMatrix3x3 invertMatrix = InvertMatrix(inputMatrix.items, error);
 	if (error.wasError)
 	{
-		PrintMessageToOutput(output, error);
+		std::cout << error.message;
 		return 1;
 	}
 
-	if (PrintMatrixToOutputReturnError(output, invertMatrix.items, error).wasError)
-	{
-		PrintWasWriteError();
-		return 1;
-	}
-
-	if (!output.flush())
-	{
-		PrintWasWriteError();
-		return 1;
-	}
+	PrintMatrix(invertMatrix.items);
 
 	return 0;
 }

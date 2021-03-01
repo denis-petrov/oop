@@ -3,7 +3,6 @@
 
 #include "Radix.h"
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -13,7 +12,6 @@ struct Args
 	std::string sourceNotation;
 	std::string destinationNotation;
 	std::string value;
-	std::string outputFileName;
 };
 
 struct Error
@@ -29,59 +27,21 @@ const int ASCII_A = 65;
 const int ASCII_Z = 90;
 const int COEF_FOR_CONVERT_LETTER = 55;
 const int INCORRECT_SYMBOL = -1;
-const int DEFAULT_NOTATION_VALUE = 0;
 
 std::optional<Args> ParseArgs(int argc, char* argv[])
 {
-	if (argc != 5)
+	if (argc != 4)
 	{
 		std::cout << "Invalid argument count.\n";
-		std::cout << "Usage: CopyFile.exe <source notation> <destination notation> <value> <output file>.\n";
+		std::cout << "Usage: CopyFile.exe <source notation> <destination notation> <value>.\n";
 		return std::nullopt;
 	}
 	Args args;
 	args.sourceNotation = argv[1];
 	args.destinationNotation = argv[2];
 	args.value = argv[3];
-	args.outputFileName = argv[4];
 
 	return args;
-}
-
-int ConvertNotationFromStringToInt(const std::string& notation, std::ofstream & output)
-{
-	try
-	{
-		return std::stoi(notation);
-	}
-	catch (std::invalid_argument& e)
-	{
-		output << "Invalid <" << notation << "> value.\n";
-		return DEFAULT_NOTATION_VALUE;
-	}
-}
-
-int ValidationNotation(const int& notation, std::ofstream& output)
-{
-	if (!(notation >= 2 && notation <= 36))
-	{
-		output << "Value of <" << notation << "> isn't more than 2 and less then 36. \n";
-		return DEFAULT_NOTATION_VALUE;
-	}
-	else
-	{
-		return notation;
-	}
-}
-
-int EnsureNotationCorrect(const std::string& notation, std::ofstream& output)
-{
-	int tempNotation = ConvertNotationFromStringToInt(notation, output);
-	if (tempNotation != DEFAULT_NOTATION_VALUE)
-	{
-		return ValidationNotation(tempNotation, output);
-	}
-	return DEFAULT_NOTATION_VALUE;
 }
 
 char IntToSymbol(const int value)
@@ -113,12 +73,12 @@ int SymbolToInt(const char symbol)
 	}
 }
 
-bool IsFoundFirstMinusInString(const int& symbolInt, const bool& isMinusMet)
+bool IsFoundFirstMinusInString(const int symbolInt, const bool& isMinusMet)
 {
 	return (symbolInt == ASCII_MINUS) && (!isMinusMet);
 }
 
-void ValidateFirstMetMinusInString(const int& symbolInt, bool& isMinusMet, const size_t& position, int& power, Error& error)
+void ValidateFirstMetMinusInString(const int symbolInt, bool& isMinusMet, const size_t& position, int& power, Error& error)
 {
 	if (IsFoundFirstMinusInString(symbolInt, isMinusMet))
 	{
@@ -135,7 +95,7 @@ void ValidateFirstMetMinusInString(const int& symbolInt, bool& isMinusMet, const
 	}
 }
 
-bool IsSymbolIncorrectInNotation(const int& symbolInt, const int& radix)
+bool IsSymbolIncorrectInNotation(const int symbolInt, const int radix)
 {
 	return ((symbolInt >= radix) || (symbolInt == INCORRECT_SYMBOL));
 }
@@ -145,7 +105,7 @@ bool IsCurrentIsNotMinus(const bool& isMinusMet, const size_t& position)
 	return ((isMinusMet) && (position != 0)) || (!isMinusMet);
 }
 
-void ValidateSymbolLessMaxInNotation(const int& symbolInt, const bool& isMinusMet, const int& radix, const std::string& value, const size_t& position, Error& error)
+void ValidateSymbolLessMaxInNotation(const int symbolInt, const bool& isMinusMet, const int radix, const std::string& value, const size_t& position, Error& error)
 {
 	if (IsSymbolIncorrectInNotation(symbolInt, radix) && IsCurrentIsNotMinus(isMinusMet, position))
 	{
@@ -155,7 +115,7 @@ void ValidateSymbolLessMaxInNotation(const int& symbolInt, const bool& isMinusMe
 	}
 }
 
-bool IsOverflow(const int& number, const int& digit, const int& radix, const bool & isMinusMet)
+bool IsOverflow(const int number, const int digit, const int radix, const bool& isMinusMet)
 {
 	if (!isMinusMet)
 	{
@@ -167,7 +127,7 @@ bool IsOverflow(const int& number, const int& digit, const int& radix, const boo
 	}
 }
 
-int StringToInt(const std::string& value, const int& radix, Error& error)
+int StringToInt(const std::string& value, const int radix, Error& error)
 {
 	bool isMinusMet = false;
 	int result = 0;
@@ -210,7 +170,7 @@ int StringToInt(const std::string& value, const int& radix, Error& error)
 	return result;
 }
 
-std::string IntToString(int number, const int& radix)
+std::string IntToString(int number, const int radix)
 {
 	std::string result;
 
@@ -231,7 +191,7 @@ std::string IntToString(int number, const int& radix)
 	return result;
 }
 
-std::string ConvertValueToDestinationNotation(const int& sourceNotation, const int& destinationNotation, const std::string& value, Error& error)
+std::string ConvertValueToDestinationNotation(const int sourceNotation, const int destinationNotation, const std::string& value, Error& error)
 {
 	if (value == "0")
 	{
@@ -247,6 +207,11 @@ std::string ConvertValueToDestinationNotation(const int& sourceNotation, const i
 	return "";
 }
 
+bool IsNotationNotCorrect(const int notation) 
+{
+	return !(notation >= 2 && notation <= 36);
+}
+
 int main(int argc, char* argv[])
 {
 	auto args = ParseArgs(argc, argv);
@@ -255,18 +220,35 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::ofstream output;
-	output.open(args->outputFileName);
-	if (!output.is_open())
+	int sourceNotation = 0;
+	int destinationNotation = 0;
+	try
 	{
-		std::cout << "Failed to open '" << args->outputFileName << "' for writing.\n";
+		sourceNotation = std::stoi(args->sourceNotation);
+		destinationNotation = std::stoi(args->destinationNotation);
+
+		if (IsNotationNotCorrect(sourceNotation))
+		{
+			throw std::invalid_argument("Invalid <" + args->sourceNotation + "> notation value.\n");
+		}
+		if (IsNotationNotCorrect(destinationNotation))
+		{
+			throw std::invalid_argument("Invalid <" + args->destinationNotation + "> notation value.\n");
+		}
+	}	
+	catch (std::out_of_range& e)
+	{
+		std::cout << "Value of <notation> is not in range from 2 to 36";
 		return 1;
 	}
-
-	int sourceNotation = EnsureNotationCorrect(args->sourceNotation, output);
-	int destinationNotation = EnsureNotationCorrect(args->destinationNotation, output);
-	if ((sourceNotation == DEFAULT_NOTATION_VALUE) || (destinationNotation == DEFAULT_NOTATION_VALUE))
+	catch (std::invalid_argument& e)
 	{
+		std::cout << e.what();
+		return 1;
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what();
 		return 1;
 	}
 
@@ -278,22 +260,13 @@ int main(int argc, char* argv[])
 	if (error.wasError)
 	{
 		error.message += "Please try again.\n";
-		output << error.message;
+		std::cout << error.message;
 		return 1;
 	}
 	else
 	{
-		if (!(output << "Value in " << args->sourceNotation << " notation = " << args->value << "\n"
-					 << "Value in " << args->destinationNotation << " noation = " << valueInRadixNotation << "\n"))
-		{
-			return 1;
-		}
-	}
-
-	if (!output.flush())
-	{
-		std::cout << "Failed to write data to output.\n";
-		return 1;
+		std::cout << "Value in " << args->sourceNotation << " notation = " << args->value << "\n"
+				  << "Value in " << args->destinationNotation << " noation = " << valueInRadixNotation << "\n";
 	}
 
 	return 0;
