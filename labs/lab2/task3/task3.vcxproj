@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ae9a7603-27b5-47a7-b612-040670ca94a4}</ProjectGuid>
-    <RootNamespace>task1</RootNamespace>
+    <ProjectGuid>{739eda1e-fe1f-4e91-86f4-a44eea5d7046}</ProjectGuid>
+    <RootNamespace>task3</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,9 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="task1.cpp" />
+    <ClCompile Include="task3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\boost.1.72.0.0\build\boost.targets" Condition="Exists('packages\boost.1.72.0.0\build\boost.targets')" />
+    <Import Project="packages\boost_serialization-vc142.1.72.0.0\build\boost_serialization-vc142.targets" Condition="Exists('packages\boost_serialization-vc142.1.72.0.0\build\boost_serialization-vc142.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\boost.1.72.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.72.0.0\build\boost.targets'))" />
+    <Error Condition="!Exists('packages\boost_serialization-vc142.1.72.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_serialization-vc142.1.72.0.0\build\boost_serialization-vc142.targets'))" />
+  </Target>
 </Project>
