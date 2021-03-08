@@ -3,13 +3,15 @@
 #include <cmath>
 #include <algorithm>
 
-bool ReadVectorOfDouble(std::istream& stream, std::vector<double>& vec)
+using namespace std;
+
+bool ReadVectorOfDouble(istream& stream, vector<double>& vec)
 {
 	vec.clear();
+	istream_iterator<double> start(stream);
+	istream_iterator<double> end;
 
-	std::copy(std::istream_iterator<double>(stream),
-		std::istream_iterator<double>(),
-		std::back_inserter<std::vector<double>>(vec));
+	copy(start, end, back_inserter(vec));
 
 	return !vec.empty();
 }
@@ -18,31 +20,31 @@ bool ReadVectorOfDouble(std::istream& stream, std::vector<double>& vec)
 *	All vec elems *= maxElem / minElem
 *	Sort elements in vector
 */
-void ProcessVector(std::vector<double>& vec) 
+void ProcessVector(vector<double>& vec) 
 {
 	auto vecStart = vec.begin();
 	auto vecEnd = vec.end();
 
-	auto maxElem = *std::max_element(vecStart, vecEnd);
-	auto minElem = *std::min_element(vecStart, vecEnd);
+	auto maxElem = *max_element(vecStart, vecEnd);
+	auto minElem = *min_element(vecStart, vecEnd);
 
-	std::transform(vecStart, vecEnd, vecStart, [&maxElem, &minElem](auto& elem) { return (elem * maxElem) / minElem; });
+	transform(vecStart, vecEnd, vecStart, [&maxElem, &minElem](auto& elem) { return (elem * maxElem) / minElem; });
 
-	std::sort(vecStart, vecEnd);
+	sort(vecStart, vecEnd);
 }
 
-void PrintVector(std::ostream& out, const std::vector<double>& vec)
+void PrintVector(ostream& out, const vector<double>& vec)
 {
-	std::copy(vec.begin(), vec.end(), std::ostream_iterator<double>(out, " "));
+	copy(vec.begin(), vec.end(), ostream_iterator<double>(out, " "));
 }
 
 int main(int argc, char* argv[])
 {
-	std::vector<double> vec;
+	vector<double> vec;
 
-	if (!ReadVectorOfDouble(std::cin, vec))
+	if (!ReadVectorOfDouble(cin, vec))
 	{
-		std::cout << "Please enter a number sequence.\n";
+		cout << "Please enter a number sequence.\n";
 		return 1;
 	}
 
