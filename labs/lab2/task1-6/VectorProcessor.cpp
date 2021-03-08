@@ -3,7 +3,6 @@
 
 using namespace std;
 
-
 bool ReadVectorOfDouble(istream& stream, vector<double>& vec)
 {
 	vec.clear();
@@ -27,8 +26,9 @@ void ProcessVector(vector<double>& vec)
 	auto maxElem = *max_element(vecStart, vecEnd);
 	auto minElem = *min_element(vecStart, vecEnd);
 
+	minElem = (minElem == 0) ? 1 : minElem;
 	transform(vecStart, vecEnd, vecStart, [&maxElem, &minElem](auto& elem) { return (elem * maxElem) / minElem; });
-
+	
 	sort(vecStart, vecEnd);
 }
 
