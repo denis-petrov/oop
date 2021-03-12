@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "HtmlDecoder.h"
+#include "HtmlDecode.h"
 
 using namespace std;
 
@@ -8,7 +8,7 @@ int main()
 	string htmlLine;
 	getline(cin, htmlLine);
 
-	htmlLine = HtmlDecoder(htmlLine);
+	htmlLine = DecodeHtmlString(htmlLine);
 
 	cout << htmlLine << endl;
 	return 0;

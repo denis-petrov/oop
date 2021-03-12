@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "HtmlDecoder.h"
+#include "HtmlDecode.h"
 
 using namespace std;
 
-string HtmlDecoder(const string& html)
+string DecodeHtmlString(const string& html)
 {
-	map<string, string> mapHtmlDecode = {
+	unordered_map<string, string> symbolByHtmlString = {
 		{ "&qout;", "\"" },
 		{ "&apos;", "'" },
 		{ "&lt;", "<" },
@@ -14,13 +14,13 @@ string HtmlDecoder(const string& html)
 	};
 
 	string result;
-	const regex decodeHtmlRegex("&(qout|apos|lt|gt|amp);");
+	const regex DECODE_HTML_REGEX("&(qout|apos|lt|gt|amp);");
 
 	smatch match;
 	int startPos = 0;
-	while (regex_search(html.begin() + startPos, html.end(), match, decodeHtmlRegex))
+	while (regex_search(html.begin() + startPos, html.end(), match, DECODE_HTML_REGEX))
 	{
-		result += (string)match.prefix() + mapHtmlDecode[match[0]];
+		result += (string)match.prefix() + symbolByHtmlString[match[0]];
 		startPos += match.position() + match[0].length();
 	}
 	result += (string)match.suffix();
