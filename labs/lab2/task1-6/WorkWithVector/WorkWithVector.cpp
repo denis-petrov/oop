@@ -13,9 +13,9 @@ int main()
 		return 1;
 	}
 
-	ProcessVector(vec);
+	auto processedVec = ProcessVector(vec);
 
-	PrintVector(cout, vec);
+	PrintVector(cout, processedVec);
 
 	return 0;
 }
