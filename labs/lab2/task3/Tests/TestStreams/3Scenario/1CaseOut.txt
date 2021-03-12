@@ -1,0 +1,2 @@
+Unknown word "dog". Enter a translation or an empty line to refuse.
+The word "dog" was saved in dictionary as "sabaka".
