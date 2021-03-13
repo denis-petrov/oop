@@ -22,9 +22,9 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	 auto primes = GeneratePrimeNumbersSet(upperBound);
+	auto primes = GenerateSetOfPrimeNumbers(upperBound);
 
-	 ostream_iterator<int> output(cout, " ");
-	 copy(primes.begin(), primes.end(), output);
-	 cout << endl;
+	ostream_iterator<int> output(cout, " ");
+	copy(primes.begin(), primes.end(), output);
+	cout << endl;
 }
