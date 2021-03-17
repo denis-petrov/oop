@@ -87,7 +87,7 @@ SCENARIO("Erase Composite Numbers") // 3 scenario
 		{
 			vec = {};
 			expectedVec = {};
-			EraseCompositeNumbers(vec);
+			WipeCompositeNumbers(vec);
 
 			REQUIRE(vec == expectedVec);
 		}
@@ -96,7 +96,7 @@ SCENARIO("Erase Composite Numbers") // 3 scenario
 		{
 			vec = { true, true, true, true, true, true, true, true, true };
 			expectedVec = { true, true, true, true, false, true, false, true, false };
-			EraseCompositeNumbers(vec);
+			WipeCompositeNumbers(vec);
 
 			REQUIRE(vec == expectedVec);
 		}

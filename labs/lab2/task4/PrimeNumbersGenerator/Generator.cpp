@@ -18,7 +18,7 @@ int GetUpperBound(const string& value)
 	return upperBound;
 }
 
-void EraseNumberSequence(vector<bool>& vec, const int current)
+void WipeSequence(vector<bool>& vec, const int current)
 {
 	for (size_t index = current * current; index < vec.size(); index += current)
 	{
@@ -26,13 +26,13 @@ void EraseNumberSequence(vector<bool>& vec, const int current)
 	}
 }
 
-void EraseCompositeNumbers(vector<bool>& vec)
+void WipeCompositeNumbers(vector<bool>& vec)
 {
 	for (size_t index = FIRST_PRIME; index <= sqrt(vec.size()); index++)
 	{
 		if (vec[index])
 		{
-			EraseNumberSequence(vec, index);
+			WipeSequence(vec, index);
 		}
 	}
 }
@@ -45,7 +45,7 @@ set<int> VectorToSet(const vector<bool>& vec)
 	{
 		if (vec[index])
 		{
-			primes.insert(primes.end(), index);
+			primes.insert(index);
 		}
 	}
 
@@ -55,7 +55,7 @@ set<int> VectorToSet(const vector<bool>& vec)
 set<int> GenerateSetOfPrimeNumbers(const int upperBound)
 {
 	vector<bool> sieve(upperBound + 1, true);
-	EraseCompositeNumbers(sieve);
+	WipeCompositeNumbers(sieve);
 
 	return VectorToSet(sieve);
 }

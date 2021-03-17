@@ -8,8 +8,7 @@ int main()
 	string htmlLine;
 	getline(cin, htmlLine);
 
-	htmlLine = DecodeHtmlString(htmlLine);
-
-	cout << htmlLine << endl;
+	cout << DecodeHtmlString(htmlLine) << endl;
+	
 	return 0;
 }

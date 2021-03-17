@@ -14,7 +14,7 @@ void SerializeDictionary(const string& fname, const map<string, string>& dict)
 map<string, string> DeserializeDictionary(const string& fname)
 {
 	map<string, string> dict;
-	std::ifstream fin(fname, ios::binary);
+	ifstream fin(fname, ios::binary);
 	if (!fin)
 	{
 		fin.close();

@@ -5,9 +5,9 @@ using namespace std;
 
 int main()
 {
-	vector<double> vec;
+	vector<double> vec = ReadVectorOfDouble(cin, vec);
 
-	if (!ReadVectorOfDouble(cin, vec))
+	if (vec.empty())
 	{
 		cout << "Please enter a number sequence.\n";
 		return 1;

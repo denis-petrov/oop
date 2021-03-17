@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	string fname = argv[1];
-
+		
 	auto dictionary = DeserializeDictionary(fname);
 
 	auto userDictionary = UseTranslator(cin, cout, dictionary);

@@ -4,15 +4,17 @@
 using namespace std;
 
 
-bool ReadVectorOfDouble(istream& stream, vector<double>& vec)
+vector<double> ReadVectorOfDouble(istream& stream, const vector<double>& vec)
 {
-	vec.clear();
+	vector<double> result(vec);
+	result.clear();
+
 	istream_iterator<double> start(stream);
 	istream_iterator<double> end;
 
-	copy(start, end, back_inserter(vec));
+	copy(start, end, back_inserter(result));
 
-	return !vec.empty();
+	return result;
 }
 
 /*
