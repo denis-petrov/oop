@@ -35,7 +35,9 @@ vector<double> ProcessVector(const vector<double>& vec)
 	auto maxElem = *max_element(vecStart, vecEnd);
 	auto minElem = *min_element(vecStart, vecEnd);
 
-	minElem = (minElem == 0) ? 1 : minElem;
+	if (minElem == 0)
+		throw runtime_error("Math error: Attempted to divide by Zero.");
+
 	transform(vecStart, vecEnd, vecStart, [&maxElem, &minElem](auto& elem) { return (elem * maxElem) / minElem; });
 
 	sort(vecStart, vecEnd);

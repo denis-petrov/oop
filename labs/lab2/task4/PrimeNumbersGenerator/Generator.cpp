@@ -20,7 +20,7 @@ int GetUpperBound(const string& value)
 
 void WipeSequence(vector<bool>& vec, const int current)
 {
-	for (size_t index = current * current; index < vec.size(); index += current)
+	for (size_t index = pow(current, POWER); index < vec.size(); index += current)
 	{
 		vec[index] = false;
 	}

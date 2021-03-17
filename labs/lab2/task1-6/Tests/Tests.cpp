@@ -21,7 +21,7 @@ SCENARIO("Vector processing with a vector gives sotred processed vector")
 		{
 			vec = { 0.0, 1.0, 2.0 };
 			expectedResult = { 0.0, 2.0, 4.0 };
-			REQUIRE(ProcessVector(vec) == expectedResult);
+			REQUIRE_THROWS(ProcessVector(vec));
 		}
 
 		WHEN("A vector where lower value less zero")
@@ -42,7 +42,7 @@ SCENARIO("Vector processing with a vector gives sotred processed vector")
 		{
 			vec = { 0, 0, 0 };
 			expectedResult = { 0, 0, 0 };
-			REQUIRE(ProcessVector(vec) == expectedResult);
+			REQUIRE_THROWS(ProcessVector(vec));
 		}
 	}
 

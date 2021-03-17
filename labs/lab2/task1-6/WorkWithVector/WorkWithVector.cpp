@@ -13,7 +13,17 @@ int main()
 		return 1;
 	}
 
-	auto processedVec = ProcessVector(vec);
+	vector<double> processedVec;
+	try
+	{
+		processedVec = ProcessVector(vec);
+	}
+	catch (const runtime_error& e)
+	{
+		cout << e.what() << "\n";
+		return 1;
+	}
+	
 
 	PrintVector(cout, processedVec);
 
