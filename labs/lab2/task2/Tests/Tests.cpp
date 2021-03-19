@@ -58,5 +58,28 @@ SCENARIO("HTML String Decode with a string gives decode string")
 			expectedResult = "&&&<;;;";
 			REQUIRE(DecodeHtmlString(html) == expectedResult);
 		}
+
+		WHEN("A string contains nested sequence of html code")
+		{
+			html = "&amp;qout;";
+			expectedResult = "&qout;";
+			REQUIRE(DecodeHtmlString(html) == expectedResult);
+
+			html = "&amp;apos;";
+			expectedResult = "&apos;";
+			REQUIRE(DecodeHtmlString(html) == expectedResult);
+
+			html = "&amp;lt;";
+			expectedResult = "&lt;";
+			REQUIRE(DecodeHtmlString(html) == expectedResult);
+			
+			html = "&amp;gt;";
+			expectedResult = "&gt;";
+			REQUIRE(DecodeHtmlString(html) == expectedResult);
+			
+			html = "&amp;amp;";
+			expectedResult = "&amp;";
+			REQUIRE(DecodeHtmlString(html) == expectedResult);
+		}
 	}
 }
