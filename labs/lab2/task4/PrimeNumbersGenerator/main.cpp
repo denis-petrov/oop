@@ -27,4 +27,6 @@ int main(int argc, char* argv[])
 	ostream_iterator<int> output(cout, " ");
 	copy(primes.begin(), primes.end(), output);
 	cout << endl;
+
+	return 0;
 }
