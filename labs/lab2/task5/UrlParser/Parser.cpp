@@ -11,16 +11,16 @@ Protocol GetProtocol(const string& protocolStr)
 		{ FTP, Protocol::FTP }
 	};
 
-	return protocolByString.count(protocolStr) ? protocolByString[protocolStr] : Protocol::ERROR;
+	return protocolByString.count(protocolStr) ? protocolByString[protocolStr] : Protocol::NOT_SET;
 }
 
 int GetDefaultPort(const Protocol& protocol) 
 {
 	map<Protocol, int> portByProtocol{
-		{ Protocol::HTTP, DEFAULT_HTTP },
-		{ Protocol::HTTPS, DEFAULT_HTTPS },
-		{ Protocol::FTP, DEFAULT_FTP },
-		{ Protocol::ERROR, ERROR_PORT },
+		{ Protocol::HTTP, DEFAULT_HTTP_PORT },
+		{ Protocol::HTTPS, DEFAULT_HTTPS_PORT },
+		{ Protocol::FTP, DEFAULT_FTP_PORT },
+		{ Protocol::NOT_SET, NOT_SET_PORT },
 	};
 
 	return portByProtocol[protocol];
