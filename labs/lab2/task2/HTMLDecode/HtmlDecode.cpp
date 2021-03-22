@@ -5,7 +5,7 @@ using namespace std;
 
 string DecodeHtmlString(const string& html)
 {
-	vector<pair<string, string>> symbolByHtmlString = {
+	const vector<pair<string, string>> symbolByHtmlString = {
 		{ "&qout;", "\"" },
 		{ "&apos;", "'" },
 		{ "&lt;", "<" },

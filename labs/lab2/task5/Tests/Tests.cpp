@@ -12,56 +12,44 @@ SCENARIO("Test get protocol") // 1 scenario
 {
 	GIVEN("String")
 	{
-		std::string protocolStr;
-
 		WHEN("Incorrect Value") // 1 case
 		{
-			protocolStr = "test@@";
-			REQUIRE(GetProtocol(protocolStr) == Protocol::NOT_SET);
+			REQUIRE(GetProtocol("test@@") == std::nullopt);
 
-			protocolStr = "";
-			REQUIRE(GetProtocol(protocolStr) == Protocol::NOT_SET);
+			REQUIRE(GetProtocol("") == std::nullopt);
 		}
 
 		WHEN("Correct Value") // 2 case
 		{
-			protocolStr = "http";
-			REQUIRE(GetProtocol(protocolStr) == Protocol::HTTP);
+			REQUIRE(GetProtocol("http") == Protocol::HTTP);
 
-			protocolStr = "https";
-			REQUIRE(GetProtocol(protocolStr) == Protocol::HTTPS);
+			REQUIRE(GetProtocol("https") == Protocol::HTTPS);
 
-			protocolStr = "ftp";
-			REQUIRE(GetProtocol(protocolStr) == Protocol::FTP);
+			REQUIRE(GetProtocol("ftp") == Protocol::FTP);
 		}
 	}
 }
 
-SCENARIO("Test get default port") // 2 scenario
+SCENARIO("Validate port") // 2 scenario
 {
-	GIVEN("Protocol")
+	GIVEN("Int")
 	{
-		Protocol protocol;
-
-		WHEN("Incorrect Value") // 1 case
+		WHEN("Value around border and correct") // 1 case
 		{
-			protocol = Protocol::NOT_SET;
-			REQUIRE(GetDefaultPort(protocol) == NOT_SET_PORT);
+			REQUIRE(ValidatePort(1) == true);
+
+			REQUIRE(ValidatePort(65535) == true);
 		}
 
-		WHEN("Correct Value") // 2 case
+		WHEN("Value around border and in correct") // 2 case
 		{
-			protocol = Protocol::HTTP;
-			REQUIRE(GetDefaultPort(protocol) == DEFAULT_HTTP_PORT);
+			REQUIRE(ValidatePort(0) == false);
 
-			protocol = Protocol::HTTPS;
-			REQUIRE(GetDefaultPort(protocol) == DEFAULT_HTTPS_PORT);
-
-			protocol = Protocol::FTP;
-			REQUIRE(GetDefaultPort(protocol) == DEFAULT_FTP_PORT);
+			REQUIRE(ValidatePort(65536) == false);
 		}
 	}
 }
+
 
 SCENARIO("Test Get port") // 3 scenario
 {
@@ -72,28 +60,18 @@ SCENARIO("Test Get port") // 3 scenario
 
 		WHEN("Incorrect Value") // 1 case
 		{
-			portStr = "";
-			protocol = Protocol::NOT_SET;
-			REQUIRE(GetPort(portStr, protocol) == NOT_SET_PORT);
+			REQUIRE(GetPort("", Protocol::HTTP) == DEFAULT_HTTP_PORT);
 
-			portStr = "@@";
-			protocol = Protocol::NOT_SET;
-			REQUIRE(GetPort(portStr, protocol) == NOT_SET_PORT);
+			REQUIRE(GetPort("@@", Protocol::HTTPS) == DEFAULT_HTTPS_PORT);
 		}
 
 		WHEN("Correct Value") // 2 case
 		{
-			portStr = "http";
-			protocol = Protocol::HTTP;
-			REQUIRE(GetPort(portStr, protocol) == DEFAULT_HTTP_PORT);
+			REQUIRE(GetPort("10", Protocol::HTTP) == 10);
 
-			portStr = "https";
-			protocol = Protocol::HTTPS;
-			REQUIRE(GetPort(portStr, protocol) == DEFAULT_HTTPS_PORT);
+			REQUIRE(GetPort("10", Protocol::HTTPS) == 10);
 
-			portStr = "ftp";
-			protocol = Protocol::FTP;
-			REQUIRE(GetPort(portStr, protocol) == DEFAULT_FTP_PORT);
+			REQUIRE(GetPort("10", Protocol::FTP) == 10);
 		}
 	}
 }
@@ -108,28 +86,23 @@ SCENARIO("Test ParseURL") // 4 scenario
 
 		WHEN("Incorrect Value") // 1 case
 		{
-			userURL = "";
-			REQUIRE(ParseURL(userURL, url) == false);
+			REQUIRE(ParseURL("", url) == false);
 
-			userURL = "http://";
-			REQUIRE(ParseURL(userURL, url) == false);
+			REQUIRE(ParseURL("http://", url) == false);
 		}
 
 		WHEN("Correct Value without port and document") // 2 case
 		{
-			userURL = "http://test.com";
 			expectedURL = { Protocol::HTTP, "test.com", DEFAULT_HTTP_PORT, "" };
-			REQUIRE(ParseURL(userURL, url) == true);
+			REQUIRE(ParseURL("http://test.com", url) == true);
 			REQUIRE(IsEqualURLs(url, expectedURL) == true);
 
-			userURL = "https://test.com";
 			expectedURL = { Protocol::HTTPS, "test.com", DEFAULT_HTTPS_PORT, "" };
-			REQUIRE(ParseURL(userURL, url) == true);
+			REQUIRE(ParseURL("https://test.com", url) == true);
 			REQUIRE(IsEqualURLs(url, expectedURL) == true);
 
-			userURL = "ftp://test.com";
 			expectedURL = { Protocol::FTP, "test.com", DEFAULT_FTP_PORT, "" };
-			REQUIRE(ParseURL(userURL, url) == true);
+			REQUIRE(ParseURL("ftp://test.com", url) == true);
 			REQUIRE(IsEqualURLs(url, expectedURL) == true);
 		}
 

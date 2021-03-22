@@ -3,6 +3,10 @@
 
 using namespace std;
 
+const int MIN_BOUND = 1;
+const int MAX_BOUND = 100000000;
+const int FIRST_PRIME = 2;
+
 bool IsCorrectUpperBound(const int uppedBound)
 {
 	return (MIN_BOUND <= uppedBound) && (uppedBound <= MAX_BOUND);
@@ -20,7 +24,7 @@ int GetUpperBound(const string& value)
 
 void WipeSequence(vector<bool>& vec, const int current)
 {
-	for (size_t index = pow(current, POWER); index < vec.size(); index += current)
+	for (size_t index = current * current; index < vec.size(); index += current)
 	{
 		vec[index] = false;
 	}

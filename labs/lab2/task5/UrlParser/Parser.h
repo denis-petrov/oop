@@ -4,10 +4,9 @@
 
 enum class Protocol
 {
-	HTTP = 0,
-	HTTPS = 1,
-	FTP = 2,
-	NOT_SET
+	HTTP,
+	HTTPS,
+	FTP
 };
 
 struct ParsedURL
@@ -32,7 +31,19 @@ const int MAX_PORT = 65535;
 
 const std::regex PARSE_REGEX("(http[s]?|ftp)://([^/:]+):?([^/]*)(/?[^#?]*)");
 
-Protocol GetProtocol(const std::string& protocolStr);
+const std::map<std::string, Protocol> PROTOCOL_BY_STRING {
+	{ HTTP, Protocol::HTTP },
+	{ HTTPS, Protocol::HTTPS },
+	{ FTP, Protocol::FTP }
+};
+
+const std::map<Protocol, int> PORT_BY_PROTOCOL {
+	{ Protocol::HTTP, DEFAULT_HTTP_PORT },
+	{ Protocol::HTTPS, DEFAULT_HTTPS_PORT },
+	{ Protocol::FTP, DEFAULT_FTP_PORT },
+};
+
+std::optional<Protocol> GetProtocol(const std::string& protocolStr);
 int GetDefaultPort(const Protocol& protocol);
 int GetPort(const std::string& portStr, const Protocol& protocol);
 

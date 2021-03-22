@@ -16,9 +16,9 @@ int main(int argc, char* argv[])
 	{
 		upperBound = GetUpperBound(argv[1]);
 	}
-	catch (bad_cast const& e)
+	catch (bad_cast const&)
 	{
-		cout << "Invalid <upper bound> - less then 2 or more then 100 000 000\n";
+		cout << "Invalid <upper bound> - less then 2 or more t hen 100 000 000\n";
 		return 1;
 	}
 

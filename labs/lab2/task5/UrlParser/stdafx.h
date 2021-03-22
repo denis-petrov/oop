@@ -10,6 +10,7 @@
 #include <regex>
 #include <string>
 #include <map>
+#include <optional>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>

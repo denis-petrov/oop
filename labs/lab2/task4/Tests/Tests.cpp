@@ -6,72 +6,59 @@ SCENARIO("Test validation of upper bound") // 1 scenario
 {
 	GIVEN("Int")
 	{
-		int bound;
-
 		WHEN("Bound less min value") // 1 case
 		{
-			bound = 0;
+			REQUIRE(IsCorrectUpperBound(0) == false);
 
-			REQUIRE(IsCorrectUpperBound(bound) == false);
-
-			bound = -2;
-
-			REQUIRE(IsCorrectUpperBound(bound) == false);
+			REQUIRE(IsCorrectUpperBound(-2) == false);
 		}
 
 		WHEN("Bound is more than min value") // 2 case
 		{
-			bound = INT_MAX;
-
-			REQUIRE(IsCorrectUpperBound(bound) == false);
+			REQUIRE(IsCorrectUpperBound(INT_MAX) == false);
 		}
 
 		WHEN("Bound is correct") // 3 case
 		{
-			bound = 2;
+			REQUIRE(IsCorrectUpperBound(2) == true);
 
-			REQUIRE(IsCorrectUpperBound(bound) == true);
+			REQUIRE(IsCorrectUpperBound(100) == true);
+		}
 
-			bound = 100;
+		WHEN("Near to border value is correct") // 4 case
+		{
+			REQUIRE(IsCorrectUpperBound(1) == true);
 
-			REQUIRE(IsCorrectUpperBound(bound) == true);
+			REQUIRE(IsCorrectUpperBound(100000000) == true);
 		}
 	}
 }
 
-SCENARIO("Convert bound from stringto int with boost lexical cast") // 2 scenario
+SCENARIO("Convert bound from string to int with boost lexical cast") // 2 scenario
 {
 	GIVEN("String")
 	{
-		std::string value;
-		int expectedValue;
-
 		WHEN("Incorrect value") // 1 case
 		{
-			value = "0";
+			CHECK_THROWS(GetUpperBound("0"));
 
-			CHECK_THROWS(GetUpperBound(value));
+			CHECK_THROWS(GetUpperBound("-2"));
 
-			value = "-2";
-
-			CHECK_THROWS(GetUpperBound(value));
-
-			value = "lol";
-
-			CHECK_THROWS(GetUpperBound(value));
+			CHECK_THROWS(GetUpperBound("lol"));
 		}
 
 		WHEN("Correct value") // 2 case
 		{
-			value = "10";
-			expectedValue = 10;
+			REQUIRE(GetUpperBound("10") == 10);
 
-			REQUIRE(GetUpperBound(value) == expectedValue);
+			REQUIRE(GetUpperBound("2") == 2);
+		}
 
-			value = "2";
-			expectedValue = 2;
+		WHEN("Near to border value is correct") // 3 case
+		{
+			REQUIRE(GetUpperBound("1") == 1);
 
-			REQUIRE(GetUpperBound(value) == expectedValue);
+			REQUIRE(GetUpperBound("100000000") == 100000000);
 		}
 	}
 }
@@ -132,23 +119,20 @@ SCENARIO("Generate set of prime numbers") // 5 scenario
 {
 	GIVEN("Int value")
 	{
-		int value;
 		std::set<int> expectedSet;
 
 		WHEN("Not correct value(bound)") // 1 case
 		{
-			value = 0;
 			expectedSet = {};
 
-			REQUIRE(GenerateSetOfPrimeNumbers(value) == expectedSet);
+			REQUIRE(GenerateSetOfPrimeNumbers(0) == expectedSet);
 		}
 
 		WHEN("Correct value(bound)") // 2 case
 		{
-			value = 9;
 			expectedSet = { 2, 3, 5, 7 };
 
-			REQUIRE(GenerateSetOfPrimeNumbers(value) == expectedSet);
+			REQUIRE(GenerateSetOfPrimeNumbers(9) == expectedSet);
 		}
 	}
 }

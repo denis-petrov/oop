@@ -3,27 +3,22 @@
 
 using namespace std;
 
-Protocol GetProtocol(const string& protocolStr) 
+optional<Protocol> GetProtocol(const string& protocolStr) 
 {
-	map<string, Protocol> protocolByString{ 
-		{ HTTP, Protocol::HTTP },
-		{ HTTPS, Protocol::HTTPS },
-		{ FTP, Protocol::FTP }
-	};
-
-	return protocolByString.count(protocolStr) ? protocolByString[protocolStr] : Protocol::NOT_SET;
+	try
+	{
+		auto res = PROTOCOL_BY_STRING.at(protocolStr);
+		return res; 
+	}
+	catch (const exception&)
+	{
+		return nullopt;
+	}
 }
 
 int GetDefaultPort(const Protocol& protocol) 
 {
-	map<Protocol, int> portByProtocol{
-		{ Protocol::HTTP, DEFAULT_HTTP_PORT },
-		{ Protocol::HTTPS, DEFAULT_HTTPS_PORT },
-		{ Protocol::FTP, DEFAULT_FTP_PORT },
-		{ Protocol::NOT_SET, NOT_SET_PORT },
-	};
-
-	return portByProtocol[protocol];
+	return PORT_BY_PROTOCOL.at(protocol);
 }
 
 int GetPort(const string& portStr, const Protocol& protocol) 
@@ -51,7 +46,13 @@ bool ParseURL(const string& userURL, ParsedURL& parsedURL)
 	smatch matches;
 	if (regex_match(search, matches, PARSE_REGEX))
 	{
-		parsedURL.protocol = GetProtocol(matches[1].str());
+		auto protocol = GetProtocol(matches[1].str());
+		if (protocol == nullopt)
+		{
+			return false;
+		}
+		parsedURL.protocol = protocol.value();
+
 		parsedURL.host = matches[2].str();
 		parsedURL.port = GetPort(matches[3].str(), parsedURL.protocol);
 		parsedURL.document = matches[4].str();

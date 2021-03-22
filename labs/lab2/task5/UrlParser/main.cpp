@@ -3,10 +3,15 @@
 
 using namespace std;
 
+const string EXIT = "...";
+
 bool ReadURL(istream& input, string& userString)
 {
-	input >> userString;
-	if (userString == "...")
+	if (!(input >> userString))
+	{
+		return false;
+	}
+	if (userString == EXIT)
 	{
 		return false;
 	}
@@ -33,7 +38,14 @@ int main(int argc, char* argv[])
 	while (ReadURL(cin, userURL))
 	{
 		ParsedURL parsedURL;
-		ParseURL(userURL, parsedURL) ? PrintParsedURL(cout, parsedURL) : PrintError(cout, userURL);
+		if (ParseURL(userURL, parsedURL))
+		{
+			PrintParsedURL(cout, parsedURL);
+		}
+		else
+		{
+			PrintError(cout, userURL);
+		}
 	}
 
 	cout << "Goodbye.\n";
