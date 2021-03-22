@@ -7,7 +7,10 @@ const string EXIT = "...";
 
 bool ReadHTMLLine(istream& input, string& userString)
 {
-	getline(input, userString);
+	if (!getline(input, userString))
+	{
+		return false;
+	}
 	if (userString == EXIT)
 	{
 		return false;
