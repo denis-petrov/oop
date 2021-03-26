@@ -3,11 +3,26 @@
 
 using namespace std;
 
+const map<int, pair<int, int>> SPEED_BY_GEAR{
+	{ -1, { 0, 20 } },
+	{ 0, { 0, 150 } },
+	{ 1, { 0, 30 } },
+	{ 2, { 20, 50 } },
+	{ 3, { 30, 60 } },
+	{ 4, { 40, 90 } },
+	{ 5, { 50, 150 } }
+};
+
+const pair<int, int> DEFAULT_SPEED_RANGE = { 0, 0 };
+const int MIN_GEAR = -1;
+const int MAX_GEAR = 5;
+
+
 CCar::CCar()
 	: m_isEngineOn(false)
 	, m_gear(0)
 	, m_speed(0)
-	, m_direction(Direction::NONE)
+	, m_direction(Direction::STAY)
 {
 }
 
@@ -39,16 +54,15 @@ CCar::Direction CCar::GetDirection() const
 	return m_direction;
 }
 
-
 // Change state of instance
 
-bool CCar::TurnOnEngine() 
+bool CCar::TurnOnEngine()
 {
 	m_isEngineOn = IsAbleOnEngine();
 	return m_isEngineOn;
 }
 
-bool CCar::TurnOffEngine() 
+bool CCar::TurnOffEngine()
 {
 	m_isEngineOn = IsAbleOffEngine();
 	return m_isEngineOn;
@@ -64,10 +78,20 @@ bool CCar::SetGear(const int gear)
 	return false;
 }
 
+bool CCar::SetSpeed(const int speed) 
+{
+	if (IsAbleChangeSpeed(speed))
+	{
+		m_speed = speed;
+		UpdateDirection();
+		return true;
+	}
+	return false;
+}
 
 /* Private sethods */
 
-bool CCar::IsCarStay() const 
+bool CCar::IsCarStay() const
 {
 	return (m_gear == 0) && (m_speed == 0) && (m_direction == CCar::Direction::STAY);
 }
@@ -82,12 +106,52 @@ bool CCar::IsAbleOffEngine() const
 	return (!m_isEngineOn) && IsCarStay();
 }
 
-bool CCar::IsAbleChangeGear(const int gear) 
+bool CCar::IsAbleChangeGear(const int gear) const
 {
-	// TODO
+	bool IsGearCorrect = (MIN_GEAR <= gear) && (gear <= MAX_GEAR);
+
+	bool IsSpeedInNewGearRange = IsSpeedInRange(GetSpeedRange(gear), gear);
+
+	bool IsDirectionCorrect = (gear == 0) || (m_direction == Direction::STAY) ||
+		(gear > 0 && m_direction == Direction::FORWARD) || (gear < 0 && m_direction == Direction::BACK);
+
+	return IsGearCorrect && IsSpeedInNewGearRange && IsDirectionCorrect;
 }
 
-bool CCar::IsSpeedInRange(const pair<int, int>& range, const int speed) const 
+bool CCar::IsAbleChangeSpeed(const int speed) const 
+{
+	return (m_gear == 0 && speed < m_speed) || (m_gear != 0 && IsSpeedInRange(GetSpeedRange(m_gear), speed));
+}
+
+void CCar::UpdateDirection() 
+{
+	if (m_speed > 0)
+	{
+		m_direction = Direction::FORWARD;
+	}
+	else if (m_speed < 0)
+	{
+		m_direction = Direction::BACK;
+	}
+	else
+	{
+		m_direction = Direction::STAY;
+	}
+}
+
+pair<int, int> CCar::GetSpeedRange(const int gear) const
+{
+	try
+	{
+		return SPEED_BY_GEAR.at(gear);
+	}
+	catch (const out_of_range&)
+	{
+		return DEFAULT_SPEED_RANGE;
+	}
+}
+
+bool CCar::IsSpeedInRange(const pair<int, int>& range, const int speed) const
 {
 	return (range.first <= speed) && (speed >= range.second);
 }

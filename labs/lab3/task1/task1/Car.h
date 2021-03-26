@@ -36,6 +36,11 @@ private:
 	bool IsAbleOffEngine() const;
 	bool IsAbleChangeGear(const int gear) const;
 
-	bool IsSpeedInRange(const pair<int, int>& range, const int speed) const;
+	std::pair<int, int> GetSpeedRange(const int gear) const;
+	bool IsAbleChangeSpeed(const int speed) const;
+
+	void UpdateDirection();
+
+	bool IsSpeedInRange(const std::pair<int, int>& range, const int speed) const;
 };
 

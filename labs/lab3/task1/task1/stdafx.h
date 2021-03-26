@@ -3,3 +3,4 @@
 #include "targetver.h"
 
 #include <map>
+#include <stdexcept>
