@@ -1,0 +1,7 @@
+Help 			- all commands
+Info			- current state of car
+SetSpeed newSpeed	- set speed equal newSpeed
+SetGear newGear		- set gear equal newGear 
+EngineOn		- turn on engine
+EngineOff		- turn off engine
+End			- close program

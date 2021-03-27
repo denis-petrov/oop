@@ -19,6 +19,8 @@ public:
 	int GetSpeed() const;
 	Direction GetDirection() const;
 
+	std::string ToString() const;
+
 	bool TurnOnEngine();
 	bool TurnOffEngine();
 

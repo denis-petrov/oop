@@ -54,6 +54,34 @@ CCar::Direction CCar::GetDirection() const
 	return m_direction;
 }
 
+string CCar::ToString() const 
+{
+	string isEngineOn = CCar::IsEngineOn() ? "Working" : "Not working";
+
+	string direction;
+	switch (CCar::GetDirection())
+	{
+		case Direction::BACK: 
+		{
+			direction = "Back";
+			break;
+		}
+		case Direction::FORWARD: 
+		{
+			direction = "Forward";
+			break;
+		}
+		case Direction::STAY: 
+		{
+			direction = "Stay";
+			break;
+		}
+	}
+
+	return (string) "Car info:\n" + (string) "Engine working: " + isEngineOn + +"\nDirection: " + direction
+		+ "\nGear: " + to_string(CCar::GetGear()) + "\nSpeed: " + to_string(CCar::GetSpeed());
+}
+
 // Change state of instance
 
 bool CCar::TurnOnEngine()
@@ -98,19 +126,19 @@ bool CCar::IsCarStay() const
 
 bool CCar::IsAbleOnEngine() const
 {
-	return (m_isEngineOn) && IsCarStay();
+	return (!m_isEngineOn) && IsCarStay();
 }
 
 bool CCar::IsAbleOffEngine() const
 {
-	return (!m_isEngineOn) && IsCarStay();
+	return (m_isEngineOn) && IsCarStay();
 }
 
 bool CCar::IsAbleChangeGear(const int gear) const
 {
 	bool IsGearCorrect = (MIN_GEAR <= gear) && (gear <= MAX_GEAR);
 
-	bool IsSpeedInNewGearRange = IsSpeedInRange(GetSpeedRange(gear), gear);
+	bool IsSpeedInNewGearRange = IsSpeedInRange(GetSpeedRange(gear), m_speed);
 
 	bool IsDirectionCorrect = (gear == 0) || (m_direction == Direction::STAY) ||
 		(gear > 0 && m_direction == Direction::FORWARD) || (gear < 0 && m_direction == Direction::BACK);
@@ -153,5 +181,5 @@ pair<int, int> CCar::GetSpeedRange(const int gear) const
 
 bool CCar::IsSpeedInRange(const pair<int, int>& range, const int speed) const
 {
-	return (range.first <= speed) && (speed >= range.second);
+	return (range.first <= speed) && (speed <= range.second);
 }
