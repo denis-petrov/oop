@@ -92,8 +92,8 @@ bool CCar::TurnOnEngine()
 
 bool CCar::TurnOffEngine()
 {
-	m_isEngineOn = IsAbleOffEngine();
-	return m_isEngineOn;
+	m_isEngineOn = !IsAbleOffEngine();
+	return !m_isEngineOn;
 }
 
 bool CCar::SetGear(const int gear)
@@ -131,7 +131,7 @@ bool CCar::IsAbleOnEngine() const
 
 bool CCar::IsAbleOffEngine() const
 {
-	return (m_isEngineOn) && IsCarStay();
+	return m_isEngineOn && IsCarStay();
 }
 
 bool CCar::IsAbleChangeGear(const int gear) const
@@ -153,17 +153,17 @@ bool CCar::IsAbleChangeSpeed(const int speed) const
 
 void CCar::UpdateDirection() 
 {
-	if (m_speed > 0)
+	if (m_speed == 0)
+	{
+		m_direction = Direction::STAY;
+	}
+	else if (m_gear > 0)
 	{
 		m_direction = Direction::FORWARD;
 	}
-	else if (m_speed < 0)
+	else if (m_gear < 0)
 	{
 		m_direction = Direction::BACK;
-	}
-	else
-	{
-		m_direction = Direction::STAY;
 	}
 }
 

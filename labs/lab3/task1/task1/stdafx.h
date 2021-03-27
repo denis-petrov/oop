@@ -8,5 +8,4 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <optional>
 #include <functional>
