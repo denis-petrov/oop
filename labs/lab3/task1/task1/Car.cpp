@@ -13,6 +13,12 @@ const map<int, pair<int, int>> SPEED_BY_GEAR{
 	{ 5, { 50, 150 } }
 };
 
+const map<CCar::Direction, string> STRING_BY_DIRECTION{
+	{ CCar::Direction::BACK, "Back" },
+	{ CCar::Direction::FORWARD, "Forward" },
+	{ CCar::Direction::STAY, "Stay" },
+};
+
 const pair<int, int> DEFAULT_SPEED_RANGE = { 0, 0 };
 const int MIN_GEAR = -1;
 const int MAX_GEAR = 5;
@@ -32,7 +38,7 @@ CCar::~CCar()
 
 /* Public methods */
 
-// property access
+// Property access
 
 bool CCar::IsEngineOn() const
 {
@@ -58,25 +64,7 @@ string CCar::ToString() const
 {
 	string isEngineOn = CCar::IsEngineOn() ? "Working" : "Not working";
 
-	string direction;
-	switch (CCar::GetDirection())
-	{
-		case Direction::BACK: 
-		{
-			direction = "Back";
-			break;
-		}
-		case Direction::FORWARD: 
-		{
-			direction = "Forward";
-			break;
-		}
-		case Direction::STAY: 
-		{
-			direction = "Stay";
-			break;
-		}
-	}
+	string direction = STRING_BY_DIRECTION.at(CCar::GetDirection());
 
 	return (string) "Car info:\n" + (string) "Engine working: " + isEngineOn + +"\nDirection: " + direction
 		+ "\nGear: " + to_string(CCar::GetGear()) + "\nSpeed: " + to_string(CCar::GetSpeed());
@@ -117,7 +105,7 @@ bool CCar::SetSpeed(const int speed)
 	return false;
 }
 
-/* Private sethods */
+/* Private methods */
 
 bool CCar::IsCarStay() const
 {
