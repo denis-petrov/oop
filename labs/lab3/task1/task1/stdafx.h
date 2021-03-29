@@ -9,3 +9,4 @@
 #include <sstream>
 #include <fstream>
 #include <functional>
+#include <variant>
