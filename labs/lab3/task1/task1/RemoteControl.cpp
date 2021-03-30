@@ -69,7 +69,7 @@ void CRemoteControl::EngineOn()
 {
 	if (m_car.TurnOnEngine())
 	{
-		m_output << "Engine have started.\n\n";
+		m_output << "Engine has started.\n\n";
 	}
 	else
 	{
@@ -81,7 +81,7 @@ void CRemoteControl::EngineOff()
 {
 	if (m_car.TurnOffEngine())
 	{
-		m_output << "Engine have stoped.\n\n";
+		m_output << "Engine has stoped.\n\n";
 	}
 	else
 	{
