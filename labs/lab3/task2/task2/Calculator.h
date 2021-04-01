@@ -11,39 +11,48 @@ class CCalculator
 		DIVISION
 	};
 
-	struct Function
+	struct Func
 	{
-		std::variant<double, std::string> first;
-		Operation operation;
-		std::variant<double, std::string> second;
+		std::string first;
+		std::optional<Operation> operation;
+		std::optional<std::string> second;
 	};
 
 public:
 	CCalculator();
 	~CCalculator();
 
-	/* Variables */
-	bool DeclareVariable(const std::string& variableName);
-	bool InitializeVariable(const std::string& variableName, const std::string& identifier);
+	std::optional<std::string> GetEntityValue(const std::string& name) const;
 
-	double GetVariableValue(const std::string& variableName) const;
+	/* Variables */
+	bool DeclareVariable(const std::string& name);
+	bool InitializeVariable(const std::string& name, const std::string& identifier);
+
 	std::string GetVariables() const;
 
 
 	/* Functions */
-	bool InitializeFunction(const std::string& first, const std::string& operation, const std::string& second);
+	bool InitializeFunction(const std::string& name, const std::string& first);
+	bool InitializeFunction(const std::string& name, const std::string& first, const char operation, const std::string& second);
 
 private:
-	std::map<std::string, double> m_usedVariables;
-	std::map<std::string, Function> m_usedFunctions;
+	/* Variables */
+	std::map<std::string, double> m_existingVariables;
 
-	std::map<char, Operation> m_operationByChar;
-
-	bool IsVariableUse(const std::string& variable) const;
-	bool UpdateVariable(const std::string& variableName, const double variableValue);
+	bool IsVariableExist(const std::string& name) const;
+	bool UpdateVariable(const std::string& name, const double value);
 
 	double ConvertVariableValue(const std::string& value) const;
-	std::string ValueToString(const double value, const int precision) const;
+	std::optional<double> GetVariableValue(const std::string& name) const;
+	std::string ValueToString(const double value) const;
 
-	std::optional<CCalculator::Operation> GetOperation(const char request) const;
+
+	/* Functions */
+	std::map<std::string, Func> m_existingFunctions;
+	std::map<char, Operation> m_operationByChar;
+
+	bool IsFunctionExist(const std::string& name) const;
+	std::optional<CCalculator::Operation> GetOperationByChar(const char request) const;
+
+	std::optional<double> CalculateFunction(const std::string& name) const;
 };
