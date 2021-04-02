@@ -80,13 +80,21 @@ SCENARIO("Print variable by alphabet sort (printvars)")
 		REQUIRE(calculator.GetEntityValue("a").value() == "2.20");
 
 		REQUIRE(calculator.InitializeVariable("b", "c"));
-		REQUIRE(calculator.GetEntityValue("b").value() == "11.00");
+		REQUIRE(calculator.GetEntityValue("b") == "11.00");
 		REQUIRE(calculator.GetVariables() == "a:2.20\nb:11.00\nc:11.00\n");
 	}
 
 	WHEN("Variables is empty")
 	{
 		REQUIRE(calculator.GetVariables() == "");
+	}
+
+	WHEN("Variables is incorrect")
+	{
+		CHECK_THROWS(calculator.InitializeVariable("a", "#"));
+		CHECK_THROWS(calculator.InitializeVariable("a", "!"));
+		CHECK_THROWS(calculator.InitializeVariable("a", "="));
+		CHECK_THROWS(calculator.InitializeVariable("a", "+"));
 	}
 }
 
@@ -109,6 +117,33 @@ SCENARIO("Initialize function (fn)")
 		}
 	}
 
+	GIVEN("Init by function")
+	{
+		WHEN("Function is init by another function")
+		{
+			REQUIRE(calculator.InitializeVariable("testVar", "11"));
+			REQUIRE(calculator.GetEntityValue("testVar").value() == "11.00");
+
+			REQUIRE(calculator.InitializeFunction("testFn", "testVar"));
+
+			REQUIRE(calculator.InitializeFunction("testFn2", "testFn"));
+		}
+
+		WHEN("Function is init by variable")
+		{
+			REQUIRE(calculator.InitializeVariable("testVar", "11"));
+			REQUIRE(calculator.GetEntityValue("testVar").value() == "11.00");
+
+			REQUIRE(calculator.InitializeFunction("testFn", "testVar"));
+		}
+
+		WHEN("Function is not init cause initialize func not init")
+		{
+			REQUIRE(!calculator.InitializeFunction("testFn", "testFunc"));
+		}
+
+	}
+
 	GIVEN("Init by action")
 	{
 		WHEN("First and second variable is not init") 
@@ -128,11 +163,54 @@ SCENARIO("Initialize function (fn)")
 			REQUIRE(!calculator.InitializeFunction("testFn", "first", '*', "second"));
 		}
 
-		WHEN("All correct")
+		WHEN("Init by 2 variables")
 		{
 			REQUIRE(calculator.InitializeVariable("first", "11"));
 			REQUIRE(calculator.InitializeVariable("second", "11"));
 			REQUIRE(calculator.InitializeFunction("testFn", "first", '*', "second"));
+		}
+
+		WHEN("Init by function and variable")
+		{
+			REQUIRE(calculator.InitializeVariable("first", "11"));
+			REQUIRE(calculator.InitializeFunction("firstFunc", "first"));
+
+			REQUIRE(calculator.InitializeVariable("second", "11"));
+			REQUIRE(calculator.InitializeFunction("testFn", "firstFunc", '*', "second"));
+		}
+
+		WHEN("Init by variable and function")
+		{
+			REQUIRE(calculator.InitializeVariable("first", "11"));
+
+			REQUIRE(calculator.InitializeVariable("second", "11"));
+			REQUIRE(calculator.InitializeFunction("secondFunc", "second"));
+
+			REQUIRE(calculator.InitializeFunction("testFn", "first", '*', "secondFunc"));
+		}
+
+		WHEN("Init by 2 functions")
+		{
+			REQUIRE(calculator.InitializeVariable("first", "11"));
+			REQUIRE(calculator.InitializeVariable("second", "11"));
+
+			REQUIRE(calculator.InitializeFunction("firstFunc", "first"));
+			REQUIRE(calculator.InitializeFunction("secondFunc", "second"));
+
+			REQUIRE(calculator.InitializeFunction("testFn", "firstFunc", '*', "secondFunc"));
+		}
+
+		WHEN("Not correct operation") 
+		{
+			REQUIRE(calculator.InitializeVariable("first", "11"));
+			REQUIRE(calculator.InitializeVariable("second", "11"));
+
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", '#', "second"));
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", '@', "second"));
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", '1', "second"));
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", 'd', "second"));
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", ' ', "second"));
+			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", '\n', "second"));
 		}
 	}
 }
