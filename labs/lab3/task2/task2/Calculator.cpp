@@ -32,7 +32,8 @@ CCalculator::~CCalculator()
 {
 }
 
-optional<string> CCalculator::GetEntityValue(const string& name) const
+/* print <name> */
+string CCalculator::GetEntityValue(const string& name) const
 {
 	if (IsVariableExist(name))
 	{
@@ -43,14 +44,41 @@ optional<string> CCalculator::GetEntityValue(const string& name) const
 		}
 	}
 
-	/* TODO */
-	//if (IsFunctionExist(name))
-	//{
-		/*auto val = GetVariableValue(name);
-		return val.has_value() ? val.value() : "";*/
-	//}
+	if (IsFunctionExist(name))
+	{
+		try
+		{
+			return ValueToString(CalculateFunction(name));
+		}
+		catch (const exception& e)
+		{
+			throw e;
+		}
+	}
 
-	return nullopt;
+	throw runtime_error(name + " does not exist");
+}
+
+/*printvars*/
+string CCalculator::GetVariables() const
+{
+	string res;
+	for (auto& variable : m_existingVariables)
+	{
+		res += (variable.first + ":" + GetEntityValue(variable.first) + "\n");
+	}
+	return res;
+}
+
+/* printfns */
+string CCalculator::GetFunctions() const
+{
+	string res;
+	for (auto& function : m_existingFunctions)
+	{
+		res += (function.first + ":" + GetEntityValue(function.first) + "\n");
+	}
+	return res;
 }
 
 
@@ -90,16 +118,6 @@ bool CCalculator::InitializeVariable(const string& name, const string& value)
 	}
 }
 
-string CCalculator::GetVariables() const
-{
-	string res;
-	for (auto& variable : m_existingVariables)
-	{
-		res += (variable.first + ":" + ValueToString(variable.second) + "\n");
-	}
-	return res;
-};
-
 /* Functions */
 
 bool CCalculator::InitializeFunction(const string& name, const string& first)
@@ -127,9 +145,14 @@ bool CCalculator::InitializeFunction(const string& name, const string& first, co
 	return true;
 }
 
+
+
+
+
 /* Private methods */
 
 /* Variables */
+
 bool CCalculator::IsVariableExist(const string& name) const
 {
 	auto it = m_existingVariables.find(name);
@@ -189,6 +212,9 @@ string CCalculator::ValueToString(const double value) const
 	return stream.str();
 }
 
+
+
+
 /* Functions */
 
 bool CCalculator::IsFunctionExist(const string& name) const
@@ -214,10 +240,10 @@ double CCalculator::CalculateFunction(const string& name) const
 	if (!IsFunctionExist(name))
 		throw runtime_error("Function: " + name + " does not exist");
 
-	auto visitedNodes = GetEmptyVisitedNodes();
 	try
 	{
-		return ExecuteSequenceCalculate(name, visitedNodes);
+		auto calculatedNodes = GetEmptyVisitedNodes();
+		return ExecuteSequenceCalculate(name, calculatedNodes);
 	}
 	catch (const exception& e)
 	{
@@ -225,7 +251,7 @@ double CCalculator::CalculateFunction(const string& name) const
 	}
 }
 
-double CCalculator::ExecuteSequenceCalculate(const string& startName, map<string, optional<double>>& visitedNodes) const
+double CCalculator::ExecuteSequenceCalculate(const string& startName, map<string, optional<double>>& calculatedNodes) const
 {
 	stack<string> st;
 	st.push(startName);
@@ -233,49 +259,63 @@ double CCalculator::ExecuteSequenceCalculate(const string& startName, map<string
 	while (!st.empty())
 	{
 		string currName = st.top();
-		if (visitedNodes.at(currName) != nullopt)
+		if (calculatedNodes.at(currName).has_value())
 		{
 			st.pop();
 			continue;
 		}
 
-		auto currFunc = m_existingFunctions.at(currName);
-
-		auto firstVal = visitedNodes.at(currFunc.first);
-		if (firstVal == nullopt)
-			st.push(currFunc.first);
-
-		auto secondVal = visitedNodes.at(currFunc.second.value());
-		try
+		optional<double> tempRes;
+		if (IsFunctionExist(currName))
 		{
-			double tempRes;
-			if (currFunc.action.has_value()) 
+			auto currFunc = m_existingFunctions.at(currName);
+			
+			auto firstVal = calculatedNodes.at(currFunc.first);
+			if (!firstVal.has_value())
 			{
-				if (secondVal == nullopt)
+				st.push(currFunc.first);
+			}
+
+			if (currFunc.action.has_value())
+			{
+				auto secondVal = calculatedNodes.at(currFunc.second.value());
+				if (!secondVal.has_value())
+				{
 					st.push(currFunc.second.value());
-				else
-					tempRes = HandleAction(firstVal.value(), currFunc.action.value(), secondVal.value());
-			}
-			else
-			{
-				auto varValue = GetVariableValue(currName);
-				if (isnan(varValue.value()))
-					throw runtime_error("Met NaN in operand");
+				}
 
-				tempRes = varValue.value();
+				if (firstVal.has_value() && secondVal.has_value())
+				{
+					tempRes = optional(HandleAction(firstVal.value(), currFunc.action.value(), secondVal.value()));
+				}
 			}
-			visitedNodes.at(currName) = tempRes;
-			st.pop();
+			else if(firstVal.has_value())
+			{
+				tempRes = firstVal;
+			}
 		}
-		catch (const exception& e)
+		else if (IsVariableExist(currName))
 		{
-			throw e;
+			tempRes = GetVariableValue(currName);
+		}
+
+		if (tempRes.has_value())
+		{
+			if (isnan(tempRes.value()))
+				return NAN;
+
+			calculatedNodes.at(currName) = tempRes.value();
+			st.pop();
 		}
 	}
 
-	return visitedNodes.at(startName).value();
+	auto res = calculatedNodes.at(startName);
+	if (res.has_value())
+	{
+		return res.value();
+	}
+	return NAN;
 }
-
 
 map<string, optional<double>> CCalculator::GetEmptyVisitedNodes() const
 {
@@ -301,8 +341,7 @@ double CCalculator::HandleAction(const double first, const char action, const do
 	{
 		return it->second(first, second);
 	}
-
-	return NAN;
+	throw runtime_error("Not correct action: " + action);
 }
 
 /* Operations */
@@ -347,6 +386,10 @@ double CCalculator::CalculateDivision(const double first, const double second) c
 {
 	try
 	{
+		if (second == 0)
+		{
+			throw invalid_argument("Division by 0");
+		}
 		return first / second;
 	}
 	catch (const exception& e)

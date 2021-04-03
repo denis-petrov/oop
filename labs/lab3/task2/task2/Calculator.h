@@ -14,18 +14,19 @@ public:
 	CCalculator();
 	~CCalculator();
 
-	std::optional<std::string> GetEntityValue(const std::string& name) const;
+	/* print <name> */
+	std::string GetEntityValue(const std::string& name) const;
+	/* printvars */
+	std::string GetVariables() const;
+	/* printfns */
+	std::string GetFunctions() const;
+
 
 	/* Variables */
 	bool DeclareVariable(const std::string& name);
 	bool InitializeVariable(const std::string& name, const std::string& identifier);
 
-	std::string GetVariables() const;
-
-
 	/* Functions */
-	double CalculateFunction(const std::string& name) const;
-
 	bool InitializeFunction(const std::string& name, const std::string& first);
 	bool InitializeFunction(const std::string& name, const std::string& first, const char action, const std::string& second);
 
@@ -66,7 +67,8 @@ private:
 
 
 	/* Calcualtion */
-	double ExecuteSequenceCalculate(const std::string& startName, std::map<std::string, std::optional<double>>& visitedNodes) const;
+	double CalculateFunction(const std::string& name) const;
+	double ExecuteSequenceCalculate(const std::string& startName, std::map<std::string, std::optional<double>>& calculatedNodes) const;
 
 	std::map<std::string, std::optional<double>> GetEmptyVisitedNodes() const;
 

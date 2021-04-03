@@ -11,19 +11,19 @@ SCENARIO("Declare variable use (var)")
 	WHEN("Variable that has never been used") 
 	{
 		REQUIRE(calculator.DeclareVariable("test"));
-		REQUIRE(calculator.GetEntityValue("test").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test") == "nan");
 
 		REQUIRE(calculator.DeclareVariable("test2"));
-		REQUIRE(calculator.GetEntityValue("test2").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test2") == "nan");
 	}
 
 	WHEN("Variable that contains in calculator")
 	{
 		REQUIRE(calculator.DeclareVariable("test"));
-		REQUIRE(calculator.GetEntityValue("test").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test") == "nan");
 
 		REQUIRE(calculator.DeclareVariable("test2"));
-		REQUIRE(calculator.GetEntityValue("test2").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test2") == "nan");
 
 		REQUIRE(!calculator.DeclareVariable("test"));
 		REQUIRE(!calculator.DeclareVariable("test2"));
@@ -51,19 +51,19 @@ SCENARIO("Initialize variable use (let)")
 	WHEN("Variable init by another variable")
 	{
 		REQUIRE(calculator.DeclareVariable("test"));
-		REQUIRE(calculator.GetEntityValue("test").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test") == "nan");
 
 		REQUIRE(calculator.InitializeVariable("testInit1", "test"));
-		REQUIRE(calculator.GetEntityValue("testInit1").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("testInit1") == "nan");
 	}
 
 	WHEN("Variable init by exsist variable")
 	{
 		REQUIRE(calculator.DeclareVariable("test"));
-		REQUIRE(calculator.GetEntityValue("test").value() == "nan");
+		REQUIRE(calculator.GetEntityValue("test") == "nan");
 
 		REQUIRE(calculator.InitializeVariable("test", "0"));
-		REQUIRE(calculator.GetEntityValue("test").value() == "0.00");
+		REQUIRE(calculator.GetEntityValue("test") == "0.00");
 	}
 }
 
@@ -74,10 +74,10 @@ SCENARIO("Print variable by alphabet sort (printvars)")
 	WHEN("Variables is not empty")
 	{
 		REQUIRE(calculator.InitializeVariable("c", "11"));
-		REQUIRE(calculator.GetEntityValue("c").value() == "11.00");
+		REQUIRE(calculator.GetEntityValue("c") == "11.00");
 
 		REQUIRE(calculator.InitializeVariable("a", "2.2"));
-		REQUIRE(calculator.GetEntityValue("a").value() == "2.20");
+		REQUIRE(calculator.GetEntityValue("a") == "2.20");
 
 		REQUIRE(calculator.InitializeVariable("b", "c"));
 		REQUIRE(calculator.GetEntityValue("b") == "11.00");
@@ -107,7 +107,7 @@ SCENARIO("Initialize function (fn)")
 		WHEN("Variable is init") 
 		{
 			REQUIRE(calculator.InitializeVariable("testVar", "11"));
-			REQUIRE(calculator.GetEntityValue("testVar").value() == "11.00");
+			REQUIRE(calculator.GetEntityValue("testVar") == "11.00");
 			REQUIRE(calculator.InitializeFunction("testFn", "testVar"));
 		}
 
@@ -122,7 +122,7 @@ SCENARIO("Initialize function (fn)")
 		WHEN("Function is init by another function")
 		{
 			REQUIRE(calculator.InitializeVariable("testVar", "11"));
-			REQUIRE(calculator.GetEntityValue("testVar").value() == "11.00");
+			REQUIRE(calculator.GetEntityValue("testVar") == "11.00");
 
 			REQUIRE(calculator.InitializeFunction("testFn", "testVar"));
 
@@ -132,7 +132,7 @@ SCENARIO("Initialize function (fn)")
 		WHEN("Function is init by variable")
 		{
 			REQUIRE(calculator.InitializeVariable("testVar", "11"));
-			REQUIRE(calculator.GetEntityValue("testVar").value() == "11.00");
+			REQUIRE(calculator.GetEntityValue("testVar") == "11.00");
 
 			REQUIRE(calculator.InitializeFunction("testFn", "testVar"));
 		}
@@ -212,5 +212,201 @@ SCENARIO("Initialize function (fn)")
 			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", ' ', "second"));
 			REQUIRE(!calculator.InitializeFunction("first", "firstFunc", '\n', "second"));
 		}
+	}
+}
+
+SCENARIO("Calculate function (print fn)") 
+{
+	CCalculator calculator;
+
+	WHEN("fn is not exist")
+	{
+		CHECK_THROWS(calculator.GetEntityValue("fn"));
+	}
+
+	WHEN("short fn init by NAN variable")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.InitializeFunction("fn", "first"));
+		REQUIRE(calculator.GetEntityValue("fn") == "nan");
+	}
+
+	WHEN("fn init by variable")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first"));
+		REQUIRE(calculator.GetEntityValue("fn") == "11.00");
+	}
+
+	WHEN("fn init by variable")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "22.00");
+	}
+
+	WHEN("full fn init by NAN variable")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "nan");
+	}
+
+	WHEN("full fn init by variable, check sub")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '-', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "0.00");
+	}
+
+	WHEN("full fn init by variable, check multiplication")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '*', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "121.00");
+	}
+
+	WHEN("full fn init by variable, check division")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '/', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "1.00");
+	}
+
+	WHEN("full fn init by variable, check division by 0")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "0"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '/', "second"));
+		CHECK_THROWS(calculator.GetEntityValue("fn"));
+	}
+
+	WHEN("short fn2 init by short fn")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first"));
+		REQUIRE(calculator.GetEntityValue("fn") == "11.00");
+
+		REQUIRE(calculator.InitializeFunction("fn2", "fn"));
+		REQUIRE(calculator.GetEntityValue("fn2") == "11.00");
+	}
+
+	WHEN("short fn2 init by full fn")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+		REQUIRE(calculator.InitializeFunction("fn", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn") == "22.00");
+
+		REQUIRE(calculator.InitializeFunction("fn2", "fn"));
+		REQUIRE(calculator.GetEntityValue("fn2") == "22.00");
+	}
+
+	WHEN("full fn3 init by full fn1 and full fn2")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "22.00");
+
+		REQUIRE(calculator.InitializeFunction("fn2", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn2") == "22.00");
+
+		REQUIRE(calculator.InitializeFunction("fn3", "fn1", '+', "fn2"));
+		REQUIRE(calculator.GetEntityValue("fn3") == "44.00");
+	}
+
+	WHEN("full fn3 init by full fn1 and variable")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "22.00");
+
+		REQUIRE(calculator.InitializeFunction("fn3", "fn1", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn3") == "33.00");
+	}
+
+	WHEN("full fn3 init by variable and full fn1")
+	{
+		REQUIRE(calculator.InitializeVariable("first", "11"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "22.00");
+
+		REQUIRE(calculator.InitializeFunction("fn3", "first", '+', "fn1"));
+		REQUIRE(calculator.GetEntityValue("fn3") == "33.00");
+	}
+
+	WHEN("full fn3 init by NAN variable and full fn1 with NAN")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "nan");
+
+		REQUIRE(calculator.InitializeFunction("fn3", "first", '+', "fn1"));
+		REQUIRE(calculator.GetEntityValue("fn3") == "nan");
+	}
+}
+
+SCENARIO("Check print <identificator>") 
+{
+	CCalculator calculator;
+
+	WHEN("Variable or Function does not init") 
+	{
+		CHECK_THROWS(calculator.GetEntityValue("fn3"));
+	}
+
+	WHEN("Variable init")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.GetEntityValue("first") == "nan");
+	}
+}
+
+SCENARIO("Check printfns")
+{
+	CCalculator calculator;
+
+	WHEN("Functions does not init")
+	{
+		REQUIRE(calculator.GetFunctions().empty());
+	}
+
+	WHEN("Function was init")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "nan");
+
+		REQUIRE(calculator.GetFunctions() == "fn1:nan\n");
+	}
+
+	WHEN("Functions was init")
+	{
+		REQUIRE(calculator.DeclareVariable("first"));
+		REQUIRE(calculator.InitializeVariable("second", "11"));
+
+		REQUIRE(calculator.InitializeFunction("fn1", "first", '+', "second"));
+		REQUIRE(calculator.GetEntityValue("fn1") == "nan");
+
+		REQUIRE(calculator.InitializeVariable("first", "22"));
+		REQUIRE(calculator.InitializeFunction("fn2", "first", '-', "second"));
+		REQUIRE(calculator.GetEntityValue("fn2") == "11.00");
+
+		REQUIRE(calculator.GetFunctions() == "fn1:33.00\nfn2:11.00\n");
 	}
 }
