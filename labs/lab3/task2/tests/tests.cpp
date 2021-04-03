@@ -4,6 +4,21 @@
 
 using namespace std;
 
+bool TestALotOfActions() 
+{
+	CCalculator calculator;
+
+	calculator.InitializeVariable("x", "1");
+	string xPrev = "x";
+	for (size_t i = 2; i <= 100000; i++)
+	{
+		string xNew = "x"s + to_string(i);
+		calculator.InitializeFunction(xNew, xPrev, '+', "x");
+		xPrev = xNew;
+	}
+	return (calculator.GetEntityValue("x100000") == "100000.00");
+}
+
 SCENARIO("Declare variable use (var)") 
 {
 	CCalculator calculator;
@@ -409,4 +424,9 @@ SCENARIO("Check printfns")
 
 		REQUIRE(calculator.GetFunctions() == "fn1:33.00\nfn2:11.00\n");
 	}
+}
+
+SCENARIO("Test a lot of action ") 
+{
+	REQUIRE(TestALotOfActions());
 }
