@@ -52,7 +52,7 @@ string CCalculator::GetEntityValue(const string& name) const
 		}
 		catch (const exception& e)
 		{
-			throw e;
+			return e.what();
 		}
 	}
 

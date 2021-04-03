@@ -1,0 +1,10 @@
+help 							- all commands
+var <identifier>					- declare a variable with <identifier> name
+let <identifier1>=<number>				- initialize the variable <identifier> by number 
+let <identifier1>=<identifier2>				- initialize the variable <identifier1> by <identifier2>
+fn <identifier1>=<identifier2>				- initialize the function by <identifier2>
+fn <identifier1>=<identifier2><operation><identifier3>	- initialize the function by sequence
+print <identifier>					- print the <identifier>
+printvars						- print all declarated variables
+printfns						- print all declarated functions
+end							- close program
