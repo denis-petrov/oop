@@ -28,6 +28,7 @@ CCar::CCar()
 	: m_isEngineOn(false)
 	, m_gear(0)
 	, m_speed(0)
+	, m_direction(Direction::STAY)
 {
 }
 
@@ -56,19 +57,7 @@ int CCar::GetSpeed() const
 
 CCar::Direction CCar::GetDirection() const
 {
-	if (m_speed == 0)
-	{
-		return Direction::STAY;
-	}
-	else if (m_gear > 0)
-	{
-		return Direction::FORWARD;
-	}
-	else if (m_gear < 0)
-	{
-		return Direction::BACK;
-	}
-	return Direction::STAY;
+	return m_direction;
 }
 
 string CCar::ToString() const 
@@ -110,6 +99,7 @@ bool CCar::SetSpeed(const int speed)
 	if (IsAbleChangeSpeed(speed))
 	{
 		m_speed = speed;
+		UpdateDirection();
 		return true;
 	}
 	return false;
@@ -148,6 +138,22 @@ bool CCar::IsAbleChangeSpeed(const int speed) const
 {
 	return ((m_gear == 0 && speed < m_speed && speed >= 0) || (m_gear != 0 && IsSpeedInRange(GetSpeedRange(m_gear), speed))) 
 		&& m_isEngineOn;
+}
+
+void CCar::UpdateDirection()
+{
+	if (m_speed == 0)
+	{
+		m_direction = Direction::STAY;
+	}
+	else if (m_gear > 0)
+	{
+		m_direction = Direction::FORWARD;
+	}
+	else if (m_gear < 0)
+	{
+		m_direction = Direction::BACK;
+	}
 }
 
 pair<int, int> CCar::GetSpeedRange(const int gear) const
