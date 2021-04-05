@@ -298,7 +298,7 @@ SCENARIO("Calculate function (print fn)")
 		REQUIRE(calculator.InitializeVariable("first", "11"));
 		REQUIRE(calculator.InitializeVariable("second", "0"));
 		REQUIRE(calculator.InitializeFunction("fn", "first", '/', "second"));
-		CHECK_THROWS(calculator.GetEntityValue("fn"));
+		REQUIRE(calculator.GetEntityValue("fn") == "Division by 0");
 	}
 
 	WHEN("short fn2 init by short fn")

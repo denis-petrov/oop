@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include <functional>
 #include <cmath>
 #include <iomanip>
 #include <limits>

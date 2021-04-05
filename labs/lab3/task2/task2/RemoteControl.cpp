@@ -5,6 +5,19 @@
 using namespace std;
 
 const string HELP_FILE_NAME = "help.txt";
+const string HELP = "help";
+const string VAR = "var";
+const string LET = "let";
+const string FN = "fn";
+const string PRINT = "print";
+const string PRINTVARS = "printvars";
+const string PRINTFNS = "printfns";
+const string END = "end";
+
+const char ADD = '+';
+const char SUBTRACT = '-';
+const char MULTIPLICATION = '*';
+const char DIVISION = '/';
 
 const regex ONE_IDENTIFIER_REGEX("(\\s+)(\\w+)=(\\w+)");
 const regex FULL_FUNCTION_REGEX("(\\s+)(\\w+)=(\\w+)+(\\+|\\-|\\*|/)+(\\w+)");
@@ -15,14 +28,14 @@ CRemoteControl::CRemoteControl(CCalculator& calculator, std::istream& input, std
 	, m_output(output)
 	, m_isEndInput(false)
 	, m_actionMap({
-		  { "help", bind(&CRemoteControl::Help, this) },
-		  { "var", bind(&CRemoteControl::Var, this) },
-		  { "let", bind(&CRemoteControl::Let, this) },
-		  { "fn", bind(&CRemoteControl::Fn, this) },
-		  { "print", bind(&CRemoteControl::Print, this) },
-		  { "printvars", bind(&CRemoteControl::PrintVars, this) },
-		  { "printfns", bind(&CRemoteControl::PrintFns, this) },
-		  { "end", bind(&CRemoteControl::End, this) },
+		  { HELP, bind(&CRemoteControl::Help, this) },
+		  { VAR, bind(&CRemoteControl::Var, this) },
+		  { LET, bind(&CRemoteControl::Let, this) },
+		  { FN, bind(&CRemoteControl::Fn, this) },
+		  { PRINT, bind(&CRemoteControl::Print, this) },
+		  { PRINTVARS, bind(&CRemoteControl::PrintVars, this) },
+		  { PRINTFNS, bind(&CRemoteControl::PrintFns, this) },
+		  { END, bind(&CRemoteControl::End, this) },
 	  })
 {
 }
@@ -131,29 +144,27 @@ void CRemoteControl::Fn()
 		first = matches[3].str();
 		operation = matches[4].str();
 		second = matches[5].str();
+
+		if (m_calculator.InitializeFunction(identifier, first, operation[0], second))
+		{
+			cout << "Function: " << identifier << " has been declared by: " << first << operation << second;
+		}
 	}
 	else if (regex_match(search, matches, ONE_IDENTIFIER_REGEX) && !IsFullFunction(search))
 	{
 		identifier = matches[2].str();
 		first = matches[3].str();
+
+		if (m_calculator.InitializeFunction(identifier, first))
+		{
+			cout << "Function: " << identifier << " has been declared by: " << first;
+		}
 	}
 	else
 	{
 		cout << "Not correct input.\nUse: let <identificator>=<number>";
 	}
 
-	if (m_calculator.InitializeFunction(identifier, first, operation[0], second))
-	{
-		cout << "Function: " << identifier << " has been declared by: " << first << operation << second;
-	}
-	else if (m_calculator.InitializeFunction(identifier, first))
-	{
-		cout << "Function: " << identifier << " has been declared by: " << first;
-	}
-	else
-	{
-		cout << "Was error while declaring variable: " << identifier;
-	}
 	cout << "\n\n";
 }
 
@@ -182,8 +193,8 @@ void CRemoteControl::End()
 	m_output << "Goodbye.\n\n";
 }
 
-bool CRemoteControl::IsFullFunction(const string& s) const
+bool IsFullFunction(const string& s)
 {
-	return (s.find('+') != string::npos) || (s.find('-') != string::npos) 
-		|| (s.find('*') != string::npos) || (s.find('/') != string::npos);
+	return (s.find(ADD) != string::npos) || (s.find(SUBTRACT) != string::npos) 
+		|| (s.find(MULTIPLICATION) != string::npos) || (s.find(DIVISION) != string::npos);
 }

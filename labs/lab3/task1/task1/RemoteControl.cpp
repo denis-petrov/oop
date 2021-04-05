@@ -6,19 +6,27 @@ using namespace std;
 
 const string HELP_FILE_NAME = "help.txt";
 
+const string HELP = "Help";
+const string INFO = "Info";
+const string ENGINE_ON = "EngineOn";
+const string ENGINE_OFF = "EngineOff";
+const string SET_SPEED = "SetSpeed";
+const string SET_GEAR = "SetGear";
+const string END = "End";
+
 CRemoteControl::CRemoteControl(CCar& car, std::istream& input, std::ostream& output)
 	: m_car(car)
 	, m_input(input)
 	, m_output(output)
 	, m_isEndInput(false)
 	, m_actionMap({
-		  { "Help", bind(&CRemoteControl::Help, this) },
-		  { "Info", bind(&CRemoteControl::Info, this) },
-		  { "EngineOn", bind(&CRemoteControl::EngineOn, this) },
-		  { "EngineOff", bind(&CRemoteControl::EngineOff, this) },
-		  { "SetSpeed", bind(&CRemoteControl::SetSpeed, this) },
-		  { "SetGear", bind(&CRemoteControl::SetGear, this) },
-		  { "End", bind(&CRemoteControl::End, this) },
+		  { HELP, bind(&CRemoteControl::Help, this) },
+		  { INFO, bind(&CRemoteControl::Info, this) },
+		  { ENGINE_ON, bind(&CRemoteControl::EngineOn, this) },
+		  { ENGINE_OFF, bind(&CRemoteControl::EngineOff, this) },
+		  { SET_SPEED, bind(&CRemoteControl::SetSpeed, this) },
+		  { SET_GEAR, bind(&CRemoteControl::SetGear, this) },
+		  { END, bind(&CRemoteControl::End, this) },
 	  })
 {
 }
@@ -31,7 +39,7 @@ bool CRemoteControl::HandleCommand()
 		return false;
 	}
 
-	m_isEndInput = (action == "End") ? true : false;
+	m_isEndInput = (action == END) ? true : false;
 
 	auto it = m_actionMap.find(action);
 	if (it != m_actionMap.end())

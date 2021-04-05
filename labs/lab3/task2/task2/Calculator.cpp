@@ -89,7 +89,7 @@ bool CCalculator::DeclareVariable(const string& name)
 {
 	if (!IsVariableExist(name) && !IsFunctionExist(name) && !name.empty())
 	{
-		m_existingVariables.insert(make_pair(name, NAN));
+		m_existingVariables.emplace(name, NAN);
 		return true;
 	}
 	return false;
@@ -109,7 +109,7 @@ bool CCalculator::InitializeVariable(const string& name, const string& value)
 		{
 			return UpdateVariable(name, variableValue);
 		}
-		m_existingVariables.insert(make_pair(name, variableValue));
+		m_existingVariables.emplace(name, variableValue);
 		return true;
 	}
 	catch (const exception& e)
@@ -127,7 +127,7 @@ bool CCalculator::InitializeFunction(const string& name, const string& first)
 		return false;
 	}
 	Func curFunc{ first, nullopt, nullopt };
-	m_existingFunctions.insert(make_pair(name, curFunc));
+	m_existingFunctions.emplace(name, curFunc);
 
 	return true;
 }
@@ -140,7 +140,7 @@ bool CCalculator::InitializeFunction(const string& name, const string& first, co
 	}
 
 	Func curFunc{ first, operation, second };
-	m_existingFunctions.insert(make_pair(name, curFunc));
+	m_existingFunctions.emplace(name, curFunc);
 
 	return true;
 }
@@ -243,15 +243,15 @@ double CCalculator::CalculateFunction(const string& name) const
 	try
 	{
 		auto calculatedNodes = GetEmptyVisitedNodes();
-		return ExecuteSequenceCalculate(name, calculatedNodes);
+		return ExecuteSequenceComputation(name, calculatedNodes); 
 	}
-	catch (const exception& e)
+	catch (const exception&)
 	{
-		throw e;
+		throw;
 	}
 }
 
-double CCalculator::ExecuteSequenceCalculate(const string& startName, map<string, optional<double>>& calculatedNodes) const
+double CCalculator::ExecuteSequenceComputation(const string& startName, unordered_map<string, optional<double>>& calculatedNodes) const
 {
 	stack<string> st;
 	st.push(startName);
@@ -317,18 +317,18 @@ double CCalculator::ExecuteSequenceCalculate(const string& startName, map<string
 	return NAN;
 }
 
-map<string, optional<double>> CCalculator::GetEmptyVisitedNodes() const
+unordered_map<string, optional<double>> CCalculator::GetEmptyVisitedNodes() const
 {
-	map<string, optional<double>> res;
+	unordered_map<string, optional<double>> res;
 
 	for (auto& value : m_existingVariables)
 	{
-		res.insert(make_pair(value.first, value.second));
+		res.emplace(value.first, value.second);
 	}
 
 	for (auto& value : m_existingFunctions)
 	{
-		res.insert(make_pair(value.first, nullopt));
+		res.emplace(value.first, nullopt);
 	}
 
 	return res;
@@ -352,9 +352,9 @@ double CCalculator::CalculateSum(const double first, const double second) const
 	{
 		return first + second;
 	}
-	catch (const exception& e)
+	catch (const exception&)
 	{
-		throw e;
+		throw;
 	}
 }
 
@@ -364,9 +364,9 @@ double CCalculator::CalculateSubtract(const double first, const double second) c
 	{
 		return first - second;
 	}
-	catch (const exception& e)
+	catch (const exception&)
 	{
-		throw e;
+		throw;
 	}
 }
 
@@ -376,9 +376,9 @@ double CCalculator::CalculateMultiplication(const double first, const double sec
 	{
 		return first * second;
 	}
-	catch (const exception& e)
+	catch (const exception&)
 	{
-		throw e;
+		throw;
 	}
 }
 
@@ -392,9 +392,9 @@ double CCalculator::CalculateDivision(const double first, const double second) c
 		}
 		return first / second;
 	}
-	catch (const exception& e)
+	catch (const exception&)
 	{
-		throw e;
+		throw;
 	}
 }
 

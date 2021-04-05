@@ -33,6 +33,4 @@ private:
 	bool m_isEndInput;
 
 	const ActionMap m_actionMap;
-
-	bool IsFullFunction(const std::string& s) const;
 };

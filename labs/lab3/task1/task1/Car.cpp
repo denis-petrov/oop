@@ -4,7 +4,7 @@
 using namespace std;
 
 const map<int, pair<int, int>> SPEED_BY_GEAR{
-	{ -1, { -20, 0 } },
+	{ -1, { 0, 20 } },
 	{ 0, { 0, 150 } },
 	{ 1, { 0, 30 } },
 	{ 2, { 20, 50 } },
@@ -51,23 +51,24 @@ int CCar::GetGear() const
 
 int CCar::GetSpeed() const
 {
-	return abs(m_speed);
+	return m_speed;
 }
 
 CCar::Direction CCar::GetDirection() const
 {
-	if (m_speed > 0)
+	if (m_speed == 0)
 	{
-		return CCar::Direction::FORWARD;
+		return Direction::STAY;
 	}
-	else if (m_speed < 0)
+	else if (m_gear > 0)
 	{
-		return CCar::Direction::BACK;
+		return Direction::FORWARD;
 	}
-	else
+	else if (m_gear < 0)
 	{
-		return CCar::Direction::STAY;
+		return Direction::BACK;
 	}
+	return Direction::STAY;
 }
 
 string CCar::ToString() const 
@@ -133,14 +134,14 @@ bool CCar::IsAbleOffEngine() const
 
 bool CCar::IsAbleChangeGear(const int gear) const
 {
-	bool IsGearCorrect = (MIN_GEAR <= gear) && (gear <= MAX_GEAR);
+	bool isGearCorrect = (MIN_GEAR <= gear) && (gear <= MAX_GEAR);
 
-	bool IsSpeedInNewGearRange = IsSpeedInRange(GetSpeedRange(gear), m_speed);
+	bool isSpeedInNewGearRange = IsSpeedInRange(GetSpeedRange(gear), m_speed);
 
-	bool IsDirectionCorrect = (gear == 0) || (GetDirection() == Direction::STAY) 
+	bool isDirectionCorrect = (gear == 0) || (GetDirection() == Direction::STAY) 
 		|| (gear > 0 && GetDirection() == Direction::FORWARD) || (gear < 0 && GetDirection() == Direction::BACK);
 
-	return IsGearCorrect && IsSpeedInNewGearRange && IsDirectionCorrect && (gear != 0 ? m_isEngineOn : true);
+	return isGearCorrect && isSpeedInNewGearRange && isDirectionCorrect && (gear != 0 ? m_isEngineOn : true);
 }
 
 bool CCar::IsAbleChangeSpeed(const int speed) const 

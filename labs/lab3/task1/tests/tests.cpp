@@ -292,7 +292,7 @@ SCENARIO("Validate change gear to back")
 		REQUIRE(car.TurnOnEngine());
 		REQUIRE(car.SetGear(-1));
 		REQUIRE(car.GetGear() == -1);
-		REQUIRE(car.SetSpeed(-20));
+		REQUIRE(car.SetSpeed(20));
 		REQUIRE(car.GetSpeed() == 20);
 
 		WHEN("Speed is max value")
@@ -318,7 +318,7 @@ SCENARIO("Validate change gear to back")
 
 		WHEN("Speed is less than min value")
 		{
-			REQUIRE(!car.SetSpeed(1));
+			REQUIRE(!car.SetSpeed(-1));
 			REQUIRE(car.GetSpeed() == 20);
 			REQUIRE(car.GetDirection() == CCar::Direction::BACK);
 		}
@@ -364,5 +364,18 @@ SCENARIO("Change incorrect speed")
 			REQUIRE(!car.SetGear(-20));
 			REQUIRE(!car.SetGear(-1));
 		}
+	}
+}
+
+SCENARIO("Check back gear")
+{
+	GIVEN("Car with back gear")
+	{
+		CCar car;
+
+		REQUIRE(car.TurnOnEngine());
+		REQUIRE(car.SetGear(-1));
+		REQUIRE(car.GetGear() == -1);
+		REQUIRE(car.SetSpeed(20));
 	}
 }
