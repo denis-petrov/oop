@@ -139,10 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\task1\Body.cpp" />
+    <ClCompile Include="..\task1\CCone.cpp" />
+    <ClCompile Include="..\task1\CCylinder.cpp" />
+    <ClCompile Include="..\task1\CParallelepiped.cpp" />
+    <ClCompile Include="..\task1\SolidBody.cpp" />
+    <ClCompile Include="..\task1\Sphere.cpp" />
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\task1\Body.h" />
+    <ClInclude Include="..\task1\Cone.h" />
+    <ClInclude Include="..\task1\Cylinder.h" />
+    <ClInclude Include="..\task1\Parallelepiped.h" />
+    <ClInclude Include="..\task1\SolidBody.h" />
+    <ClInclude Include="..\task1\Sphere.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

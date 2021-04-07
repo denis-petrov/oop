@@ -8,9 +8,9 @@ CParallelepiped::CParallelepiped(const double width, const double height, const 
 	, m_height(height)
 	, m_depth(depth)
 {
-	if (m_width < DEFAULT_WIDTH || m_height < DEFAULT_HEIGTH || m_depth < DEFAULT_DEPTH)
+	if (!(m_width > MIN_PARAM && m_height > MIN_PARAM && m_depth > MIN_PARAM))
 	{
-		throw invalid_argument("Not correct parameters for parallelepiped.");
+		throw invalid_argument("Not correct parameters for Parallelepiped.");
 	}
 }
 

@@ -33,6 +33,12 @@
     <ClCompile Include="CParallelepiped.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CCone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CCylinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,6 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Parallelepiped.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cylinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

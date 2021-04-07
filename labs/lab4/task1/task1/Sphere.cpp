@@ -6,9 +6,9 @@ CSphere::CSphere(const double radius, const double density)
 	: CSolidBody(density)
 	, m_radius(radius)
 {
-	if (radius < DEFAULT_RADIUS)
+	if (!(radius > MIN_PARAM))
 	{
-		throw("Radius must be greater than or equal to " + DEFAULT_RADIUS);
+		throw("Radius must be greater than or equal to " + MIN_PARAM);
 	}
 }
 

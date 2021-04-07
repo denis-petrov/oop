@@ -5,9 +5,9 @@ using namespace std;
 CSolidBody::CSolidBody(const double density)
 	: m_density(density)
 {
-	if (m_density < DEFAULT_DENSITY)
+	if (!(m_density > MIN_PARAM))
 	{
-		throw invalid_argument("Density must be greater than or equal to " + DEFAULT_DENSITY);
+		throw invalid_argument("Density must be greater than or equal to " + MIN_PARAM);
 	}
 }
 
