@@ -87,9 +87,9 @@ BOOST_FIXTURE_TEST_SUITE(Parallelepiped, Parallelepiped_)
 	BOOST_AUTO_TEST_CASE(can_be_converted_to_string)
 	{
 		const auto expectedString = R"({ Parallelepiped }
-	Width: 12.2
-	Height: 4.4
-	Depth: 8.8
+	Width = 12.2
+	Height = 4.4
+	Depth = 8.8
 	Density = 2
 	Volume = 472.384
 	Mass = 944.768

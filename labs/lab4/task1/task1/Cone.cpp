@@ -31,9 +31,9 @@ double CCone::GetHeight() const
 string CCone::ToString() const 
 {
 	stringstream stream;
-	stream << "{ Cone }\n"
-		   << "Base Radius: " << GetBaseRadius()
-		   << "Height: " << GetHeight()
-		   << CSolidBody::ToString() << "\n";
+	stream << "{ Cone }" << endl
+		   << "\tBase Radius = " << GetBaseRadius() << endl
+		   << "\tHeight = " << GetHeight() << endl
+		   << CSolidBody::ToString() << endl;
 	return stream.str();
 }

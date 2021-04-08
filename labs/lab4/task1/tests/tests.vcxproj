@@ -161,6 +161,8 @@
     <ClCompile Include="..\task1\Parallelepiped.cpp" />
     <ClCompile Include="..\task1\SolidBody.cpp" />
     <ClCompile Include="..\task1\Sphere.cpp" />
+    <ClCompile Include="ConeTests.cpp" />
+    <ClCompile Include="CylinderTests.cpp" />
     <ClCompile Include="ParallelepipedTests.cpp" />
     <ClCompile Include="SphereTests.cpp" />
     <ClCompile Include="stdafx.cpp" />

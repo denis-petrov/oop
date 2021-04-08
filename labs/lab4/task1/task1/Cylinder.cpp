@@ -13,17 +13,17 @@ CCylinder::CCylinder(const double baseRadius, const double height, const double 
 	}
 }
 
-double CCylinder::GetVolume() const 
+double CCylinder::GetVolume() const
 {
 	return M_PI * pow(GetBaseRadius(), 2) * GetHeight();
 }
 
-double CCylinder::GetBaseRadius() const 
+double CCylinder::GetBaseRadius() const
 {
 	return m_baseRadius;
 }
 
-double CCylinder::GetHeight() const 
+double CCylinder::GetHeight() const
 {
 	return m_height;
 }
@@ -31,9 +31,9 @@ double CCylinder::GetHeight() const
 string CCylinder::ToString() const
 {
 	stringstream stream;
-	stream << "{ Cylinder }\n"
-		   << "Base Radius: " << GetBaseRadius()
-		   << "Height: " << GetHeight()
-		   << CSolidBody::ToString() << "\n";
+	stream << "{ Cylinder }" << endl
+		   << "\tBase Radius = " << GetBaseRadius() << endl
+		   << "\tHeight = " << GetHeight() << endl
+		   << CSolidBody::ToString() << endl;
 	return stream.str();
 }

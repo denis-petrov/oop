@@ -38,9 +38,9 @@ string CParallelepiped::ToString() const
 {
 	stringstream stream;
 	stream << "{ Parallelepiped }" << endl
-		   << "\tWidth: " << GetWidth() << endl
-		   << "\tHeight: " << GetHeight() << endl
-		   << "\tDepth: " << GetDepth() << endl
+		   << "\tWidth = " << GetWidth() << endl
+		   << "\tHeight = " << GetHeight() << endl
+		   << "\tDepth = " << GetDepth() << endl
 		   << CSolidBody::ToString() << endl;
 	return stream.str();
 }
