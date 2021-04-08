@@ -2,7 +2,7 @@
 
 using namespace std;
 
-CCylinder::CCylinder(const double baseRadius, const double height, const double density = DEFAULT_DENSITY)
+CCylinder::CCylinder(const double baseRadius, const double height, const double density)
 	: CSolidBody(density)
 	, m_baseRadius(baseRadius)
 	, m_height(height)

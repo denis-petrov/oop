@@ -24,10 +24,9 @@ double CSolidBody::GetDensity() const
 string CSolidBody::ToString() const
 {
 	stringstream stream;
-	stream << fixed << setprecision(DEFAULT_PRECISION);
-
-	stream << "Density: " << GetDensity()
-		   << "\nVolume: " << GetVolume()
-		   << "\nMass: " << GetMass() << "\n";
+	stream << "\tDensity = " << GetDensity() << endl 
+		   << fixed << setprecision(3)
+		   << "\tVolume = " << GetVolume() << endl
+		   << "\tMass = " << GetMass() << endl;
 	return stream.str();
 }

@@ -8,7 +8,7 @@ CSphere::CSphere(const double radius, const double density)
 {
 	if (!(radius > MIN_PARAM))
 	{
-		throw("Radius must be greater than or equal to " + MIN_PARAM);
+		throw invalid_argument("Radius must be greater than or equal to " + MIN_PARAM);
 	}
 }
 
@@ -26,7 +26,7 @@ string CSphere::ToString() const
 {
 	stringstream stream;
 	stream << "{ Sphere }\n"
-		   << "Radius: " << GetRadius()
-		   << CSolidBody::ToString() << "\n";
+		   << "\tRadius = " << GetRadius() << endl
+		   << CSolidBody::ToString() << endl;
 	return stream.str();
 }
