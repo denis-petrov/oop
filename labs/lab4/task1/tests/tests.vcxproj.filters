@@ -21,13 +21,13 @@
     <ClCompile Include="..\task1\Body.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\task1\CCone.cpp">
+    <ClCompile Include="..\task1\Cone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\task1\CCylinder.cpp">
+    <ClCompile Include="..\task1\Cylinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\task1\CParallelepiped.cpp">
+    <ClCompile Include="..\task1\Parallelepiped.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\task1\SolidBody.cpp">
@@ -40,6 +40,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SphereTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParallelepipedTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

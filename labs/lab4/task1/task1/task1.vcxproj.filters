@@ -30,13 +30,13 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CParallelepiped.cpp">
+    <ClCompile Include="Parallelepiped.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCone.cpp">
+    <ClCompile Include="Cone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCylinder.cpp">
+    <ClCompile Include="Cylinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

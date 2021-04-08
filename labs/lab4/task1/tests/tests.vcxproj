@@ -156,11 +156,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\task1\Body.cpp" />
-    <ClCompile Include="..\task1\CCone.cpp" />
-    <ClCompile Include="..\task1\CCylinder.cpp" />
-    <ClCompile Include="..\task1\CParallelepiped.cpp" />
+    <ClCompile Include="..\task1\Cone.cpp" />
+    <ClCompile Include="..\task1\Cylinder.cpp" />
+    <ClCompile Include="..\task1\Parallelepiped.cpp" />
     <ClCompile Include="..\task1\SolidBody.cpp" />
     <ClCompile Include="..\task1\Sphere.cpp" />
+    <ClCompile Include="ParallelepipedTests.cpp" />
     <ClCompile Include="SphereTests.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="tests.cpp" />

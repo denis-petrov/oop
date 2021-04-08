@@ -144,9 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
-    <ClCompile Include="CCone.cpp" />
-    <ClCompile Include="CCylinder.cpp" />
-    <ClCompile Include="CParallelepiped.cpp" />
+    <ClCompile Include="Cone.cpp" />
+    <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="Parallelepiped.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SolidBody.cpp" />
     <ClCompile Include="Sphere.cpp" />

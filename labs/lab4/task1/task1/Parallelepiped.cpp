@@ -37,10 +37,10 @@ double CParallelepiped::GetDepth() const
 string CParallelepiped::ToString() const 
 {
 	stringstream stream;
-	stream << "{ Parallelepiped }\n"
-		   << "Width: " << GetWidth()
-		   << "Height: " << GetHeight()
-		   << "Depth: " << GetDepth()
-		   << CSolidBody::ToString() << "\n";
+	stream << "{ Parallelepiped }" << endl
+		   << "\tWidth: " << GetWidth() << endl
+		   << "\tHeight: " << GetHeight() << endl
+		   << "\tDepth: " << GetDepth() << endl
+		   << CSolidBody::ToString() << endl;
 	return stream.str();
 }

@@ -59,7 +59,6 @@ BOOST_FIXTURE_TEST_SUITE(Sphere, Sphere_)
 
 	BOOST_AUTO_TEST_CASE(can_be_converted_to_string)
 	{
-		std::cout << sphere.ToString() << "\n";
 		const auto expectedString = R"({ Sphere }
 	Radius = 42.8
 	Density = 8.8
