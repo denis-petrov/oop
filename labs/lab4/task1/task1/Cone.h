@@ -5,6 +5,7 @@ class CCone : public CSolidBody
 {
 public:
 	CCone(const double baseRadius, const double height, const double density = DEFAULT_DENSITY);
+	virtual ~CCone(){};
 
 	double GetVolume() const override;
 	double GetBaseRadius() const;

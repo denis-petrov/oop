@@ -5,6 +5,7 @@ class CParallelepiped : public CSolidBody
 {
 public:
 	CParallelepiped(const double width, const double height, const double depth, const double density = DEFAULT_DENSITY);
+	virtual ~CParallelepiped(){};
 
 	double GetVolume() const override;
 	double GetWidth() const;

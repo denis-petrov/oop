@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +108,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +127,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +146,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,11 +160,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\task1\Body.cpp" />
+    <ClCompile Include="..\task1\CCompound.cpp" />
     <ClCompile Include="..\task1\Cone.cpp" />
     <ClCompile Include="..\task1\Cylinder.cpp" />
     <ClCompile Include="..\task1\Parallelepiped.cpp" />
     <ClCompile Include="..\task1\SolidBody.cpp" />
     <ClCompile Include="..\task1\Sphere.cpp" />
+    <ClCompile Include="CompoundTests.cpp" />
     <ClCompile Include="ConeTests.cpp" />
     <ClCompile Include="CylinderTests.cpp" />
     <ClCompile Include="ParallelepipedTests.cpp" />
@@ -170,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\task1\Body.h" />
+    <ClInclude Include="..\task1\Compound.h" />
     <ClInclude Include="..\task1\Cone.h" />
     <ClInclude Include="..\task1\Cylinder.h" />
     <ClInclude Include="..\task1\Parallelepiped.h" />

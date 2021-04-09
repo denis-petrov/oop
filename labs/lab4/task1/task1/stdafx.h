@@ -7,6 +7,10 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include <vector>
+#include <functional>
+#include <numeric>
+#include <typeinfo>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
