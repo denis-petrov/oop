@@ -2,6 +2,12 @@
 
 using namespace std;
 
+bool CCompound::AddChildBody(const std::shared_ptr<CBody> child)
+{
+	m_children.push_back(child);
+	return true;
+}
+
 double CCompound::GetVolume() const
 {
 	return accumulate(m_children.begin(), m_children.end(), 0.0, [](double sum, const shared_ptr<CBody>& elem) {
@@ -32,8 +38,8 @@ string CCompound::ToString() const
 		   << "\tCompound density = " << GetDensity() << endl
 		   << endl
 		   << "\tContains elements: " << endl
-		   << "\t" << accumulate(m_children.begin(), m_children.end(), string(), [](string& sum, const shared_ptr<CBody>& elem) {
-				  return sum + elem->ToString();
+		   << accumulate(m_children.begin(), m_children.end(), string(), [index = 0](string& sum, const shared_ptr<CBody>& elem) mutable {
+				  return sum + "\t(" + to_string(++index) + ") "+ elem->ToString();
 			  });
 	return stream.str();
 }

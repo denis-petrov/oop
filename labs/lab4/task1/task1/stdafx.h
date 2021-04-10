@@ -11,6 +11,10 @@
 #include <functional>
 #include <numeric>
 #include <typeinfo>
+#include <map>
+#include <boost/lexical_cast.hpp>
+#include <regex>
+#include <optional>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

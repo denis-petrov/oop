@@ -42,6 +42,9 @@
     <ClCompile Include="CCompound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BodiesControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Compound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BodiesControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
