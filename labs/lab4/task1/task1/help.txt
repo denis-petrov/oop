@@ -11,17 +11,17 @@ All Bodies:
     Compounp <IDs of added bodies>
 
 Commands:
-    help 						            - all information
+    help 					- all information
     add <Body> <parametrs for new Body> 	- declare a new Body 
-    mostMassiveBody 	                    - get information about the most massive Body
-    lightestBodyInWater 	                - get information about the lightest body submerged in water
-    printAll                                - get all existing bodies
-    end							            - close program
+    getMostMassive 	                    	- get information about the most massive Body
+    getLightestInWater 	                 	- get information about the lightest body submerged in water
+    printAll                                	- get all existing bodies
+    end						- close program
 
 Example for add Body:
-    add Cone 1 2                            - add new Cone Body with baseRadius = 1, height = 2, density = Default
+    add Cone 1 2                            	- add new Cone Body with baseRadius = 1, height = 2, density = Default
 
-    add Compound                            - add new Compound Body that contains Cone and Parallelepiped
+    add Compound                            	- add new Compound Body that contains Cone and Parallelepiped
     add Cone 1 2  
     add Parallelepiped 1 2 3 4 
 ------------------------------------------------------------------------------------------------------------------

@@ -159,6 +159,7 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BodiesControlHandler.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="BodiesControl.h" />
     <ClInclude Include="Compound.h" />
