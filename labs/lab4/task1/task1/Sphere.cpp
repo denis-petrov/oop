@@ -22,11 +22,11 @@ double CSphere::GetRadius() const
 	return m_radius;
 }
 
-string CSphere::ToString() const
+string CSphere::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Sphere }\n"
-		   << "\tRadius = " << GetRadius() << endl
-		   << CSolidBody::ToString() << endl;
+		   << string("\t", padding) << "Radius = " << GetRadius() << endl
+		   << CSolidBody::ToString(padding) << endl;
 	return stream.str();
 }

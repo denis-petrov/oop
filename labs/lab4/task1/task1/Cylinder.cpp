@@ -28,12 +28,12 @@ double CCylinder::GetHeight() const
 	return m_height;
 }
 
-string CCylinder::ToString() const
+string CCylinder::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Cylinder }" << endl
-		   << "\tBase Radius = " << GetBaseRadius() << endl
-		   << "\tHeight = " << GetHeight() << endl
-		   << CSolidBody::ToString() << endl;
+		   << string("\t", padding) << "Base Radius = " << GetBaseRadius() << endl
+		   << string("\t", padding) << "Height = " << GetHeight() << endl
+		   << CSolidBody::ToString(padding) << endl;
 	return stream.str();
 }

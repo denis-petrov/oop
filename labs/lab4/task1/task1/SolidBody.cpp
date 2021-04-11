@@ -21,12 +21,12 @@ double CSolidBody::GetDensity() const
 	return m_density;
 }
 
-string CSolidBody::ToString() const
+string CSolidBody::ToString(const int padding) const
 {
 	stringstream stream;
-	stream << "\tDensity = " << GetDensity() << endl 
+	stream << string("\t", padding) << "Density = " << GetDensity() << endl 
 		   << fixed << setprecision(3)
-		   << "\tVolume = " << GetVolume() << endl
-		   << "\tMass = " << GetMass() << endl;
+		   << string("\t", padding) << "Volume = " << GetVolume() << endl
+		   << string("\t", padding) << "Mass = " << GetMass() << endl;
 	return stream.str();
 }

@@ -11,6 +11,7 @@ using namespace std;
 const string HELP_FILE_NAME = "help.txt";
 const string HELP = "help";
 const string ADD = "add";
+const string UPDATE_COMPOUND = "updateCompound";
 const string GET_MOST_MASSIVE = "getMostMassive";
 const string GET_LIGHTEST_IN_WATER = "getLightestInWater";
 const string PRINT_ALL = "printAll";
@@ -29,7 +30,10 @@ const string CYLINDER = "Cylinder";
 const regex ADD_CYLINDER_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)?(\\d+)?");
 
 const string COMPOUND = "Compound";
-const regex ADD_COMPOUND_REGEX("(\\s+)(\\d+)");
+const regex ADD_COMPOUND_REGEX("(\\s+)?(\\d+)?");
+
+//const regex UPDATE_COMPOUND_REGEX("(\\d+)-?(\\d+)?");
+const regex UPDATE_COMPOUND_REGEX("(\\s+)((\\d+)(-\\d+)*)(\\s+)(\\d+)");
 
 const int EMPTY = -1;
 const double GRAVITY = 9.8;

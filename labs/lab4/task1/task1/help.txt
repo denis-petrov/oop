@@ -1,7 +1,10 @@
-------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 Info:
     Default density = 1
     You can skip <density> parametr if you want to set by Default 
+
+    <ID sequence> is one ID like 1 or 2; OR sequence of IDs like 1-2-0
+    For Details abous IDs please type printAll
 
 All Bodies:
     Sphere <radius> <density>
@@ -11,17 +14,20 @@ All Bodies:
     Compounp <IDs of added bodies>
 
 Commands:
-    help 					- all information
-    add <Body> <parametrs for new Body> 	- declare a new Body 
-    getMostMassive 	                    	- get information about the most massive Body
-    getLightestInWater 	                 	- get information about the lightest body submerged in water
-    printAll                                	- get all existing bodies
-    end						- close program
+    help 								- all information
+    add <Body> <parametrs for new Body> 				- declare a new Body 
+    updateCompound <appendBody ID sequence> <pushBody ID sequence>  	- uppend existing Compound Body by ID of some Body
+    getMostMassive 	                    				- get information about the most massive Body
+    getLightestInWater 	                 				- get information about the lightest body submerged in water
+    printAll                                				- get all existing bodies
+    end									- close program
 
 Example for add Body:
-    add Cone 1 2                            	- add new Cone Body with baseRadius = 1, height = 2, density = Default
+    add Cone 1 2                            				- add new Cone Body with baseRadius = 1, height = 2, density = Default
 
-    add Compound                            	- add new Compound Body that contains Cone and Parallelepiped
     add Cone 1 2  
     add Parallelepiped 1 2 3 4 
-------------------------------------------------------------------------------------------------------------------
+    add Compound 0 1                          				- add new Compound Body that contains Cone(ID = 0) and Parallelepiped(ID = 1)
+
+    updateCompound 0-1 1						- uppend nested Compound Body wich contains in elem with ID = 0; push eleb with ID = 0 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------

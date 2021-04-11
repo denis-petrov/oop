@@ -11,7 +11,7 @@ public:
 	double GetBaseRadius() const;
 	double GetHeight() const;
 
-	std::string ToString() const override final;
+	std::string ToString(const int padding = PADDING) const override final;
 
 private:
 	double m_baseRadius;

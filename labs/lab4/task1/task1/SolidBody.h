@@ -9,7 +9,7 @@ public:
 
 	double GetMass() const override final;
 	double GetDensity() const override final;
-	std::string ToString() const override;
+	std::string ToString(const int padding = PADDING) const override;
 
 private:
 	double m_density;

@@ -12,7 +12,7 @@ public:
 	double GetHeight() const;
 	double GetDepth() const;
 
-	std::string ToString() const override final;
+	std::string ToString(const int padding = PADDING) const override final;
 
 private:
 	double m_width;

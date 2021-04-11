@@ -8,6 +8,18 @@ bool CCompound::AddChildBody(const std::shared_ptr<CBody> child)
 	return true;
 }
 
+optional<shared_ptr<CBody>> CCompound::GetChildById(const int id) const
+{
+	try
+	{
+		return m_children.at(id);
+	}
+	catch (const exception&)
+	{
+		return nullptr;
+	}
+}
+
 double CCompound::GetVolume() const
 {
 	return accumulate(m_children.begin(), m_children.end(), 0.0, [](double sum, const shared_ptr<CBody>& elem) {
@@ -27,19 +39,19 @@ double CCompound::GetDensity() const
 	return GetMass() / GetVolume();
 }
 
-string CCompound::ToString() const
+string CCompound::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Compound }" << endl
-		   << "\tSize = " << m_children.size() << endl
+		   << string("\t", padding) << "Size = " << m_children.size() << endl
 		   << fixed << setprecision(3)
-		   << "\tCompound mass = " << GetMass() << endl
-		   << "\tCompound volume = " << GetVolume() << endl
-		   << "\tCompound density = " << GetDensity() << endl
+		   << string("\t", padding) << "Compound mass = " << GetMass() << endl
+		   << string("\t", padding) << "Compound volume = " << GetVolume() << endl
+		   << string("\t", padding) << "Compound density = " << GetDensity() << endl
 		   << endl
-		   << "\tContains elements: " << endl
-		   << accumulate(m_children.begin(), m_children.end(), string(), [index = 0](string& sum, const shared_ptr<CBody>& elem) mutable {
-				  return sum + "\t(" + to_string(++index) + ") "+ elem->ToString();
+		   << string("\t", padding) << "Contains elements: " << endl
+		   << accumulate(m_children.begin(), m_children.end(), string(), [index = 0, padding](string& sum, const shared_ptr<CBody>& elem) mutable {
+				  return sum + string("\t", padding) + "ID = " + to_string(index++) + "; " + elem->ToString(padding + 1);
 			  });
 	return stream.str();
 }

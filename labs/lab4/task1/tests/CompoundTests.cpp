@@ -36,8 +36,8 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 			   << "\tCompound density = 7.000" << std::endl
 			   << std::endl
 			   << "\tContains elements: " << std::endl
-			   << "\t(1) " << sphere.ToString();
-		
+			   << "\tID = 0; " << sphere.ToString(2);
+
 		BOOST_CHECK(compound.ToString() == stream.str());
 	}
 
@@ -66,8 +66,8 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 			   << "\tCompound density = 1.418" << std::endl
 			   << std::endl
 			   << "\tContains elements: " << std::endl
-			   << "\t(1) " << sphere.ToString() 
-			   << "\t(2) " << parallelepiped.ToString();
+			   << "\tID = 0; " << sphere.ToString(2) 
+			   << "\tID = 1; " << parallelepiped.ToString(2);
 
 		BOOST_CHECK(compound.ToString() == stream.str());
 	}
@@ -96,9 +96,27 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 			   << "\tCompound density = 1.418" << std::endl
 			   << std::endl
 			   << "\tContains elements: " << std::endl
-			   << "\t(1) " << compound2.ToString();
+			   << "\tID = 0; " << compound2.ToString(2);
 
 		BOOST_CHECK(compound.ToString() == stream.str());
+	}
+
+	BOOST_AUTO_TEST_CASE(able_get_elem_by_id)
+	{
+		CCompound compound;
+
+		CSphere sphere(1, 7);
+		auto sharedSphere = std::make_shared<CSphere>(sphere);
+		BOOST_CHECK(compound.AddChildBody(sharedSphere));
+
+		CParallelepiped parallelepiped(1, 7, 8);
+		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
+		BOOST_CHECK(compound.AddChildBody(sharedParallelepiped));
+
+		BOOST_CHECK(compound.GetChildById(-1) == nullptr);
+		BOOST_CHECK(compound.GetChildById(0) == sharedSphere);
+		BOOST_CHECK(compound.GetChildById(1) == sharedParallelepiped);
+		BOOST_CHECK(compound.GetChildById(2) == nullptr);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
