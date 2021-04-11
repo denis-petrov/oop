@@ -16,6 +16,7 @@
 #include <regex>
 #include <utility>
 #include <optional>
+#include <set>
 #include <boost/algorithm/string.hpp>
 
 #define _USE_MATH_DEFINES

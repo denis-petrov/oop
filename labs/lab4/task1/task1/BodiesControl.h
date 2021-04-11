@@ -39,7 +39,7 @@ private:
 	std::vector<std::pair<int, std::shared_ptr<CBody>>> m_bodies;
 	int m_lastIndex = 0;
 	std::optional<std::pair<int, std::shared_ptr<CBody>>> GetBodyPairById(const int id) const;
-	std::shared_ptr<CCompound> GetCompoudBodyByStringId(const std::string& appendIdStr) const;
+	std::shared_ptr<CCompound> GetCompoudBodyByStringId(const std::string& appendIdStr, std::vector<std::shared_ptr<CCompound>>& usedNode) const;
 	bool IsBodyByIdExist(const int id) const;
 	void RemoveBodyById(const int id);
 

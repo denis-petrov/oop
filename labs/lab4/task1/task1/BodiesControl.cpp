@@ -104,7 +104,7 @@ optional<int> CastToInt(const string& value)
 	}
 }
 
-shared_ptr<CCompound> CBodiesControl::GetCompoudBodyByStringId(const string& appendIdStr) const
+shared_ptr<CCompound> CBodiesControl::GetCompoudBodyByStringId(const string& appendIdStr, vector<shared_ptr<CCompound>>& usedNodes) const
 {
 	shared_ptr<CCompound> appendElem;
 	vector<string> elemIds;
@@ -136,6 +136,7 @@ shared_ptr<CCompound> CBodiesControl::GetCompoudBodyByStringId(const string& app
 			temp = nestedElem.value();
 		}
 		appendElem = static_pointer_cast<CCompound>(temp);
+		usedNodes.push_back(appendElem);
 		index++;
 	}
 	return appendElem;
@@ -172,13 +173,24 @@ void CBodiesControl::UpdateCompound()
 		return;
 	}
 
-	auto appendBody =  GetCompoudBodyByStringId(appendIdStr);
+	vector<shared_ptr<CCompound>> usedNodes;
+	auto appendBody = GetCompoudBodyByStringId(appendIdStr, usedNodes);
 	auto pushBody = pushBodyPair.value().second;
 
-	RemoveBodyById(pushBodyPair.value().first);
-	appendBody->AddChildBody(pushBody);
+	auto it = std::find_if(usedNodes.begin(), usedNodes.end(),
+		[=](const shared_ptr<CCompound>& appendBody) { return appendBody == pushBody; });
 
-	m_output << "Update Compound Body was completed successfully.\n\n";
+	if (it == usedNodes.end())
+	{
+		RemoveBodyById(pushBodyPair.value().first);
+		appendBody->AddChildBody(pushBody);
+
+		m_output << "Update Compound Body was completed successfully.\n\n";
+	}
+	else
+	{
+		m_output << "Update Compound Body was completed unsuccessfully. Found cycle of Bodies.\n\n";
+	}
 }
 
 void CBodiesControl::GetMostMassiveBody()
