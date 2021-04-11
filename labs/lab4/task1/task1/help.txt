@@ -1,10 +1,10 @@
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Info:
     Default density = 1
     You can skip <density> parametr if you want to set by Default 
 
-    <ID sequence> is one ID like 1 or 2; OR sequence of IDs like 1-2-0
-    For Details abous IDs please type printAll
+    <ID> - it is number 1 or 2 or etc.
+    <ID sequence> - it is one <ID>; OR sequence of <ID>s separated by '-' like 1-2-0
 
 All Bodies:
     Sphere <radius> <density>
@@ -16,7 +16,7 @@ All Bodies:
 Commands:
     help 								- all information
     add <Body> <parametrs for new Body> 				- declare a new Body 
-    updateCompound <appendBody ID sequence> <pushBody ID sequence>  	- uppend existing Compound Body by ID of some Body
+    updateCompound <appendBody ID sequence> <pushBody ID>	  	- uppend existing Compound Body by ID of some Body
     getMostMassive 	                    				- get information about the most massive Body
     getLightestInWater 	                 				- get information about the lightest body submerged in water
     printAll                                				- get all existing bodies
@@ -29,5 +29,5 @@ Example for add Body:
     add Parallelepiped 1 2 3 4 
     add Compound 0 1                          				- add new Compound Body that contains Cone(ID = 0) and Parallelepiped(ID = 1)
 
-    updateCompound 0-1 1						- uppend nested Compound Body wich contains in elem with ID = 0; push eleb with ID = 0 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    updateCompound 0-1 1						- uppend nested Compound Body, with ID = 1, wich contains in elem with ID = 0; push elem with ID = 1 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
