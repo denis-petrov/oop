@@ -2,13 +2,13 @@
 
 using namespace std;
 
-bool CCompound::AddChildBody(const std::shared_ptr<CBody> child)
+bool CCompound::AddChildBody(const shared_ptr<CBody>& child)
 {
 	m_children.push_back(child);
 	return true;
 }
 
-optional<shared_ptr<CBody>> CCompound::GetChildById(const int id) const
+shared_ptr<CBody> CCompound::GetChildById(const int id) const
 {
 	try
 	{
@@ -18,6 +18,16 @@ optional<shared_ptr<CBody>> CCompound::GetChildById(const int id) const
 	{
 		return nullptr;
 	}
+}
+
+int CCompound::GetId() const
+{
+	return m_id;
+}
+
+void CCompound::SetId(const int id) 
+{
+	m_id = id;
 }
 
 double CCompound::GetVolume() const
@@ -50,8 +60,8 @@ string CCompound::ToString(const int padding) const
 		   << string("\t", padding) << "Compound density = " << GetDensity() << endl
 		   << endl
 		   << string("\t", padding) << "Contains elements: " << endl
-		   << accumulate(m_children.begin(), m_children.end(), string(), [index = 0, padding](string& sum, const shared_ptr<CBody>& elem) mutable {
-				  return sum + string("\t", padding) + "ID = " + to_string(index++) + "; " + elem->ToString(padding + 1);
+		   << accumulate(m_children.begin(), m_children.end(), string(), [padding](string& sum, const shared_ptr<CBody>& elem) mutable {
+				  return sum + string("\t", padding) + "ID = " + to_string(elem->GetId()) + "; " + elem->ToString(padding + 1);
 			  });
 	return stream.str();
 }

@@ -17,8 +17,8 @@ Commands:
     help 								- all information
     add <Body> <parametrs for new Body> 				- declare a new Body 
     updateCompound <appendBody ID sequence> <pushBody ID>	  	- uppend existing Compound Body by ID of some Body
-    getMostMassive 	                    				- get information about the most massive Body
-    getLightestInWater 	                 				- get information about the lightest body submerged in water
+    printMostMassive 	                    				- get information about the most massive Body
+    printLightestInWater 	                 			- get information about the lightest body submerged in water
     printAll                                				- get all existing bodies
     end									- close program
 

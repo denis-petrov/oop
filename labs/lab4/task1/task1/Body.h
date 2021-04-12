@@ -9,5 +9,8 @@ public:
 	virtual double GetMass() const = 0;
 	virtual std::string ToString(const int padding = PADDING) const = 0;
 
+	virtual int GetId() const = 0;
+	virtual void SetId(const int id) = 0;
+
 	virtual ~CBody(){};
 };

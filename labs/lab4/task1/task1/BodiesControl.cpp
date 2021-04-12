@@ -1,4 +1,10 @@
 #include "BodiesControlHandler.h"
+#include "BodiesControl.h"
+#include "Compound.h"
+#include "Cone.h"
+#include "Cylinder.h"
+#include "Parallelepiped.h"
+#include "Sphere.h"
 
 using namespace std;
 
@@ -10,8 +16,8 @@ CBodiesControl::CBodiesControl(std::istream& input, std::ostream& output)
 		  { HELP, bind(&CBodiesControl::Help, this) },
 		  { ADD, bind(&CBodiesControl::AddBody, this) },
 		  { UPDATE_COMPOUND, bind(&CBodiesControl::UpdateCompound, this) },
-		  { GET_MOST_MASSIVE, bind(&CBodiesControl::GetMostMassiveBody, this) },
-		  { GET_LIGHTEST_IN_WATER, bind(&CBodiesControl::GetLightestBodyInWater, this) },
+		  { PRINT_MOST_MASSIVE, bind(&CBodiesControl::PrintMostMassiveBody, this) },
+		  { PRINT_LIGHTEST_IN_WATER, bind(&CBodiesControl::PrintLightestBodyInWater, this) },
 		  { PRINT_ALL, bind(&CBodiesControl::PrintAll, this) },
 		  { END, bind(&CBodiesControl::End, this) },
 	  })
@@ -80,7 +86,7 @@ void CBodiesControl::AddBody()
 	m_output << "\n\n";
 }
 
-double CastToDouble(const string& value)
+optional<double> CastToDouble(const string& value)
 {
 	try
 	{
@@ -88,7 +94,7 @@ double CastToDouble(const string& value)
 	}
 	catch (const bad_cast&)
 	{
-		return NAN;
+		return nullopt;
 	}
 }
 
@@ -104,105 +110,16 @@ optional<int> CastToInt(const string& value)
 	}
 }
 
-shared_ptr<CCompound> CBodiesControl::GetCompoudBodyByStringId(const string& appendIdStr, vector<shared_ptr<CCompound>>& usedNodes) const
-{
-	shared_ptr<CCompound> appendElem;
-	vector<string> elemIds;
-	boost::split(elemIds, appendIdStr, boost::is_any_of("-"));
-
-	int index = 0;
-	for (auto& elemId : elemIds)
-	{
-		auto id = CastToInt(elemId).value();
-		shared_ptr<CBody> temp;
-		if (index == 0)
-		{
-			auto appendBodyPair = GetBodyPairById(id);
-			if (!appendBodyPair.has_value())
-			{
-				m_output << "Not correct Updated Body element.\n\n";
-				break;
-			}
-			temp = appendBodyPair.value().second;
-		}
-		else
-		{
-			auto nestedElem = appendElem->GetChildById(id);
-			if (!nestedElem.has_value())
-			{
-				m_output << "Not correct Updated Body element.\n\n";
-				break;
-			}
-			temp = nestedElem.value();
-		}
-		appendElem = static_pointer_cast<CCompound>(temp);
-		usedNodes.push_back(appendElem);
-		index++;
-	}
-	return appendElem;
-}
-
-void CBodiesControl::UpdateCompound()
-{
-	string search, appendIdStr;
-	getline(m_input, search);
-
-	optional<pair<int, shared_ptr<CBody>>> pushBodyPair;
-
-	smatch matches;
-	if (regex_match(search, matches, UPDATE_COMPOUND_REGEX))
-	{
-		appendIdStr = matches[2].str();
-		auto pushIdOpt = CastToInt(matches[6].str());
-		if (!pushIdOpt.has_value())
-		{
-			m_output << "Not correct input.\n\n";
-			return;
-		}
-		pushBodyPair = GetBodyPairById(pushIdOpt.value());
-	}
-	else
-	{
-		m_output << "Not correct input.\n\n";
-		return;
-	}
-
-	if (!pushBodyPair.has_value())
-	{
-		m_output << "Not correct Push Body element.\n\n";
-		return;
-	}
-
-	vector<shared_ptr<CCompound>> usedNodes;
-	auto appendBody = GetCompoudBodyByStringId(appendIdStr, usedNodes);
-	auto pushBody = pushBodyPair.value().second;
-
-	auto it = std::find_if(usedNodes.begin(), usedNodes.end(),
-		[=](const shared_ptr<CCompound>& appendBody) { return appendBody == pushBody; });
-
-	if (it == usedNodes.end())
-	{
-		RemoveBodyById(pushBodyPair.value().first);
-		appendBody->AddChildBody(pushBody);
-
-		m_output << "Update Compound Body was completed successfully.\n\n";
-	}
-	else
-	{
-		m_output << "Update Compound Body was completed unsuccessfully. Found cycle of Bodies.\n\n";
-	}
-}
-
-void CBodiesControl::GetMostMassiveBody()
+void CBodiesControl::PrintMostMassiveBody()
 {
 	shared_ptr<CBody> mostMassiveBody = nullptr;
 	int id = 0;
 	for (auto& elem : m_bodies)
 	{
-		if (mostMassiveBody == nullptr || mostMassiveBody->GetMass() < elem.second->GetMass())
+		if (mostMassiveBody == nullptr || mostMassiveBody->GetMass() < elem->GetMass())
 		{
-			mostMassiveBody = elem.second;
-			id = elem.first;
+			mostMassiveBody = elem;
+			id = elem->GetId();
 		}
 	}
 
@@ -218,16 +135,16 @@ double GetWeightInWater(const shared_ptr<CBody>& elem)
 	return GRAVITY * (elem->GetMass() - WATER_DENSITY * elem->GetVolume());
 }
 
-void CBodiesControl::GetLightestBodyInWater()
+void CBodiesControl::PrintLightestBodyInWater()
 {
 	shared_ptr<CBody> lightestBodyInWater = nullptr;
 	int id = 0;
 	for (auto& elem : m_bodies)
 	{
-		if (lightestBodyInWater == nullptr || GetWeightInWater(lightestBodyInWater) < GetWeightInWater(elem.second))
+		if (lightestBodyInWater == nullptr || GetWeightInWater(lightestBodyInWater) < GetWeightInWater(elem))
 		{
-			lightestBodyInWater = elem.second;
-			id = elem.first;
+			lightestBodyInWater = elem;
+			id = elem->GetId();
 		}
 	}
 
@@ -247,7 +164,7 @@ void CBodiesControl::PrintAll()
 
 	for (auto& elem : m_bodies)
 	{
-		m_output << "ID = " << elem.first << "; " << elem.second->ToString();
+		m_output << "ID = " << to_string(elem->GetId()) << "; " << elem->ToString();
 	}
 }
 
@@ -255,8 +172,8 @@ void CBodiesControl::End()
 {
 	m_output << "\n----RESULT----\n";
 	PrintAll();
-	GetMostMassiveBody();
-	GetLightestBodyInWater();
+	PrintMostMassiveBody();
+	PrintLightestBodyInWater();
 	m_output << "Goodbye.\n\n";
 }
 
@@ -272,13 +189,14 @@ bool CBodiesControl::AddSphere()
 	smatch matches;
 	if (regex_match(search, matches, ADD_SPHERE_REGEX))
 	{
-		auto radius = CastToDouble(matches[2].str());
+		auto radius = CastToDouble(matches[2].str()).value();
 		auto density = CastToDouble(matches[4].str());
 
 		try
 		{
-			auto newElem = isnan(density) ? make_shared<CSphere>(radius) : make_shared<CSphere>(radius, density);
-			m_bodies.push_back(make_pair(m_lastIndex, newElem));
+			auto newElem = (!density.has_value()) ? make_shared<CSphere>(radius) : make_shared<CSphere>(radius, density.value());
+			newElem->SetId(m_lastIndex);
+			m_bodies.push_back(newElem);
 			m_lastIndex++;
 			return true;
 		}
@@ -303,15 +221,17 @@ bool CBodiesControl::AddParallelepiped()
 	smatch matches;
 	if (regex_match(search, matches, ADD_PARALLELEPIPED_REGEX))
 	{
-		auto width = CastToDouble(matches[2].str());
-		auto height = CastToDouble(matches[4].str());
-		auto depth = CastToDouble(matches[6].str());
+		auto width = CastToDouble(matches[2].str()).value();
+		auto height = CastToDouble(matches[4].str()).value();
+		auto depth = CastToDouble(matches[6].str()).value();
 		auto density = CastToDouble(matches[8].str());
 
 		try
 		{
-			auto newElem = isnan(density) ? make_shared<CParallelepiped>(width, height, depth) : make_shared<CParallelepiped>(width, height, depth, density);
-			m_bodies.push_back(make_pair(m_lastIndex, newElem));
+			auto newElem = (!density.has_value()) ? make_shared<CParallelepiped>(width, height, depth) 
+				: make_shared<CParallelepiped>(width, height, depth, density.value());
+			newElem->SetId(m_lastIndex);
+			m_bodies.push_back(newElem);
 			m_lastIndex++;
 			return true;
 		}
@@ -335,14 +255,16 @@ bool CBodiesControl::AddCone()
 	smatch matches;
 	if (regex_match(search, matches, ADD_CONE_REGEX))
 	{
-		auto baseRadius = CastToDouble(matches[2].str());
-		auto height = CastToDouble(matches[4].str());
+		auto baseRadius = CastToDouble(matches[2].str()).value();
+		auto height = CastToDouble(matches[4].str()).value();
 		auto density = CastToDouble(matches[6].str());
 
 		try
 		{
-			auto newElem = isnan(density) ? make_shared<CCone>(baseRadius, height) : make_shared<CCone>(baseRadius, height, density);
-			m_bodies.push_back(make_pair(m_lastIndex, newElem));
+			auto newElem = (!density.has_value()) ? make_shared<CCone>(baseRadius, height) 
+				: make_shared<CCone>(baseRadius, height, density.value());
+			newElem->SetId(m_lastIndex);
+			m_bodies.push_back(newElem);
 			m_lastIndex++;
 			return true;
 		}
@@ -366,14 +288,16 @@ bool CBodiesControl::AddCylinder()
 	smatch matches;
 	if (regex_match(search, matches, ADD_CONE_REGEX))
 	{
-		auto baseRadius = CastToDouble(matches[2].str());
-		auto height = CastToDouble(matches[4].str());
+		auto baseRadius = CastToDouble(matches[2].str()).value();
+		auto height = CastToDouble(matches[4].str()).value();
 		auto density = CastToDouble(matches[6].str());
 
 		try
 		{
-			auto newElem = isnan(density) ? make_shared<CCylinder>(baseRadius, height) : make_shared<CCylinder>(baseRadius, height, density);
-			m_bodies.push_back(make_pair(m_lastIndex, newElem));
+			auto newElem = (!density.has_value()) ? make_shared<CCylinder>(baseRadius, height) 
+				: make_shared<CCylinder>(baseRadius, height, density.value());
+			newElem->SetId(m_lastIndex);
+			m_bodies.push_back(newElem);
 			m_lastIndex++;
 			return true;
 		}
@@ -405,11 +329,11 @@ bool CBodiesControl::AddCompound()
 		auto id = CastToInt(match[2]);
 		if (id.has_value() && IsBodyByIdExist(id.value()))
 		{
-			auto elemPair = GetBodyPairById(id.value());
+			auto elemPair = GetBodyById(id.value());
 			if (!elemPair.has_value())
 				continue;
 
-			compound.AddChildBody(elemPair->second);
+			compound.AddChildBody(elemPair.value());
 			coutElems++;
 			RemoveBodyById(id.value());
 		}
@@ -417,20 +341,106 @@ bool CBodiesControl::AddCompound()
 
 	if (coutElems != 0)
 	{
-		m_bodies.push_back(make_pair(m_lastIndex, make_shared<CCompound>(compound)));
+		auto newElem = make_shared<CCompound>(compound);
+		newElem->SetId(m_lastIndex);
+		m_bodies.push_back(newElem);
 		m_lastIndex++;
 		return true;
 	}
 	return false;
 }
 
-optional<pair<int, shared_ptr<CBody>>> CBodiesControl::GetBodyPairById(const int id) const
+shared_ptr<CCompound> CBodiesControl::GetCompoudBodyByStringId(const string& appendIdStr, vector<shared_ptr<CCompound>>& usedNodes) const
 {
-	for (auto& pair : m_bodies)
+	shared_ptr<CCompound> appendElem;
+	vector<string> elemIds;
+	boost::split(elemIds, appendIdStr, boost::is_any_of("-"));
+
+	bool isNotNested = true;
+	for (auto& elemId : elemIds)
 	{
-		if (pair.first == id)
+		auto id = CastToInt(elemId).value();
+		shared_ptr<CBody> temp;
+		if (isNotNested)
 		{
-			return pair;
+			auto appendBody = GetBodyById(id);
+			if (!appendBody.has_value())
+				break;
+			temp = appendBody.value();
+			isNotNested = false;
+		}
+		else
+		{
+			auto nestedElem = appendElem->GetChildById(id);
+			if (!nestedElem)
+				break;
+			temp = nestedElem;
+		}
+		appendElem = static_pointer_cast<CCompound>(temp);
+		usedNodes.push_back(appendElem);
+	}
+	return appendElem;
+}
+
+void CBodiesControl::UpdateCompound()
+{
+	string search, appendIdStr;
+	getline(m_input, search);
+
+	optional<shared_ptr<CBody>> pushBodyElem;
+
+	smatch matches;
+	if (regex_match(search, matches, UPDATE_COMPOUND_REGEX))
+	{
+		appendIdStr = matches[2].str();
+		auto pushIdOpt = CastToInt(matches[6].str());
+		if (!pushIdOpt.has_value())
+		{
+			m_output << "Not correct input.\n\n";
+			return;
+		}
+		pushBodyElem = GetBodyById(pushIdOpt.value());
+	}
+	else
+	{
+		m_output << "Not correct input.\n\n";
+		return;
+	}
+
+	if (!pushBodyElem.has_value())
+	{
+		m_output << "Not correct Push Body element.\n\n";
+		return;
+	}
+
+	vector<shared_ptr<CCompound>> usedNodes;
+	auto appendBody = GetCompoudBodyByStringId(appendIdStr, usedNodes);
+	auto pushBody = pushBodyElem.value();
+
+	auto it = std::find_if(usedNodes.begin(), usedNodes.end(),
+		[=](const shared_ptr<CCompound>& appendBody) { return appendBody == pushBody; });
+
+	if (it == usedNodes.end() && appendBody != nullptr)
+	{
+		appendBody->AddChildBody(pushBody);
+		RemoveBodyById(pushBodyElem.value()->GetId());
+
+		m_output << "Update Compound Body was completed successfully.\n\n";
+	}
+	else
+	{
+		m_output << "Update Compound Body was completed unsuccessfully. Found cycle of Bodies.\n\n";
+	}
+}
+
+
+optional<shared_ptr<CBody>> CBodiesControl::GetBodyById(const int id) const
+{
+	for (auto& elem : m_bodies)
+	{
+		if (elem->GetId() == id)
+		{
+			return elem;
 		}
 	}
 	return nullopt;
@@ -438,9 +448,9 @@ optional<pair<int, shared_ptr<CBody>>> CBodiesControl::GetBodyPairById(const int
 
 bool CBodiesControl::IsBodyByIdExist(const int id) const
 {
-	for (auto& pair : m_bodies)
+	for (auto& elem : m_bodies)
 	{
-		if (pair.first == id)
+		if (elem->GetId() == id)
 		{
 			return true;
 		}
@@ -454,8 +464,8 @@ void CBodiesControl::RemoveBodyById(const int id)
 		remove_if(
 			m_bodies.begin(),
 			m_bodies.end(),
-			[id](const pair<int, shared_ptr<CBody>>& e) {
-				return id == e.first;
+			[id](const shared_ptr<CBody>& e) {
+				return id == e->GetId();
 			}),
 		m_bodies.end());
 }

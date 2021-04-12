@@ -33,9 +33,9 @@ BOOST_FIXTURE_TEST_SUITE(Parallelepiped, Parallelepiped_)
 
 	BOOST_AUTO_TEST_CASE(throw_the_invalid_argument_error_if_width_does_not_correct)
 	{
-		BOOST_CHECK_THROW(CParallelepiped(0, 1, 1, 1), std::invalid_argument);
-		BOOST_CHECK_THROW(CParallelepiped(-1, 1, 1, 1), std::invalid_argument);
-		BOOST_CHECK_NO_THROW(CParallelepiped(0.01, 1, 1, 1));
+		BOOST_CHECK_THROW(CParallelepiped(0, 1, 1), std::invalid_argument);
+		BOOST_CHECK_THROW(CParallelepiped(-1, 1, 1), std::invalid_argument);
+		BOOST_CHECK_NO_THROW(CParallelepiped(0.01, 1, 1));
 	}
 
 	BOOST_AUTO_TEST_CASE(has_a_height)
@@ -45,9 +45,9 @@ BOOST_FIXTURE_TEST_SUITE(Parallelepiped, Parallelepiped_)
 
 	BOOST_AUTO_TEST_CASE(throw_the_invalid_argument_error_if_height_does_not_correct)
 	{
-		BOOST_CHECK_THROW(CParallelepiped(1, 0, 1, 1), std::invalid_argument);
-		BOOST_CHECK_THROW(CParallelepiped(1, -1, 1, 1), std::invalid_argument);
-		BOOST_CHECK_NO_THROW(CParallelepiped(1, 0.01, 1, 1));
+		BOOST_CHECK_THROW(CParallelepiped(1, 0, 1), std::invalid_argument);
+		BOOST_CHECK_THROW(CParallelepiped(1, -1, 1), std::invalid_argument);
+		BOOST_CHECK_NO_THROW(CParallelepiped(1, 0.01, 1));
 	}
 
 	BOOST_AUTO_TEST_CASE(has_a_depth)
@@ -57,9 +57,9 @@ BOOST_FIXTURE_TEST_SUITE(Parallelepiped, Parallelepiped_)
 
 	BOOST_AUTO_TEST_CASE(throw_the_invalid_argument_error_if_depth_does_not_correct)
 	{
-		BOOST_CHECK_THROW(CParallelepiped(1, 1, 0, 1), std::invalid_argument);
-		BOOST_CHECK_THROW(CParallelepiped(1, 1, -1, 1), std::invalid_argument);
-		BOOST_CHECK_NO_THROW(CParallelepiped(1, 1, 0.01, 1));
+		BOOST_CHECK_THROW(CParallelepiped(1, 1, 0), std::invalid_argument);
+		BOOST_CHECK_THROW(CParallelepiped(1, 1, -1), std::invalid_argument);
+		BOOST_CHECK_NO_THROW(CParallelepiped(1, 1, 0.01));
 	}
 
 	BOOST_AUTO_TEST_CASE(has_a_density)

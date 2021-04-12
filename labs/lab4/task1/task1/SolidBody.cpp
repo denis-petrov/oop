@@ -4,6 +4,7 @@ using namespace std;
 
 CSolidBody::CSolidBody(const double density)
 	: m_density(density)
+	, m_id(0)
 {
 	if (!(m_density > MIN_PARAM))
 	{
@@ -30,3 +31,15 @@ string CSolidBody::ToString(const int padding) const
 		   << string("\t", padding) << "Mass = " << GetMass() << endl;
 	return stream.str();
 }
+
+int CSolidBody::GetId() const 
+{
+	return m_id;
+}
+
+void CSolidBody::SetId(const int id) 
+{
+	m_id = id;
+}
+
+

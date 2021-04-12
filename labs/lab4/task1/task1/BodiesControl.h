@@ -15,8 +15,8 @@ private:
 	void Help();
 	void AddBody();
 	void UpdateCompound();
-	void GetMostMassiveBody();
-	void GetLightestBodyInWater();
+	void PrintMostMassiveBody();
+	void PrintLightestBodyInWater();
 	void PrintAll();
 	void End();
 
@@ -36,9 +36,9 @@ private:
 	using ActionBody = std::map<std::string, HandlerBody>;
 	const ActionBody m_addBodyMap;
 
-	std::vector<std::pair<int, std::shared_ptr<CBody>>> m_bodies;
+	std::vector<std::shared_ptr<CBody>> m_bodies;
 	int m_lastIndex = 0;
-	std::optional<std::pair<int, std::shared_ptr<CBody>>> GetBodyPairById(const int id) const;
+	std::optional<std::shared_ptr<CBody>> GetBodyById(const int id) const;
 	std::shared_ptr<CCompound> GetCompoudBodyByStringId(const std::string& appendIdStr, std::vector<std::shared_ptr<CCompound>>& usedNode) const;
 	bool IsBodyByIdExist(const int id) const;
 	void RemoveBodyById(const int id);
