@@ -4,20 +4,20 @@ using namespace std;
 
 bool CCompound::AddChildBody(const shared_ptr<CBody>& child)
 {
-	m_children.push_back(child);
-	return true;
+	if (GetChildById(child->GetId()) == nullptr)
+	{
+		m_children.push_back(child);
+		return true;
+	}
+	return false;
 }
 
 shared_ptr<CBody> CCompound::GetChildById(const int id) const
 {
-	try
-	{
-		return m_children.at(id);
-	}
-	catch (const exception&)
-	{
-		return nullptr;
-	}
+	for (auto& child : m_children)
+		if (child->GetId() == id)
+			return child;
+	return nullptr;
 }
 
 int CCompound::GetId() const

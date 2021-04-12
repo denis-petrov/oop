@@ -111,16 +111,33 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 
 		CSphere sphere(1, 7);
 		auto sharedSphere = std::make_shared<CSphere>(sphere);
+		sharedSphere->SetId(0);
 		BOOST_CHECK(compound.AddChildBody(sharedSphere));
 
 		CParallelepiped parallelepiped(1, 7, 8, 9);
 		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
+		sharedParallelepiped->SetId(1);
 		BOOST_CHECK(compound.AddChildBody(sharedParallelepiped));
 
 		BOOST_CHECK(compound.GetChildById(-1) == nullptr);
 		BOOST_CHECK(compound.GetChildById(0) == sharedSphere);
 		BOOST_CHECK(compound.GetChildById(1) == sharedParallelepiped);
 		BOOST_CHECK(compound.GetChildById(2) == nullptr);
+	}
+
+	BOOST_AUTO_TEST_CASE(not_able_add_element_with_existing_id)
+	{
+		CCompound compound;
+
+		CSphere sphere(1, 7);
+		auto sharedSphere = std::make_shared<CSphere>(sphere);
+		sharedSphere->SetId(0);
+		BOOST_CHECK(compound.AddChildBody(sharedSphere));
+
+		CParallelepiped parallelepiped(1, 7, 8, 9);
+		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
+		sharedParallelepiped->SetId(0);
+		BOOST_CHECK(compound.AddChildBody(sharedParallelepiped) == false);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

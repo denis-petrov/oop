@@ -355,7 +355,7 @@ shared_ptr<CCompound> CBodiesControl::GetNestedCompoudBody(const vector<string>&
 		return nullptr;
 
 	shared_ptr<CCompound> nestedAppendElem = static_pointer_cast<CCompound>(firstBody);
-	usedNodes.push_back(nestedAppendElem);
+	usedNodes.push_back(static_pointer_cast<CCompound>(firstBody));
 
 	bool isFirst = true;
 	for (auto& elemId : elemIds)
