@@ -50,7 +50,7 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 		BOOST_CHECK(compound.GetDensity() == sphere.GetDensity());
 		BOOST_CHECK(compound.GetVolume() == sphere.GetVolume());
 
-		CParallelepiped parallelepiped(1, 7, 8);
+		CParallelepiped parallelepiped(1, 7, 8, 1);
 		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
 		sharedParallelepiped->SetId(1);
 		BOOST_CHECK(compound.AddChildBody(sharedParallelepiped));
@@ -82,7 +82,7 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 		sharedSphere->SetId(0);
 		BOOST_CHECK(compound2.AddChildBody(sharedSphere));
 
-		CParallelepiped parallelepiped(1, 7, 8);
+		CParallelepiped parallelepiped(1, 7, 8, 1);
 		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
 		sharedParallelepiped->SetId(1);
 		BOOST_CHECK(compound2.AddChildBody(sharedParallelepiped));

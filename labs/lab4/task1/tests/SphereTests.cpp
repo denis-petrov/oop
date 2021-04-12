@@ -30,9 +30,9 @@ BOOST_FIXTURE_TEST_SUITE(Sphere, Sphere_)
 
 	BOOST_AUTO_TEST_CASE(throw_the_invalid_argument_error_if_radius_does_not_correct) 
 	{
-		BOOST_CHECK_THROW(CSphere(0), std::invalid_argument);
-		BOOST_CHECK_THROW(CSphere(-1), std::invalid_argument);
-		BOOST_CHECK_NO_THROW(CSphere(0.01));
+		BOOST_CHECK_THROW(CSphere(0, 1), std::invalid_argument);
+		BOOST_CHECK_THROW(CSphere(-1, 1), std::invalid_argument);
+		BOOST_CHECK_NO_THROW(CSphere(0.01, 1));
 	}
 	
 	BOOST_AUTO_TEST_CASE(has_a_density)

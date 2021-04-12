@@ -4,7 +4,7 @@
 class CCylinder : public CSolidBody
 {
 public:
-	CCylinder(const double baseRadius, const double height, const double density = DEFAULT_DENSITY);
+	CCylinder(const double baseRadius, const double height, const double density);
 	virtual ~CCylinder(){};
 
 	double GetVolume() const override;

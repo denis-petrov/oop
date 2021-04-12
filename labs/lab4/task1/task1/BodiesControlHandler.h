@@ -12,16 +12,16 @@ const string PRINT_ALL = "printAll";
 const string END = "end";
 
 const string SPHERE = "Sphere";
-const regex ADD_SPHERE_REGEX("(\\s+)(\\d+)(\\s+)?(\\d+)?");
+const regex ADD_SPHERE_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)");
 
 const string PARALLELEPIPED = "Parallelepiped";
-const regex ADD_PARALLELEPIPED_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)?(\\d+)?");
+const regex ADD_PARALLELEPIPED_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)(\\d+)");
 
 const string CONE = "Cone";
-const regex ADD_CONE_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)?(\\d+)?");
+const regex ADD_CONE_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)(\\d+)");
 
 const string CYLINDER = "Cylinder";
-const regex ADD_CYLINDER_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)?(\\d+)?");
+const regex ADD_CYLINDER_REGEX("(\\s+)(\\d+)(\\s+)(\\d+)(\\s+)(\\d+)");
 
 const string COMPOUND = "Compound";
 const regex ADD_COMPOUND_REGEX("(\\s+)?(\\d+)?");

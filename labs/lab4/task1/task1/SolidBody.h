@@ -4,7 +4,7 @@
 class CSolidBody : public CBody
 {
 public:
-	CSolidBody(const double density = DEFAULT_DENSITY);
+	CSolidBody(const double density);
 	virtual ~CSolidBody(){};
 
 	double GetMass() const override;

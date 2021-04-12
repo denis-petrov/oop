@@ -4,7 +4,7 @@
 class CSphere : public CSolidBody
 {
 public:
-	CSphere(const double radius, const double density = DEFAULT_DENSITY);
+	CSphere(const double radius, const double density);
 	virtual ~CSphere(){};
 
 	double GetVolume() const override final;

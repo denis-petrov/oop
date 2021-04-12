@@ -37,11 +37,13 @@ private:
 	const ActionBody m_addBodyMap;
 
 	std::vector<std::shared_ptr<CBody>> m_bodies;
+
 	int m_lastIndex = 0;
-	std::optional<std::shared_ptr<CBody>> GetBodyById(const int id) const;
-	std::shared_ptr<CCompound> GetCompoudBodyByStringId(const std::string& appendIdStr, std::vector<std::shared_ptr<CCompound>>& usedNode) const;
-	bool IsBodyByIdExist(const int id) const;
-	void RemoveBodyById(const int id);
+	std::shared_ptr<CBody> GetBody(const int id) const;
+	std::pair<std::shared_ptr<CCompound>, std::vector<std::shared_ptr<CCompound>>> GetCompoundBody(const std::string& appendIdStr) const;
+	std::shared_ptr<CCompound> GetNestedCompoudBody(const std::vector<std::string>& elemIds, std::vector<std::shared_ptr<CCompound>>& usedNode) const;
+	bool IsBodyExist(const int id) const;
+	void RemoveBody(const int id);
 
 	std::istream& m_input;
 	std::ostream& m_output;
