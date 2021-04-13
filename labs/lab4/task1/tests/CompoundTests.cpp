@@ -140,4 +140,30 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 		BOOST_CHECK(compound.AddChildBody(sharedParallelepiped) == false);
 	}
 
+	BOOST_AUTO_TEST_CASE(able_get_nested_compound)
+	{
+		CCompound compound;
+		compound.SetId(0);
+
+		CCompound compound2;
+		compound2.SetId(1);
+		auto sharedCompound2 = std::make_shared<CCompound>(compound2);
+
+		CSphere sphere(1, 7);
+		auto sharedSphere = std::make_shared<CSphere>(sphere);
+		sharedSphere->SetId(2);
+		BOOST_CHECK(compound.AddChildBody(sharedSphere));
+
+		CParallelepiped parallelepiped(1, 7, 8, 9);
+		auto sharedParallelepiped = std::make_shared<CParallelepiped>(parallelepiped);
+		sharedParallelepiped->SetId(3);
+		BOOST_CHECK(compound2.AddChildBody(sharedParallelepiped));
+
+		BOOST_CHECK(compound.AddChildBody(sharedCompound2));
+
+		std::vector<int> ids = { 1 };
+		std::vector<std::shared_ptr<CCompound>> usedNodes;
+		BOOST_CHECK(compound.GetNestedCompound(ids, usedNodes) == sharedCompound2);
+	}
+
 BOOST_AUTO_TEST_SUITE_END()

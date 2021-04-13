@@ -350,31 +350,19 @@ bool CBodiesControl::AddCompound()
 shared_ptr<CCompound> CBodiesControl::GetNestedCompoudBody(const vector<string>& elemIds, vector<shared_ptr<CCompound>>& usedNodes) const
 {
 	auto id = CastToInt(elemIds[0]).value();
-	auto firstBody = GetBody(id);
+	auto firstBody = static_pointer_cast<CCompound>(GetBody(id));
 	if (firstBody == nullptr)
 		return nullptr;
+	usedNodes.push_back(firstBody);
 
-	shared_ptr<CCompound> nestedAppendElem = static_pointer_cast<CCompound>(firstBody);
-	usedNodes.push_back(static_pointer_cast<CCompound>(firstBody));
-
-	bool isFirst = true;
-	for (auto& elemId : elemIds)
+	if (elemIds.size() > 1)
 	{
-		if (isFirst)
-		{
-			isFirst = false;
-			continue;
-		}
-
-		auto id = CastToInt(elemId).value();
-		auto nestedElem = nestedAppendElem->GetChildById(id);
-		if (nestedElem == nullptr)
-			return nullptr;
-
-		nestedAppendElem = static_pointer_cast<CCompound>(nestedElem);
-		usedNodes.push_back(nestedAppendElem);
+		vector<int> ids;
+		for (size_t i = 1; i < elemIds.size(); i++)
+			ids.push_back(CastToInt(elemIds[i]).value());
+		return firstBody->GetNestedCompound(ids, usedNodes).value();
 	}
-	return nestedAppendElem;
+	return firstBody;
 }
 
 pair<shared_ptr<CCompound>, vector<shared_ptr<CCompound>>> CBodiesControl::GetCompoundBody(const string& appendIdStr) const
@@ -385,9 +373,7 @@ pair<shared_ptr<CCompound>, vector<shared_ptr<CCompound>>> CBodiesControl::GetCo
 
 	shared_ptr<CCompound> appendBody;
 	if (elemIds.size() > 1)
-	{
 		appendBody = GetNestedCompoudBody(elemIds, usedNodes);
-	}
 	else
 	{
 		appendBody = static_pointer_cast<CCompound>(GetBody(CastToInt(elemIds[0]).value()));

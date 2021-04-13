@@ -20,6 +20,21 @@ shared_ptr<CBody> CCompound::GetChildById(const int id) const
 	return nullptr;
 }
 
+
+optional<shared_ptr<CCompound>> CCompound::GetNestedCompound(const vector<int>& elemIds, vector<shared_ptr<CCompound>>& usedNodes) const
+{
+	shared_ptr<CCompound> nestedElem;
+	for (size_t i = 0; i < elemIds.size(); i++)
+	{
+		auto temp = (i == 0) ? GetChildById(elemIds[i]) : nestedElem->GetChildById(elemIds[i]);
+		if (temp == nullptr)
+			return nullptr;
+		nestedElem = static_pointer_cast<CCompound>(temp);
+		usedNodes.push_back(nestedElem);
+	}
+	return nestedElem;
+}
+
 int CCompound::GetId() const
 {
 	return m_id;
