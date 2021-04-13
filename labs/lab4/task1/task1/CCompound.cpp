@@ -4,7 +4,7 @@ using namespace std;
 
 bool CCompound::AddChildBody(const shared_ptr<CBody>& child)
 {
-	if (GetChildById(child->GetId()) == nullptr)
+	if (child != nullptr && GetChildById(child->GetId()) == nullptr)
 	{
 		m_children.push_back(child);
 		return true;

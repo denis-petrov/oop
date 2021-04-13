@@ -394,22 +394,16 @@ void CBodiesControl::UpdateCompound()
 	{
 		appendIdStr = matches[2].str();
 		auto pushIdOpt = CastToInt(matches[6].str());
-		if (!pushIdOpt.has_value())
+		pushBody = GetBody(pushIdOpt.value());
+		if (!pushBody.has_value())
 		{
-			m_output << "Not correct input.\n\n";
+			m_output << "Not correct push body.\n\n";
 			return;
 		}
-		pushBody = GetBody(pushIdOpt.value());
 	}
 	else
 	{
 		m_output << "Not correct input.\n\n";
-		return;
-	}
-
-	if (!pushBody.has_value())
-	{
-		m_output << "Not correct Push Body element.\n\n";
 		return;
 	}
 
@@ -418,7 +412,7 @@ void CBodiesControl::UpdateCompound()
 	auto cycleIterator = std::find_if(usedNodes.begin(), usedNodes.end(),
 		[=](const shared_ptr<CCompound>& appendBody) { return appendBody == pushBody.value(); });
 
-	if (appendBody != nullptr && cycleIterator == usedNodes.end())
+	if (appendBody != nullptr && pushBody.value() != nullptr && cycleIterator == usedNodes.end())
 	{
 		appendBody->AddChildBody(pushBody.value());
 		RemoveBody(pushBody.value()->GetId());
