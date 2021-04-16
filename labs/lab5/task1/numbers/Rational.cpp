@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const regex RATIONAL_REGEX("(\\d+)\\/(\\d+)");
+const regex RATIONAL_REGEX("(\\-?\\d+)\\/(\\-?\\d+)");
 
 CRational::CRational()
 	: m_numerator(DEFAULT_NUMERATOR)
@@ -55,7 +55,17 @@ int CRational::GetDenominator() const
 
 double CRational::ToDouble() const
 {
-	return m_numerator / m_denominator;
+	return (double)m_numerator / m_denominator;
+}
+
+pair<int, CRational> CRational::ToCompoundFraction() const
+{
+	int numer = GetNumerator();
+	int denom = GetDenominator();
+
+	int intPart = numer / denom;
+	int fracPartNum = (intPart != 0) ? abs(numer) % denom : numer % denom;
+	return { intPart, CRational(fracPartNum, denom) };
 }
 
 /* PRIVATE */

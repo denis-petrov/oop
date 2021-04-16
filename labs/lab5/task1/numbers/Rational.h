@@ -13,6 +13,8 @@ public:
 	int GetDenominator() const;
 	double ToDouble() const;
 
+	std::pair<int, CRational> ToCompoundFraction() const;
+
 public:
 	CRational const operator+() const;
 	CRational const operator-() const;
@@ -21,6 +23,8 @@ public:
 	CRational & operator-=(CRational const& rhs);
 	CRational & operator*=(CRational const& rhs);
 	CRational & operator/=(CRational const& rhs);
+
+	friend std::istream& operator>>(std::istream& in, CRational& num);
 
 private:
 	void ReduceByGreatestCommonDivisor();
@@ -46,4 +50,3 @@ bool operator<(CRational const& lhs, CRational const& rhs);
 bool operator<=(CRational const& lhs, CRational const& rhs);
 
 std::ostream& operator<<(std::ostream& out, CRational const& num);
-std::istream& operator>>(std::istream& in, CRational& num);

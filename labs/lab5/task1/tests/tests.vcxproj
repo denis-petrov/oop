@@ -168,6 +168,7 @@
     <ClCompile Include="RationalMultiplicationEqual.cpp" />
     <ClCompile Include="RationalPlusEqual.cpp" />
     <ClCompile Include="RationalPrint.cpp" />
+    <ClCompile Include="RationalPublicPart.cpp" />
     <ClCompile Include="RationalRead.cpp" />
     <ClCompile Include="RationalUnaryPlusAndMinus.cpp" />
     <ClCompile Include="stdafx.cpp" />
