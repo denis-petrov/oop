@@ -14,7 +14,6 @@ BOOST_FIXTURE_TEST_SUITE(Rational_initialization, Rational_)
 	{
 		BOOST_CHECK(rationalEmpty.GetNumerator() == 0);
 		BOOST_CHECK(rationalEmpty.GetDenominator() == 1);
-		BOOST_CHECK(rationalEmpty.IsNegative() == false);
 	}
 
 	BOOST_AUTO_TEST_CASE(able_only_numerator)
@@ -28,9 +27,8 @@ BOOST_FIXTURE_TEST_SUITE(Rational_initialization, Rational_)
 		BOOST_CHECK(rationalZero.GetDenominator() == 1);
 
 		CRational rationalMinus(-1);
-		BOOST_CHECK(rationalMinus.GetNumerator() == 1);
+		BOOST_CHECK(rationalMinus.GetNumerator() == -1);
 		BOOST_CHECK(rationalMinus.GetDenominator() == 1);
-		BOOST_CHECK(rationalMinus.IsNegative() == true);
 	}
 
 	BOOST_AUTO_TEST_CASE(able_numerator_and_denominator)
@@ -48,9 +46,8 @@ BOOST_FIXTURE_TEST_SUITE(Rational_initialization, Rational_)
 		BOOST_CHECK(rational3.GetDenominator() == 3);
 		
 		CRational rational4(-7, 3);
-		BOOST_CHECK(rational4.GetNumerator() == 7);
+		BOOST_CHECK(rational4.GetNumerator() == -7);
 		BOOST_CHECK(rational4.GetDenominator() == 3);
-		BOOST_CHECK(rational4.IsNegative() == true);
 	}
 
 	BOOST_AUTO_TEST_CASE(numerator_and_denominator_reduce_by_gcd)
@@ -62,30 +59,41 @@ BOOST_FIXTURE_TEST_SUITE(Rational_initialization, Rational_)
 		CRational rational2(18, 6);
 		BOOST_CHECK(rational2.GetNumerator() == 3);
 		BOOST_CHECK(rational2.GetDenominator() == 1);
-		BOOST_CHECK(rational2.IsNegative() == false);
+
+		CRational rational3(-45, 5);
+		BOOST_CHECK(rational3.GetNumerator() == -9);
+		BOOST_CHECK(rational3.GetDenominator() == 1);
+
+		CRational rational4(-81, -3);
+		BOOST_CHECK(rational4.GetNumerator() == 27);
+		BOOST_CHECK(rational4.GetDenominator() == 1);
+
+		CRational rational5(78, 28);
+		BOOST_CHECK(rational5.GetNumerator() == 39);
+		BOOST_CHECK(rational5.GetDenominator() == 14);
 	}
 
 	BOOST_AUTO_TEST_CASE(numerator_and_denominator_stay_with_correct_sign)
 	{
 		CRational rational(-6, 3);
-		BOOST_CHECK(rational.GetNumerator() == 2);
+		BOOST_CHECK(rational.GetNumerator() == -2);
 		BOOST_CHECK(rational.GetDenominator() == 1);
-		BOOST_CHECK(rational.IsNegative() == true);
 
 		CRational rational2(-18, -6);
 		BOOST_CHECK(rational2.GetNumerator() == 3);
 		BOOST_CHECK(rational2.GetDenominator() == 1);
-		BOOST_CHECK(rational2.IsNegative() == false);
 
 		CRational rational3(-0, 1);
 		BOOST_CHECK(rational3.GetNumerator() == 0);
 		BOOST_CHECK(rational3.GetDenominator() == 1);
-		BOOST_CHECK(rational3.IsNegative() == false);
 
 		CRational rational4(0, -1);
 		BOOST_CHECK(rational4.GetNumerator() == 0);
 		BOOST_CHECK(rational4.GetDenominator() == 1);
-		BOOST_CHECK(rational4.IsNegative() == false);
+
+		CRational rational5(2, -1);
+		BOOST_CHECK(rational5.GetNumerator() == -2);
+		BOOST_CHECK(rational5.GetDenominator() == 1);
 	}
 	
 	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_denominator_is_equal_zero)

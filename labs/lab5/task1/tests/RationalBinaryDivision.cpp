@@ -6,23 +6,21 @@ struct Rational_
 	Rational_() {}
 };
 
-BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
+BOOST_FIXTURE_TEST_SUITE(Rational_binary_division, Rational_)
 
-	BOOST_AUTO_TEST_CASE(right_hand_side_able_be_empty_and_be_rational)
+	BOOST_AUTO_TEST_CASE(if_new_denominator_equal_to_zero_then_throw_error)
 	{
 		CRational rationalEmpty1;
 		CRational rationalEmpty2;
-		CRational result = rationalEmpty1 + rationalEmpty2;
-		BOOST_CHECK(result.GetNumerator() == 0);
-		BOOST_CHECK(result.GetDenominator() == 1);
+		BOOST_CHECK_THROW(CRational(rationalEmpty1 / rationalEmpty2), std::invalid_argument);
 	}
 
 	BOOST_AUTO_TEST_CASE(right_hand_side_able_be_less_zero_and_be_rational)
 	{
 		CRational rationalMoreZero(1, 1);
 		CRational rationalLessZero(-1, 1);
-		CRational result = rationalMoreZero + rationalLessZero;
-		BOOST_CHECK(result.GetNumerator() == 0);
+		CRational result = rationalMoreZero / rationalLessZero;
+		BOOST_CHECK(result.GetNumerator() == -1);
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
@@ -30,8 +28,8 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
 	{
 		CRational rationalMoreZero(1, 1);
 		CRational rationalLessZero(-1, 1);
-		CRational result = rationalLessZero + rationalMoreZero;
-		BOOST_CHECK(result.GetNumerator() == 0);
+		CRational result = rationalLessZero / rationalMoreZero;
+		BOOST_CHECK(result.GetNumerator() == -1);
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
@@ -39,17 +37,17 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
 	{
 		CRational lhs(1, 1);
 		CRational rhs(1, 3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == 4);
-		BOOST_CHECK(result.GetDenominator() == 3);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 3);
+		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
 	BOOST_AUTO_TEST_CASE(left_hand_side_denominator_able_be_not_equal_to_right_and_be_rational)
 	{
 		CRational rhs(1, 1);
 		CRational lhs(1, 3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == 4);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 1);
 		BOOST_CHECK(result.GetDenominator() == 3);
 	}
 
@@ -57,17 +55,17 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
 	{
 		CRational lhs(-1, 1);
 		CRational rhs(-1, 3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -4);
-		BOOST_CHECK(result.GetDenominator() == 3);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 3);
+		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
 	BOOST_AUTO_TEST_CASE(left_hand_side_and_right_hand_able_be_negative_and_rational)
 	{
 		CRational rhs(-1, 1);
 		CRational lhs(-1, 3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -4);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 1);
 		BOOST_CHECK(result.GetDenominator() == 3);
 	}
 
@@ -75,44 +73,42 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
 	{
 		CRational lhs(-1, 1);
 		int rhs(2);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == 1);
-		BOOST_CHECK(result.GetDenominator() == 1);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == -1);
+		BOOST_CHECK(result.GetDenominator() == 2);
 	}
 
 	BOOST_AUTO_TEST_CASE(left_hand_side_able_be_int)
 	{
 		CRational rhs(-1, 1);
 		int lhs(2);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == 1);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == -2);
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
-	BOOST_AUTO_TEST_CASE(right_hand_side_able_be_equal_to_zero)
+	BOOST_AUTO_TEST_CASE(throw_error_if_rhs_denominatir_equal_to_zero)
 	{
 		CRational lhs(-1, 1);
 		int rhs(0);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -1);
-		BOOST_CHECK(result.GetDenominator() == 1);
+		BOOST_CHECK_THROW(lhs / rhs, std::invalid_argument);
 	}
 
-	BOOST_AUTO_TEST_CASE(right_hand_side_able_be_less_than_zero)
+	BOOST_AUTO_TEST_CASE(right_hand_side_able_be_less_than_zero_and_be_int)
 	{
 		CRational lhs(-1, 1);
 		int rhs(-3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -4);
-		BOOST_CHECK(result.GetDenominator() == 1);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 1);
+		BOOST_CHECK(result.GetDenominator() == 3);
 	}
 
-	BOOST_AUTO_TEST_CASE(left_hand_side_able_be_equal_to_zero)
+	BOOST_AUTO_TEST_CASE(left_hand_side_able_be_equak_to_zero)
 	{
 		CRational rhs(-1, 1);
 		int lhs(0);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -1);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 0);
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 
@@ -120,8 +116,8 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_plus, Rational_)
 	{
 		CRational rhs(-1, 1);
 		int lhs(-3);
-		CRational result = lhs + rhs;
-		BOOST_CHECK(result.GetNumerator() == -4);
+		CRational result = lhs / rhs;
+		BOOST_CHECK(result.GetNumerator() == 3);
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 

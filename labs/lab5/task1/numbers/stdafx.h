@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
+#include <regex>
+#include "boost/lexical_cast.hpp"
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 

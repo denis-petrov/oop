@@ -156,8 +156,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\numbers\Rational.cpp" />
+    <ClCompile Include="RationalBinaryDivision.cpp" />
+    <ClCompile Include="RationalBinaryMinus.cpp" />
+    <ClCompile Include="RationalBinaryMultiplication.cpp" />
     <ClCompile Include="RationalBinaryPlus.cpp" />
+    <ClCompile Include="RationalCompare.cpp" />
+    <ClCompile Include="RationalDivisionEqual.cpp" />
+    <ClCompile Include="RationalEqualAndNotEqual.cpp" />
     <ClCompile Include="RationalInitialization.cpp" />
+    <ClCompile Include="RationalMinusEqual.cpp" />
+    <ClCompile Include="RationalMultiplicationEqual.cpp" />
+    <ClCompile Include="RationalPlusEqual.cpp" />
+    <ClCompile Include="RationalPrint.cpp" />
+    <ClCompile Include="RationalRead.cpp" />
     <ClCompile Include="RationalUnaryPlusAndMinus.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="tests.cpp" />
