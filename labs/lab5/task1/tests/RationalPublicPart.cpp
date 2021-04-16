@@ -93,16 +93,6 @@ BOOST_FIXTURE_TEST_SUITE(Rational_public_part, Rational_)
 		auto res6 = num6.ToCompoundFraction();
 		BOOST_CHECK(res6.first == -2);
 		BOOST_CHECK(res6.second == CRational(1, 4));
-
-	/*	
-		CRational num2(-4, 8);
-		BOOST_CHECK(num2.ToCompoundFraction() == (double)-0.5);
-
-		CRational num3(4, -8);
-		BOOST_CHECK(num3.ToCompoundFraction() == (double)-0.5);
-
-		CRational num4(-4, -8);
-		BOOST_CHECK(num4.ToCompoundFraction() == (double)0.5);*/
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
