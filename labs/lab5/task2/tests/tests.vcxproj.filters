@@ -21,10 +21,25 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyStringInitialization.cpp">
+    <ClCompile Include="MyStringInitializationAndClear.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\string\MyString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyStringSubstring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyStringCompareEqualAndNot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyStringPlus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyStringEqual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyStringCompareAll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
