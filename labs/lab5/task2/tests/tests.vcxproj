@@ -156,11 +156,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\string\MyString.cpp" />
+    <ClCompile Include="MyStringAccessToElem.cpp" />
     <ClCompile Include="MyStringCompareAll.cpp" />
     <ClCompile Include="MyStringCompareEqualAndNot.cpp" />
     <ClCompile Include="MyStringEqual.cpp" />
     <ClCompile Include="MyStringInitializationAndClear.cpp" />
     <ClCompile Include="MyStringPlus.cpp" />
+    <ClCompile Include="MyStringReadAndPrint.cpp" />
     <ClCompile Include="MyStringSubstring.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="tests.cpp" />

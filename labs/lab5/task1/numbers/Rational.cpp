@@ -178,8 +178,7 @@ bool operator<=(CRational const& lhs, CRational const& rhs)
 
 ostream& operator<<(ostream& out, CRational const& num) 
 {
-	out << num.GetNumerator() << "/" << num.GetDenominator();
-	return out;
+	return out << num.GetNumerator() << "/" << num.GetDenominator();
 }
 
 istream& operator>>(istream& in, CRational& num)

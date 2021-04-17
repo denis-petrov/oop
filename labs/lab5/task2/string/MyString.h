@@ -25,6 +25,11 @@ public:
 	CMyString& operator=(CMyString const& other);
 	CMyString& operator=(CMyString&& other) noexcept;
 	CMyString& operator+=(CMyString const& rhs);
+	
+	char& operator[](const size_t index);
+	const char& operator[](const size_t index) const;
+
+	friend std::istream& operator>>(std::istream& in, CMyString& str);
 
 private:
 	char* buffer_;
@@ -40,3 +45,5 @@ bool operator>(CMyString const& lhs, CMyString const& rhs);
 bool operator>=(CMyString const& lhs, CMyString const& rhs);
 bool operator<(CMyString const& lhs, CMyString const& rhs);
 bool operator<=(CMyString const& lhs, CMyString const& rhs);
+
+std::ostream& operator<<(std::ostream& out, CMyString const& str);

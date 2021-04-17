@@ -74,9 +74,7 @@ const char* CMyString::GetStringData() const
 CMyString CMyString::SubString(size_t start, size_t length) const
 {
 	if (length > length_)
-	{
 		throw invalid_argument("Access denied, because length is more than object length.");
-	}
 
 	string res;
 	for (size_t i = start; i < length; i++)
@@ -94,7 +92,6 @@ void CMyString::Clear()
 	buffer_ = new char[length_ + 1];
 	buffer_[length_] = '\0';
 }
-
 
 /* OPERATIONS */
 
@@ -129,16 +126,14 @@ CMyString& CMyString::operator=(CMyString&& other) noexcept
 
 CMyString& CMyString::operator+=(CMyString const& rhs)
 {
-	auto newLength = length_ + rhs.GetLength();
-	char* temp = new char[newLength + 1];
+	length_ += rhs.GetLength();
+	char* temp = new char[length_ + 1];
 	strcpy(temp, buffer_);
 	strcat(temp, rhs.GetStringData());
 
 	delete[] buffer_;
-	length_ = newLength;
 	buffer_ = temp;
 	buffer_[length_] = '\0';
-
 	temp = nullptr;
 
 	return *this;
@@ -152,9 +147,7 @@ CMyString const operator+(CMyString lhs, CMyString const& rhs)
 bool operator==(CMyString const& lhs, CMyString const& rhs)
 {
 	if (lhs.GetLength() != rhs.GetLength())
-	{
 		return false;
-	}
 
 	auto lhsBuffer = lhs.GetStringData();
 	auto rhsBuffer = rhs.GetStringData();
@@ -173,11 +166,11 @@ bool operator!=(CMyString const& lhs, CMyString const& rhs)
 	return !(lhs == rhs);
 }
 
-bool operator>(CMyString const& lhs, CMyString const& rhs) 
+bool operator>(CMyString const& lhs, CMyString const& rhs)
 {
 	if (lhs.GetLength() > rhs.GetLength())
 		return true;
-	
+
 	if (lhs.GetLength() < rhs.GetLength())
 		return false;
 
@@ -206,4 +199,36 @@ bool operator<(CMyString const& lhs, CMyString const& rhs)
 bool operator<=(CMyString const& lhs, CMyString const& rhs)
 {
 	return (!(lhs > rhs));
+}
+
+char& CMyString::operator[](const size_t index)
+{
+	if (index >= length_)
+		throw out_of_range("Not correct index.");
+
+	return buffer_[index];
+}
+
+const char& CMyString::operator[](const size_t index) const
+{
+	if (index >= length_)
+		throw out_of_range("Not correct index.");
+
+	return buffer_[index];
+}
+
+ostream& operator<<(ostream& out, CMyString const& str)
+{
+	return out << str.GetStringData();
+}
+
+istream& operator>>(istream& in, CMyString& str)
+{
+	char ch;
+	while (in.get(ch) && ch != '\n')
+	{
+		str += CMyString(string(1, ch));
+	}
+
+	return in;
 }
