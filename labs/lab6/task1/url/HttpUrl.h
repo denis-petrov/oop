@@ -3,6 +3,7 @@
 
 class CHttpUrl
 {
+public:
 	enum class Protocol
 	{
 		HTTP,
@@ -28,6 +29,9 @@ public:
 	Protocol GetProtocol() const;
 	unsigned short GetPort() const;
 	
+	std::string GetFullURL() const;
+	
+	std::string ProtocolToString() const;
 
 private:
 	Protocol protocol_;
@@ -39,5 +43,4 @@ private:
 	unsigned short ParsePortFromString(std::string const& userPort) const;
 	std::string EnsureDocumentCorrect(std::string const& document) const;
 	unsigned short SetDefaultPort() const;
-	std::string ProtocolToString() const;
 };

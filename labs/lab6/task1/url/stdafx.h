@@ -17,6 +17,5 @@ const std::string HTTPS = "https";
 
 const char SLASH = '/';
 
-const int NOT_SET_PORT = 0;
 const int MIN_PORT = 1;
 const int MAX_PORT = 65535;

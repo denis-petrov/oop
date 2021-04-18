@@ -16,7 +16,7 @@ CHttpUrl::CHttpUrl(string const& url)
 
 	protocol_ = ParseProtocolFromString(matches[1].str());
 	domain_ = matches[2].str();
-	port_ = ParsePortFromString(matches[3].str());
+	port_ = matches[3].str().empty() ? SetDefaultPort() : ParsePortFromString(matches[3].str());
 	document_ = matches[4].str();
 }
 
@@ -61,6 +61,22 @@ unsigned short CHttpUrl::GetPort() const
 	return port_;
 }
 
+string CHttpUrl::GetFullURL() const
+{
+	return ProtocolToString() + "://" + domain_ + string(1, ':') + to_string(port_) + document_;
+}
+
+string CHttpUrl::ProtocolToString() const
+{
+	if (protocol_ == Protocol::HTTP)
+		return HTTP;
+
+	if (protocol_ == Protocol::HTTPS)
+		return HTTPS;
+
+	throw CUrlParsingError("Not correct protocol.");
+}
+
 /* PRIVATE */
 CHttpUrl::Protocol CHttpUrl::ParseProtocolFromString(string const& userProtocol) const
 {
@@ -80,6 +96,10 @@ unsigned short CHttpUrl::ParsePortFromString(string const& userPort) const
 {
 	try
 	{
+		int intPort = boost::lexical_cast<int>(userPort);
+		if ((intPort < MIN_PORT) || (intPort > MAX_PORT))
+			throw CUrlParsingError("Not valid port.");
+
 		return boost::lexical_cast<unsigned short>(userPort);
 	}
 	catch (const bad_cast&)
@@ -96,15 +116,4 @@ string CHttpUrl::EnsureDocumentCorrect(string const& document) const
 unsigned short CHttpUrl::SetDefaultPort() const 
 {
 	return (protocol_ == CHttpUrl::Protocol::HTTP) ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;
-}
-
-string CHttpUrl::ProtocolToString() const 
-{
-	if (protocol_ == Protocol::HTTP)
-		return HTTP;
-
-	if (protocol_ == Protocol::HTTPS)
-		return HTTPS;
-
-	throw CUrlParsingError("Not correct protocol.");
 }
