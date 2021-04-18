@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "MyString.h"
 
 using namespace std;

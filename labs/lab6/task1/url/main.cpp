@@ -14,7 +14,7 @@ int main()
 		{
 			CHttpUrl url(userLine);
 
-			cout << "Full URL: " << url.GetFullURL() << "\n"
+			cout << "\nFULL URL: " << url.GetFullURL() << "\n"
 				 << "PROTOCOL: " << url.ProtocolToString() << "\n"
 				 << "DOMAIN: " << url.GetDomain() << "\n"
 				 << "PORT: " << to_string(url.GetPort()) << "\n"
