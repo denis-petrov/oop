@@ -32,8 +32,8 @@ string CCone::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Cone }" << endl
-		   << string("\t", padding) << "Base Radius = " << GetBaseRadius() << endl
-		   << string("\t", padding) << "Height = " << GetHeight() << endl
+		   << string(padding, '\t') << "Base Radius = " << GetBaseRadius() << endl
+		   << string(padding, '\t') << "Height = " << GetHeight() << endl
 		   << CSolidBody::ToString(padding) << endl;
 	return stream.str();
 }

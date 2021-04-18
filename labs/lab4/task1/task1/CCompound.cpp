@@ -68,15 +68,15 @@ string CCompound::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Compound }" << endl
-		   << string("\t", padding) << "Size = " << m_children.size() << endl
+		   << string(padding, '\t') << "Size = " << m_children.size() << endl
 		   << fixed << setprecision(3)
-		   << string("\t", padding) << "Compound mass = " << GetMass() << endl
-		   << string("\t", padding) << "Compound volume = " << GetVolume() << endl
-		   << string("\t", padding) << "Compound density = " << GetDensity() << endl
+		   << string(padding, '\t') << "Compound mass = " << GetMass() << endl
+		   << string(padding, '\t') << "Compound volume = " << GetVolume() << endl
+		   << string(padding, '\t') << "Compound density = " << GetDensity() << endl
 		   << endl
-		   << string("\t", padding) << "Contains elements: " << endl
+		   << string(padding, '\t') << "Contains elements: " << endl
 		   << accumulate(m_children.begin(), m_children.end(), string(), [padding](string& sum, const shared_ptr<CBody>& elem) mutable {
-				  return sum + string("\t", padding) + "ID = " + to_string(elem->GetId()) + "; " + elem->ToString(padding + 1);
+				  return sum + string(padding, '\t') + "ID = " + to_string(elem->GetId()) + "; " + elem->ToString(padding + 1);
 			  });
 	return stream.str();
 }

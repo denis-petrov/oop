@@ -25,10 +25,10 @@ double CSolidBody::GetDensity() const
 string CSolidBody::ToString(const int padding) const
 {
 	stringstream stream;
-	stream << string("\t", padding) << "Density = " << GetDensity() << endl 
+	stream << string(padding, '\t') << "Density = " << GetDensity() << endl 
 		   << fixed << setprecision(3)
-		   << string("\t", padding) << "Volume = " << GetVolume() << endl
-		   << string("\t", padding) << "Mass = " << GetMass() << endl;
+		   << string(padding, '\t') << "Volume = " << GetVolume() << endl
+		   << string(padding, '\t') << "Mass = " << GetMass() << endl;
 	return stream.str();
 }
 

@@ -26,7 +26,7 @@ string CSphere::ToString(const int padding) const
 {
 	stringstream stream;
 	stream << "{ Sphere }\n"
-		   << string("\t", padding) << "Radius = " << GetRadius() << endl
+		   << string(padding, '\t') << "Radius = " << GetRadius() << endl
 		   << CSolidBody::ToString(padding) << endl;
 	return stream.str();
 }
