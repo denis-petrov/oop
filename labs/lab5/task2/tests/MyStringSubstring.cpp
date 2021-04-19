@@ -24,18 +24,18 @@ BOOST_FIXTURE_TEST_SUITE(My_String_substring, MyString_)
 		BOOST_CHECK(str.SubString(0, 2) == "te");
 		BOOST_CHECK(str.SubString(0, 0) == "");
 		BOOST_CHECK(str.SubString(0, 1) == "t");
-		BOOST_CHECK(str.SubString(1, 0) == "");
-		BOOST_CHECK(str.SubString(14, 6) == "");
 		BOOST_CHECK(str.SubString(6, 10) == "y st");
 		BOOST_CHECK(str.SubString(2, 14) == "st my string");
 	}
 
-	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_length_invalid)
+	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_m_lengthinvalid)
 	{
 		CMyString emptyStr;
 		BOOST_CHECK(emptyStr.GetLength() == 0);
 		BOOST_CHECK(emptyStr == "");
 		BOOST_CHECK_THROW(emptyStr.SubString(0, 10), std::invalid_argument);
+		BOOST_CHECK_THROW(emptyStr.SubString(6, 4), std::invalid_argument);
+		BOOST_CHECK_THROW(emptyStr.SubString(1, 0), std::invalid_argument);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

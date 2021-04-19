@@ -82,7 +82,7 @@ BOOST_FIXTURE_TEST_SUITE(Rational_public_part, Rational_)
 		CRational num4(-8, 3);
 		auto res4 = num4.ToCompoundFraction();
 		BOOST_CHECK(res4.first == -2);
-		BOOST_CHECK(res4.second == CRational(2, 3));
+		BOOST_CHECK(res4.second == CRational(-2, 3));
 
 		CRational num5(-8, -5);
 		auto res5 = num5.ToCompoundFraction();
@@ -92,7 +92,7 @@ BOOST_FIXTURE_TEST_SUITE(Rational_public_part, Rational_)
 		CRational num6(-9, 4);
 		auto res6 = num6.ToCompoundFraction();
 		BOOST_CHECK(res6.first == -2);
-		BOOST_CHECK(res6.second == CRational(1, 4));
+		BOOST_CHECK(res6.second == CRational(-1, 4));
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

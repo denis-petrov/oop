@@ -17,6 +17,7 @@ BOOST_FIXTURE_TEST_SUITE(My_String_plus, MyString_)
 		CMyString str1("test my string");
 		CMyString str2("test my string");
 		str1 += str2;
+		std::cout << str1<<"\n";
 		BOOST_CHECK(str1 == "test my stringtest my string");
 
 		CMyString str3("1");

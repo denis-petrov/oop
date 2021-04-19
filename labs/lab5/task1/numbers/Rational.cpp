@@ -6,39 +6,37 @@ using namespace std;
 const regex RATIONAL_REGEX("(\\-?\\d+)\\/(\\-?\\d+)");
 
 CRational::CRational()
-	: m_numerator(DEFAULT_NUMERATOR)
-	, m_denominator(DEFAULT_DENOMINATOR)
+	: m_numerator(0)
+	, m_denominator(1)
 {
 }
 
 CRational::CRational(const int value)
 	: m_numerator(value)
-	, m_denominator(DEFAULT_DENOMINATOR)
+	, m_denominator(1)
 {
-	EnsureCorrectSign();
+	Normilize();
 }
 
 int GetGCD(int first, int second)
 {
-	/*while (second)
+	while (second)
 	{
 		auto temp = first % second;
 		first = second;
 		second = temp;
 	}
-	return abs(first); */
-	return !second ? abs(first) : GetGCD(second, first % second);
+	return abs(first); 
 }
 
 CRational::CRational(const int numerrator, const int denominator)
 	: m_numerator(numerrator)
 	, m_denominator(denominator)
 {
-	if (m_denominator == NOT_CORRECT_DENOMINATOR)
+	if (m_denominator == 0)
 		throw invalid_argument("Denominator cannot be equal to " + to_string(NOT_CORRECT_DENOMINATOR) + "!");
 
-	EnsureCorrectSign();
-	ReduceByGreatestCommonDivisor();
+	Normilize();
 }
 
 /* PUBLIC */
@@ -60,12 +58,9 @@ double CRational::ToDouble() const
 
 pair<int, CRational> CRational::ToCompoundFraction() const
 {
-	int numer = GetNumerator();
-	int denom = GetDenominator();
-
-	int intPart = numer / denom;
-	int fracPartNum = (intPart != 0) ? abs(numer) % denom : numer % denom;
-	return { intPart, CRational(fracPartNum, denom) };
+	int intPart = m_numerator / m_denominator;
+	int fracPartNum = m_numerator % m_denominator;
+	return { intPart, CRational(fracPartNum, m_denominator) };
 }
 
 /* PRIVATE */
@@ -76,14 +71,14 @@ void CRational::ReduceByGreatestCommonDivisor()
 	m_denominator /= gcd;
 }
 
-bool CRational::IsLessThanZero() const
+bool CRational::IsNegative() const
 {
 	return ((m_numerator < 0 && m_denominator > 0) || (m_numerator > 0 && m_denominator < 0));
 }
 
 void CRational::EnsureCorrectSign()
 {
-	bool isNegative = IsLessThanZero();
+	bool isNegative = IsNegative();
 	m_numerator = abs(m_numerator);
 	m_denominator = abs(m_denominator);
 	if (isNegative)
@@ -95,6 +90,11 @@ void CRational::Assign(const int numerator, const int denominator)
 	m_numerator = numerator;
 	m_denominator = denominator;
 
+	Normilize();
+}
+
+void CRational::Normilize()
+{
 	EnsureCorrectSign();
 	ReduceByGreatestCommonDivisor();
 }
@@ -184,7 +184,7 @@ ostream& operator<<(ostream& out, CRational const& num)
 istream& operator>>(istream& in, CRational& num)
 {
 	string search;
-	if (!(getline(in, search)))
+	if (!(getline(in, search, ' ')))
 		return in;
 
 	smatch matches;

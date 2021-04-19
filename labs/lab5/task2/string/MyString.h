@@ -32,11 +32,11 @@ public:
 	friend std::istream& operator>>(std::istream& in, CMyString& str);
 
 private:
-	char* buffer_;
-	size_t length_;
+	char* m_buffer;
+	size_t m_length;
 };
 
-CMyString const operator+(CMyString lhs, CMyString const& rhs);
+CMyString operator+(CMyString lhs, CMyString const& rhs);
 
 bool operator==(CMyString const& lhs, CMyString const& rhs);
 bool operator!=(CMyString const& lhs, CMyString const& rhs);

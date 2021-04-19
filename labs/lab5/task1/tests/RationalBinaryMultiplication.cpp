@@ -14,6 +14,7 @@ BOOST_FIXTURE_TEST_SUITE(Rational_binary_multuplication, Rational_)
 		CRational rationalEmpty2;
 		CRational result = rationalEmpty1 * rationalEmpty2;
 		BOOST_CHECK(result.GetNumerator() == 0);
+		std::cout << result.GetDenominator() << "\n";
 		BOOST_CHECK(result.GetDenominator() == 1);
 	}
 

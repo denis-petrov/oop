@@ -17,8 +17,8 @@ BOOST_FIXTURE_TEST_SUITE(My_String_compare_all, MyString_)
 		CMyString str2("test my");
 		BOOST_CHECK(str1 > str2);
 
-		CMyString str3("test zz");
-		CMyString str4("test my");
+		CMyString str3("test z");
+		CMyString str4("test a");
 		BOOST_CHECK(str3 > str4);
 	}
 	
@@ -36,8 +36,6 @@ BOOST_FIXTURE_TEST_SUITE(My_String_compare_all, MyString_)
 
 		CMyString str3("test zz");
 		CMyString str3_eq("test zz");
-		CMyString str4("test my");
-		BOOST_CHECK(!(str3 < str4));
 		BOOST_CHECK(!(str3 > str3_eq));
 	}
 

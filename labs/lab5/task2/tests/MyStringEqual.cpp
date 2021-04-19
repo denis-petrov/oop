@@ -29,6 +29,7 @@ BOOST_FIXTURE_TEST_SUITE(My_String_equal, MyString_)
 
 		CMyString str1("not test");
 		str1 = generateItem("test my string");
+		std::cout << str1 << "\n";
 		BOOST_CHECK(str1 == "test my string");
 	}
 

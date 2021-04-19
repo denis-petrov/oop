@@ -5,7 +5,7 @@ class CRational
 public:
 	CRational();
 
-	CRational(const int value);
+	CRational(int value);
 
 	CRational(const int numerator, const int denominator);
 
@@ -28,8 +28,9 @@ public:
 
 private:
 	void ReduceByGreatestCommonDivisor();
-	bool IsLessThanZero() const;
+	bool IsNegative() const;
 	void EnsureCorrectSign();
+	void Normilize();
 	void Assign(const int numerator, const int denominator);
 
 private:
