@@ -28,7 +28,7 @@ BOOST_FIXTURE_TEST_SUITE(My_String_substring, MyString_)
 		BOOST_CHECK(str.SubString(2, 14) == "st my string");
 	}
 
-	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_m_lengthinvalid)
+	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_m_length_is_invalid)
 	{
 		CMyString emptyStr;
 		BOOST_CHECK(emptyStr.GetLength() == 0);
@@ -36,6 +36,13 @@ BOOST_FIXTURE_TEST_SUITE(My_String_substring, MyString_)
 		BOOST_CHECK_THROW(emptyStr.SubString(0, 10), std::invalid_argument);
 		BOOST_CHECK_THROW(emptyStr.SubString(6, 4), std::invalid_argument);
 		BOOST_CHECK_THROW(emptyStr.SubString(1, 0), std::invalid_argument);
+
+		CMyString str("test my string");
+		BOOST_CHECK(str.GetLength() == 14);
+		BOOST_CHECK(str == "test my string");
+		BOOST_CHECK_THROW(str.SubString(2, 0), std::invalid_argument);
+		BOOST_CHECK_THROW(str.SubString(28, 30), std::invalid_argument);
+		BOOST_CHECK_THROW(str.SubString(-1, -1), std::invalid_argument);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

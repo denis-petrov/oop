@@ -6,57 +6,46 @@ using namespace std;
 CMyString::CMyString()
 {
 	m_length = 0;
-	m_buffer = new char[m_length + 1];
-	m_buffer[m_length] = '\0';
+	m_buffer = DefineNewArray(m_length);
 }
 
 CMyString::CMyString(const char* pString)
 {
 	m_length = strlen(pString);
-	m_buffer = new char[m_length + 1];
-	memcpy(m_buffer, pString, m_length);
-	m_buffer[m_length] = '\0';
+	m_buffer = DefineNewArray(m_length);
+	strcpy(m_buffer, pString);
 }
 
 CMyString::CMyString(const char* pString, size_t length)
 {
 	m_length = length;
-	m_buffer = new char[m_length + 1];
-	memcpy(m_buffer, pString, m_length);
-	m_buffer[m_length] = '\0';
+	m_buffer = DefineNewArray(m_length);
+	strcpy(m_buffer, pString);
 }
 
 CMyString::CMyString(CMyString const& other)
 {
 	m_length = other.GetLength();
-	m_buffer = new char[m_length + 1];
-	memcpy(m_buffer, other.GetStringData(), m_length + 1);
+	m_buffer = DefineNewArray(m_length);
+	strcpy(m_buffer, other.GetStringData());
 }
 
 CMyString::CMyString(string const& stlString)
 {
 	m_length = stlString.size();
-	m_buffer = new char[m_length + 1];
-
-	if (stlString[m_length] == '\0')
-	{
-		memcpy(m_buffer, stlString.c_str(), m_length + 1);
-	}
-	else
-	{
-		memcpy(m_buffer, stlString.c_str(), m_length);
-		m_buffer[m_length] = '\0';
-	}
+	m_buffer = DefineNewArray(m_length);
+	strcpy(m_buffer, stlString.c_str());
 }
 
 CMyString::CMyString(CMyString&& other) noexcept
 {
 	m_length = other.m_length;
 	m_buffer = other.m_buffer;
-	other.Clear();
+	other.m_buffer = nullptr;
+	other.m_length = 0;
 }
 
-CMyString ::~CMyString()
+CMyString::~CMyString()
 {
 	delete[] m_buffer;
 }
@@ -75,7 +64,7 @@ const char* CMyString::GetStringData() const
 CMyString CMyString::SubString(size_t start, size_t length) const
 {
 	if (length > m_length || start > length)
-		throw invalid_argument("Bad access, not correct parametrs.");
+		throw invalid_argument("Access denied, because length is more than object length.");
 
 	string res;
 	for (size_t i = start; i < length; i++)
@@ -90,8 +79,7 @@ void CMyString::Clear()
 {
 	m_length = 0;
 	delete[] m_buffer;
-	m_buffer = new char[m_length + 1];
-	m_buffer[m_length] = '\0';
+	m_buffer = DefineNewArray(m_length);
 }
 
 /* OPERATIONS */
@@ -123,28 +111,17 @@ CMyString& CMyString::operator=(CMyString&& other) noexcept
 }
 
 CMyString& CMyString::operator+=(CMyString const& rhs)
-{//TODO
-	auto defaultLength = m_length;
-	auto defaultBuffer = m_buffer;
-	try
-	{
-		auto newLength = m_length + rhs.GetLength();
-		char* temp = new char[newLength + 2];
+{
+	auto newLength = m_length + rhs.GetLength();
+	char* temp = DefineNewArray(newLength);
+	strcpy(temp, m_buffer);
+	strcat(temp, rhs.GetStringData());
 
-		memcpy(temp, m_buffer, m_length + 1);
-		memcpy(temp + m_length + 1, rhs.m_buffer, rhs.GetLength() + 1);
+	delete[] m_buffer;
+	m_buffer = temp;
+	m_length = newLength;
+	temp = nullptr;
 
-		m_length = newLength;
-		delete[] m_buffer;
-		m_buffer = temp;
-		m_buffer[m_length] = '\0';
-		temp = nullptr;
-	}
-	catch (const exception&)
-	{
-		m_buffer = defaultBuffer;
-		m_length = defaultLength;
-	}
 	return *this;
 }
 
@@ -177,7 +154,7 @@ bool operator!=(CMyString const& lhs, CMyString const& rhs)
 
 bool operator>(CMyString const& lhs, CMyString const& rhs)
 {
-	size_t minSize = (lhs.GetLength() > rhs.GetLength()) ? rhs.GetLength() : lhs.GetLength(); 
+	size_t minSize = (lhs.GetLength() > rhs.GetLength()) ? rhs.GetLength() : lhs.GetLength();
 
 	auto lhsBuffer = lhs.GetStringData();
 	auto rhsBuffer = rhs.GetStringData();
@@ -240,4 +217,18 @@ istream& operator>>(istream& in, CMyString& str)
 	}
 
 	return in;
+}
+
+char* CMyString::DefineNewArray(const size_t size) const
+{
+	try
+	{
+		char* temp = new char[size + 1];
+		temp[size] = '\0';
+		return temp;
+	}
+	catch (const bad_alloc&)
+	{
+		return nullptr;
+	}
 }

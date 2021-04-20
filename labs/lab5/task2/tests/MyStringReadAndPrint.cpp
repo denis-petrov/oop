@@ -21,7 +21,7 @@ std::string const GetMyStringAsString(CMyString const& str)
 
 BOOST_FIXTURE_TEST_SUITE(My_String_read_and_print, MyString_)
 
-	/*BOOST_AUTO_TEST_CASE(able_read_empty)
+	BOOST_AUTO_TEST_CASE(able_read_empty)
 	{
 		CMyString str1;
 		BOOST_CHECK(GetMyStringFromString("") == str1);
@@ -44,8 +44,8 @@ BOOST_FIXTURE_TEST_SUITE(My_String_read_and_print, MyString_)
 		CMyString str("test");
 		BOOST_CHECK(GetMyStringFromString("test\n") == str);
 
-		CMyString str2("test\t");
-		BOOST_CHECK(GetMyStringFromString("test\t") == str2);
+		CMyString str2("tes");
+		BOOST_CHECK(GetMyStringFromString("tes t\t") == str2);
 	}
 
 	BOOST_AUTO_TEST_CASE(able_print_empty)
@@ -73,6 +73,6 @@ BOOST_FIXTURE_TEST_SUITE(My_String_read_and_print, MyString_)
 
 		CMyString str2("test\t");
 		BOOST_CHECK(GetMyStringAsString(str2) == "test\t");
-	}*/
+	}
 
 BOOST_AUTO_TEST_SUITE_END()

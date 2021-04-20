@@ -34,6 +34,8 @@ public:
 private:
 	char* m_buffer;
 	size_t m_length;
+
+	char* DefineNewArray(const size_t size) const;
 };
 
 CMyString operator+(CMyString lhs, CMyString const& rhs);
