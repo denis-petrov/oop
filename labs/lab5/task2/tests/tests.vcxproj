@@ -155,12 +155,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\string\Iterator.cpp" />
     <ClCompile Include="..\string\MyString.cpp" />
     <ClCompile Include="MyStringAccessToElem.cpp" />
     <ClCompile Include="MyStringCompareAll.cpp" />
     <ClCompile Include="MyStringCompareEqualAndNot.cpp" />
     <ClCompile Include="MyStringEqual.cpp" />
     <ClCompile Include="MyStringInitializationAndClear.cpp" />
+    <ClCompile Include="MyStringIterator.cpp" />
     <ClCompile Include="MyStringPlus.cpp" />
     <ClCompile Include="MyStringReadAndPrint.cpp" />
     <ClCompile Include="MyStringSubstring.cpp" />
@@ -168,6 +170,7 @@
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\string\Iterator.h" />
     <ClInclude Include="..\string\MyString.h" />
     <ClInclude Include="MyStringTestsHandler.h" />
     <ClInclude Include="stdafx.h" />

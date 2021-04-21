@@ -7,5 +7,6 @@
 #include <stdexcept>
 #include <string>
 #include <cstring>
+#include <cassert>
 
 #define WIN32_LEAN_AND_MEAN

@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "Iterator.h"
 
 class CMyString
 {
@@ -18,14 +19,20 @@ public:
 	size_t GetLength() const;
 	const char* GetStringData() const;
 	CMyString SubString(size_t start, size_t length = SIZE_MAX) const;
-
 	void Clear();
+
+	CIterator begin();
+	CIterator end();
+
+	const CIterator cbegin();
+	const CIterator cend();
 
 public:
 	CMyString& operator=(CMyString const& other);
 	CMyString& operator=(CMyString&& other) noexcept;
 	CMyString& operator+=(CMyString const& rhs);
-	
+	CMyString& operator+=(char ch);
+
 	char& operator[](const size_t index);
 	const char& operator[](const size_t index) const;
 

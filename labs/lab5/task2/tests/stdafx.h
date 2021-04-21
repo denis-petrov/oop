@@ -9,9 +9,12 @@
 #include <math.h>
 #include <string>
 #include "../string/MyString.h"
+#include "../string/Iterator.h"
 #include <string.h>
+#include <cassert>
 
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/test/execution_monitor.hpp>  
 
 #define BOOST_TEST_INCLUDED
 #pragma warning(disable : 4702)

@@ -125,6 +125,12 @@ CMyString& CMyString::operator+=(CMyString const& rhs)
 	return *this;
 }
 
+CMyString& CMyString::operator+=(char ch)
+{
+	return *this += string(1, ch);
+}
+
+
 CMyString operator+(CMyString lhs, CMyString const& rhs)
 {
 	return lhs += rhs;
@@ -213,7 +219,7 @@ istream& operator>>(istream& in, CMyString& str)
 	char ch;
 	while (in.get(ch) && ch != '\n' && ch != ' ')
 	{
-		str += CMyString(string(1, ch));
+		str += ch;
 	}
 
 	return in;
@@ -231,4 +237,26 @@ char* CMyString::DefineNewArray(const size_t size) const
 	{
 		return nullptr;
 	}
+}
+
+CIterator CMyString::begin()
+{
+	return CIterator(&m_buffer[0]);
+}
+
+CIterator CMyString::end()
+{
+	return CIterator(&m_buffer[m_length]);
+}
+
+const CIterator CMyString::cbegin()
+{
+	const CIterator res(&m_buffer[0]);
+	return res;
+}
+
+const CIterator CMyString::cend()
+{
+	const CIterator res(&m_buffer[m_length]);
+	return res;
 }
