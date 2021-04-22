@@ -260,3 +260,26 @@ const CIterator CMyString::cend()
 	const CIterator res(&m_buffer[m_length]);
 	return res;
 }
+
+
+CReverseIterator CMyString::rbegin()
+{
+	return CReverseIterator(&m_buffer[m_length - 1]);
+}
+
+CReverseIterator CMyString::rend()
+{
+	return CReverseIterator(&m_buffer[-1]);
+}
+
+const CReverseIterator CMyString::crbegin()
+{
+	const CReverseIterator res(&m_buffer[m_length - 1]);
+	return res;
+}
+
+const CReverseIterator CMyString::crend()
+{
+	const CReverseIterator res(&m_buffer[-1]);
+	return res;
+}

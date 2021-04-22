@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Iterator.h"
+#include "ReverseIterator.h"
 
 class CMyString
 {
@@ -26,6 +27,12 @@ public:
 
 	const CIterator cbegin();
 	const CIterator cend();
+
+	CReverseIterator rbegin();
+	CReverseIterator rend();
+
+	const CReverseIterator crbegin();
+	const CReverseIterator crend();
 
 public:
 	CMyString& operator=(CMyString const& other);

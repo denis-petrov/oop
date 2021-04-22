@@ -27,6 +27,9 @@ public:
 	friend bool operator==(CIterator const& lhs, CIterator const& rhs) { return lhs.m_ptr == rhs.m_ptr; };
 	friend bool operator!=(CIterator const& lhs, CIterator const& rhs) { return lhs.m_ptr != rhs.m_ptr; };
 
-private:
+	char* getPtr() const;
+	const char* getConstPtr() const;
+
+protected:
 	char* m_ptr;
 };
