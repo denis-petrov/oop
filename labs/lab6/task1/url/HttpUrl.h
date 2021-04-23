@@ -12,14 +12,14 @@ public:
 
 public:
 	CHttpUrl(std::string const& url);
-	
-	CHttpUrl(std::string const& domain, 
-		std::string const& document, 
-		Protocol protocol = Protocol::HTTP);
-	
-	CHttpUrl(std::string const& domain, 
+
+	CHttpUrl(std::string const& domain,
 		std::string const& document,
-		Protocol protocol, 
+		Protocol protocol = Protocol::HTTP);
+
+	CHttpUrl(std::string const& domain,
+		std::string const& document,
+		Protocol protocol,
 		unsigned short port);
 
 public:
@@ -28,16 +28,16 @@ public:
 	std::string GetDocument() const;
 	Protocol GetProtocol() const;
 	unsigned short GetPort() const;
-	
+
 	std::string GetFullURL() const;
-	
+
 	std::string ProtocolToString() const;
 
 private:
-	Protocol protocol_;
-	std::string domain_;
-	unsigned short port_;
-	std::string document_;
+	Protocol m_protocol;
+	std::string m_domain;
+	unsigned short m_port;
+	std::string m_document;
 
 	Protocol ParseProtocolFromString(std::string const& userProtocol) const;
 	unsigned short ParsePortFromString(std::string const& userPort) const;

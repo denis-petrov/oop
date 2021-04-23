@@ -14,64 +14,64 @@ CHttpUrl::CHttpUrl(string const& url)
 		throw CUrlParsingError("Not valid URL string.");
 	}
 
-	protocol_ = ParseProtocolFromString(matches[1].str());
-	domain_ = matches[2].str();
-	port_ = matches[3].str().empty() ? SetDefaultPort() : ParsePortFromString(matches[3].str());
-	document_ = matches[4].str();
+	m_protocol = ParseProtocolFromString(matches[1].str());
+	m_domain = matches[2].str();
+	m_port = matches[3].str().empty() ? SetDefaultPort() : ParsePortFromString(matches[3].str());
+	m_document = matches[4].str();
 }
 
 CHttpUrl::CHttpUrl(string const& domain, string const& document, Protocol protocol)
-	: domain_(domain)
-	, document_(EnsureDocumentCorrect(document))
-	, protocol_(protocol)
-	, port_(SetDefaultPort())
+	: m_domain(domain)
+	, m_document(EnsureDocumentCorrect(document))
+	, m_protocol(protocol)
+	, m_port(SetDefaultPort())
 {
 }
 
 CHttpUrl::CHttpUrl(string const& domain, string const& document, Protocol protocol, unsigned short port)
-	: domain_(domain)
-	, document_(EnsureDocumentCorrect(document))
-	, protocol_(protocol)
-	, port_(port)
+	: m_domain(domain)
+	, m_document(EnsureDocumentCorrect(document))
+	, m_protocol(protocol)
+	, m_port(port)
 {
 }
 
-string CHttpUrl::GetURL() const 
+string CHttpUrl::GetURL() const
 {
-	return ProtocolToString() + "://" + domain_ + document_;
+	return ProtocolToString() + "://" + m_domain + m_document;
 }
 
 string CHttpUrl::GetDomain() const
 {
-	return domain_;
+	return m_domain;
 }
 
 string CHttpUrl::GetDocument() const
 {
-	return document_;
+	return m_document;
 }
 
 CHttpUrl::Protocol CHttpUrl::GetProtocol() const
 {
-	return protocol_;
+	return m_protocol;
 }
 
 unsigned short CHttpUrl::GetPort() const
 {
-	return port_;
+	return m_port;
 }
 
 string CHttpUrl::GetFullURL() const
 {
-	return ProtocolToString() + "://" + domain_ + string(1, ':') + to_string(port_) + document_;
+	return ProtocolToString() + "://" + m_domain + string(1, ':') + to_string(m_port) + m_document;
 }
 
 string CHttpUrl::ProtocolToString() const
 {
-	if (protocol_ == Protocol::HTTP)
+	if (m_protocol == Protocol::HTTP)
 		return HTTP;
 
-	if (protocol_ == Protocol::HTTPS)
+	if (m_protocol == Protocol::HTTPS)
 		return HTTPS;
 
 	throw CUrlParsingError("Not correct protocol.");
@@ -113,7 +113,7 @@ string CHttpUrl::EnsureDocumentCorrect(string const& document) const
 	return (document[0] == SLASH) ? document : string(1, SLASH) + document;
 }
 
-unsigned short CHttpUrl::SetDefaultPort() const 
+unsigned short CHttpUrl::SetDefaultPort() const
 {
-	return (protocol_ == CHttpUrl::Protocol::HTTP) ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;
+	return (m_protocol == CHttpUrl::Protocol::HTTP) ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;
 }

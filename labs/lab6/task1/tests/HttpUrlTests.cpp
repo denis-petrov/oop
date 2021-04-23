@@ -19,7 +19,7 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 		BOOST_CHECK_THROW(CHttpUrl("lol2://t.ru/12"), CUrlParsingError);
 	}
 
-	BOOST_AUTO_TEST_CASE(throw_url_parsing_error_if_port_is_incorrect)
+	BOOST_AUTO_TEST_CASE(throw_url_parsing_error_if_m_portis_incorrect)
 	{
 		BOOST_CHECK_THROW(CHttpUrl("http://test.com:65536/12"), CUrlParsingError);
 		BOOST_CHECK_THROW(CHttpUrl("https://t.ru:-1/12"), CUrlParsingError);
@@ -48,7 +48,7 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);
 	}
 
-	BOOST_AUTO_TEST_CASE(able_initialize_instance_by_domain_and_document_or_protocol)
+	BOOST_AUTO_TEST_CASE(able_initialize_instance_by_m_domainand_m_documentor_protocol)
 	{
 		CHttpUrl httpUrl("vk.com", "test");
 		CHttpUrl httpUrlFull("vk.com", "test", CHttpUrl::Protocol::HTTP);
