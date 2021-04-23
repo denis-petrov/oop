@@ -32,26 +32,28 @@ char* CIterator::operator->()
 
 CIterator& CIterator::operator++()
 {
-	m_ptr++;
+	++m_ptr;
 	return *this;
 }
 
 CIterator& CIterator::operator--()
 {
-	m_ptr--;
+	--m_ptr;
 	return *this;
 }
 
 CIterator CIterator::operator++(int)
 {
-	//++(*this);
-	return ++(*this);
+	CIterator tmp = *this;
+	++(*this);
+	return tmp;
 }
 
 CIterator CIterator::operator--(int)
 {
-	//--(*this);
-	return --(*this); 
+	CIterator tmp = *this;
+	--(*this);
+	return tmp;
 }
 
 CIterator& CIterator::operator+=(ptrdiff_t const& rhs)
@@ -68,18 +70,20 @@ CIterator& CIterator::operator-=(ptrdiff_t const& rhs)
 
 CIterator CIterator::operator+(ptrdiff_t const& rhs)
 {
-	auto prevPtr = m_ptr;
+	auto oldPtr = m_ptr;
 	m_ptr += rhs;
-	m_ptr = prevPtr;
-	return *this;
+	auto temp(*this);
+	m_ptr = oldPtr;
+	return temp;
 }
 
 CIterator CIterator::operator-(ptrdiff_t const& rhs)
 {
-	auto prevPtr = m_ptr;
+	auto oldPtr = m_ptr;
 	m_ptr -= rhs;
-	m_ptr = prevPtr;
-	return *this;
+	auto temp(*this);
+	m_ptr = oldPtr;
+	return temp;
 }
 
 ptrdiff_t CIterator::operator-(CIterator const& it)

@@ -6,35 +6,28 @@ using namespace std;
 CMyString::CMyString()
 {
 	m_length = 0;
-	m_buffer = DefineNewArray(m_length);
+	m_buffer = Allocate(m_length);
+	m_buffer[m_length] = '\0';
 }
 
 CMyString::CMyString(const char* pString)
 {
-	m_length = strlen(pString);
-	m_buffer = DefineNewArray(m_length);
-	strcpy(m_buffer, pString);
+	m_buffer = CopyString(pString, strlen(pString));
 }
 
 CMyString::CMyString(const char* pString, size_t length)
 {
-	m_length = length;
-	m_buffer = DefineNewArray(m_length);
-	strcpy(m_buffer, pString);
+	m_buffer = CopyString(pString, length);
 }
 
 CMyString::CMyString(CMyString const& other)
 {
-	m_length = other.GetLength();
-	m_buffer = DefineNewArray(m_length);
-	strcpy(m_buffer, other.GetStringData());
+	m_buffer = CopyString(other.GetStringData(), other.GetLength());
 }
 
 CMyString::CMyString(string const& stlString)
 {
-	m_length = stlString.size();
-	m_buffer = DefineNewArray(m_length);
-	strcpy(m_buffer, stlString.c_str());
+	m_buffer = CopyString(stlString.c_str(), stlString.size());
 }
 
 CMyString::CMyString(CMyString&& other) noexcept
@@ -79,7 +72,7 @@ void CMyString::Clear()
 {
 	m_length = 0;
 	delete[] m_buffer;
-	m_buffer = DefineNewArray(m_length);
+	m_buffer = Allocate(m_length);
 }
 
 /* OPERATIONS */
@@ -113,9 +106,9 @@ CMyString& CMyString::operator=(CMyString&& other) noexcept
 CMyString& CMyString::operator+=(CMyString const& rhs)
 {
 	auto newLength = m_length + rhs.GetLength();
-	char* temp = DefineNewArray(newLength);
-	strcpy(temp, m_buffer);
-	strcat(temp, rhs.GetStringData());
+	char* temp = Allocate(newLength);
+	memcpy(temp, m_buffer, m_length);
+	memcpy(temp + m_length, rhs.GetStringData(), rhs.GetLength());
 
 	delete[] m_buffer;
 	m_buffer = temp;
@@ -193,7 +186,7 @@ bool operator<=(CMyString const& lhs, CMyString const& rhs)
 	return !(lhs > rhs);
 }
 
-char& CMyString::operator[](const size_t index)
+char& CMyString::operator[](size_t index)
 {
 	if (index >= m_length)
 		throw out_of_range("Not correct index.");
@@ -201,7 +194,7 @@ char& CMyString::operator[](const size_t index)
 	return m_buffer[index];
 }
 
-const char& CMyString::operator[](const size_t index) const
+const char& CMyString::operator[](size_t index) const
 {
 	if (index >= m_length)
 		throw out_of_range("Not correct index.");
@@ -225,18 +218,25 @@ istream& operator>>(istream& in, CMyString& str)
 	return in;
 }
 
-char* CMyString::DefineNewArray(const size_t size) const
+char* CMyString::Allocate(size_t size) const
 {
 	try
 	{
-		char* temp = new char[size + 1];
-		temp[size] = '\0';
-		return temp;
+		return new char[size + 1];
 	}
 	catch (const bad_alloc&)
 	{
 		return nullptr;
 	}
+}
+
+char* CMyString::CopyString(const char* str, size_t size) 
+{
+	auto temp = Allocate(size);
+	memcpy(temp, str, size);
+	temp[size] = '\0';
+	m_length = size;
+	return temp;
 }
 
 CIterator CMyString::begin()

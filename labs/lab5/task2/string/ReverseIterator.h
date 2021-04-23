@@ -25,6 +25,4 @@ public:
 	CReverseIterator operator-(const int rhs);
 
 	ptrdiff_t operator-(CReverseIterator const& reverseIterator);
-
-	CIterator base();
 };

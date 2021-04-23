@@ -36,26 +36,28 @@ CReverseIterator& CReverseIterator::operator-=(ptrdiff_t const& rhs)
 
 CReverseIterator& CReverseIterator::operator++()
 {
-	this->m_ptr--;
+	--this->m_ptr;
 	return *this;
 }
 
 CReverseIterator& CReverseIterator::operator--()
 {
-	this->m_ptr++;
+	++this->m_ptr;
 	return *this;
 }
 
 CReverseIterator CReverseIterator::operator++(int)
 {
-	this->m_ptr--;
-	return *this;
+	auto temp(*this);
+	--this->m_ptr;
+	return temp;
 }
 
 CReverseIterator CReverseIterator::operator--(int)
 {
-	this->m_ptr++;
-	return *this; 
+	auto temp(*this);
+	++this->m_ptr;
+	return temp;
 }
 
 CReverseIterator CReverseIterator::operator+(const int rhs)
@@ -79,9 +81,3 @@ ptrdiff_t CReverseIterator::operator-(CReverseIterator const& reverseIterator)
 	return std::distance(this->getPtr(), reverseIterator.getPtr());
 }
 
-CIterator CReverseIterator::base()
-{
-	CIterator iterator(this->m_ptr);
-	++iterator;
-	return iterator;
-}

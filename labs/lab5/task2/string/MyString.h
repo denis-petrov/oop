@@ -40,8 +40,8 @@ public:
 	CMyString& operator+=(CMyString const& rhs);
 	CMyString& operator+=(char ch);
 
-	char& operator[](const size_t index);
-	const char& operator[](const size_t index) const;
+	char& operator[](size_t index);
+	const char& operator[](size_t index) const;
 
 	friend std::istream& operator>>(std::istream& in, CMyString& str);
 
@@ -49,7 +49,8 @@ private:
 	char* m_buffer;
 	size_t m_length;
 
-	char* DefineNewArray(const size_t size) const;
+	char* Allocate(size_t size) const;
+	char* CopyString(const char* str, size_t size);
 };
 
 CMyString operator+(CMyString lhs, CMyString const& rhs);
