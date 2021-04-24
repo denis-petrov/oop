@@ -249,15 +249,15 @@ CIterator CMyString::end()
 	return CIterator(&m_buffer[m_length]);
 }
 
-const CIterator CMyString::cbegin()
+const CConstIterator CMyString::cbegin()
 {
-	const CIterator res(&m_buffer[0]);
+	const CConstIterator res(&m_buffer[0]);
 	return res;
 }
 
-const CIterator CMyString::cend()
+const CConstIterator CMyString::cend()
 {
-	const CIterator res(&m_buffer[m_length]);
+	const CConstIterator res(&m_buffer[m_length]);
 	return res;
 }
 
@@ -265,21 +265,23 @@ const CIterator CMyString::cend()
 CReverseIterator CMyString::rbegin()
 {
 	return CReverseIterator(&m_buffer[m_length - 1]);
+	//return CReverseIterator(&m_buffer[0]);
 }
 
 CReverseIterator CMyString::rend()
 {
 	return CReverseIterator(&m_buffer[-1]);
+	//return CReverseIterator(&m_buffer[m_length]);
 }
 
-const CReverseIterator CMyString::crbegin()
+const CConstReverseIterator CMyString::crbegin()
 {
-	const CReverseIterator res(&m_buffer[m_length - 1]);
+	const CConstReverseIterator res(&m_buffer[m_length - 1]);
 	return res;
 }
 
-const CReverseIterator CMyString::crend()
+const CConstReverseIterator CMyString::crend()
 {
-	const CReverseIterator res(&m_buffer[-1]);
+	const CConstReverseIterator res(&m_buffer[-1]);
 	return res;
 }

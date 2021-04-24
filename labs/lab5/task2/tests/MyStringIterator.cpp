@@ -24,7 +24,6 @@ BOOST_FIXTURE_TEST_SUITE(My_String_iterator, MyString_)
 		{
 			res += ch;
 		}
-		std::cout << res << "\n";
 		BOOST_CHECK(str == res);
 	}
 

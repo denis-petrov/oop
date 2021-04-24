@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "Iterator.h"
 #include "ReverseIterator.h"
+#include "ConstIterator.h"
+#include "ConstReverseIterator.h"
 
 class CMyString
 {
@@ -25,14 +27,14 @@ public:
 	CIterator begin();
 	CIterator end();
 
-	const CIterator cbegin();
-	const CIterator cend();
+	const CConstIterator cbegin();
+	const CConstIterator cend();
 
 	CReverseIterator rbegin();
 	CReverseIterator rend();
 
-	const CReverseIterator crbegin();
-	const CReverseIterator crend();
+	const CConstReverseIterator crbegin();
+	const CConstReverseIterator crend();
 
 public:
 	CMyString& operator=(CMyString const& other);

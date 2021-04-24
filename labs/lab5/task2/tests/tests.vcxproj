@@ -155,9 +155,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\string\ConstIterator.cpp" />
+    <ClCompile Include="..\string\ConstReverseIterator.cpp" />
     <ClCompile Include="..\string\Iterator.cpp" />
+    <ClCompile Include="..\string\IteratorImpl.cpp" />
     <ClCompile Include="..\string\MyString.cpp" />
     <ClCompile Include="..\string\ReverseIterator.cpp" />
+    <ClCompile Include="..\string\ReverseIteratorImpl.cpp" />
     <ClCompile Include="MyStringAccessToElem.cpp" />
     <ClCompile Include="MyStringCompareAll.cpp" />
     <ClCompile Include="MyStringCompareEqualAndNot.cpp" />
@@ -171,9 +175,13 @@
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\string\ConstIterator.h" />
+    <ClInclude Include="..\string\ConstReverseIterator.h" />
     <ClInclude Include="..\string\Iterator.h" />
+    <ClInclude Include="..\string\IteratorImpl.h" />
     <ClInclude Include="..\string\MyString.h" />
     <ClInclude Include="..\string\ReverseIterator.h" />
+    <ClInclude Include="..\string\ReverseIteratorImpl.h" />
     <ClInclude Include="MyStringTestsHandler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

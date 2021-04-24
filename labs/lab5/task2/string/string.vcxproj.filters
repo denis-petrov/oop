@@ -30,6 +30,18 @@
     <ClCompile Include="ReverseIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IteratorImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReverseIteratorImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstReverseIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -45,6 +57,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReverseIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IteratorImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReverseIteratorImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstReverseIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
