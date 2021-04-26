@@ -24,7 +24,8 @@ public:
 
 	size_t GetSize() const;
 	bool IsEmpty() const;
-	void Append(std::string const& data);
+	void PushFront(std::string const& data);
+	void PushBack(std::string const& data);
 
 	std::string& GetBackElement();
 	std::string const& GetBackElement() const;

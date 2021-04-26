@@ -23,6 +23,9 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 	{
 		BOOST_CHECK_THROW(CHttpUrl("http://test.com:65536/12"), CUrlParsingError);
 		BOOST_CHECK_THROW(CHttpUrl("https://t.ru:-1/12"), CUrlParsingError);
+		BOOST_CHECK_THROW(CHttpUrl("https://t.ru:/12"), CUrlParsingError);
+		BOOST_CHECK_THROW(CHttpUrl("https://t.ru:65537/12"), CUrlParsingError);
+		BOOST_CHECK_THROW(CHttpUrl("https://t.ru:0/12"), CUrlParsingError);
 	}
 
 	BOOST_AUTO_TEST_CASE(throw_url_parsing_error_if_user_string_with_side_date_in_query)
@@ -96,25 +99,41 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 		BOOST_CHECK(httpUrl.GetPort() == 80);
 		BOOST_CHECK(httpUrl.GetProtocol() == CHttpUrl::Protocol::HTTP);
 
-		BOOST_CHECK(httpsUrl.GetURL() == "https://google.com/test");
+		BOOST_CHECK(httpsUrl.GetURL() == "https://google.com:90/test");
 		BOOST_CHECK(httpsUrl.GetDomain() == "google.com");
 		BOOST_CHECK(httpsUrl.GetPort() == 90);
 		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);
 	}
 
-	BOOST_AUTO_TEST_CASE(able_get_full_url)
+	BOOST_AUTO_TEST_CASE(able_get_url_with_default_port)
 	{
 		CHttpUrl httpUrl("http://google.com/test");
 		CHttpUrl httpsUrl("https://google.com/test");
 
-		BOOST_CHECK(httpUrl.GetFullURL() == "http://google.com:80/test");
+		BOOST_CHECK(httpUrl.GetURL() == "http://google.com/test");
 		BOOST_CHECK(httpUrl.GetDomain() == "google.com");
 		BOOST_CHECK(httpUrl.GetPort() == 80);
 		BOOST_CHECK(httpUrl.GetProtocol() == CHttpUrl::Protocol::HTTP);
 
-		BOOST_CHECK(httpsUrl.GetFullURL() == "https://google.com:443/test");
+		BOOST_CHECK(httpsUrl.GetURL() == "https://google.com/test");
 		BOOST_CHECK(httpsUrl.GetDomain() == "google.com");
 		BOOST_CHECK(httpsUrl.GetPort() == 443);
+		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);
+	}
+
+	BOOST_AUTO_TEST_CASE(able_get_url_with_not_default_port)
+	{
+		CHttpUrl httpUrl("http://google.com:111/test");
+		CHttpUrl httpsUrl("https://google.com:2222/test");
+
+		BOOST_CHECK(httpUrl.GetURL() == "http://google.com:111/test");
+		BOOST_CHECK(httpUrl.GetDomain() == "google.com");
+		BOOST_CHECK(httpUrl.GetPort() == 111);
+		BOOST_CHECK(httpUrl.GetProtocol() == CHttpUrl::Protocol::HTTP);
+
+		BOOST_CHECK(httpsUrl.GetURL() == "https://google.com:2222/test");
+		BOOST_CHECK(httpsUrl.GetDomain() == "google.com");
+		BOOST_CHECK(httpsUrl.GetPort() == 2222);
 		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);
 	}
 
@@ -165,6 +184,15 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 	{
 		CHttpUrl httpUrl("http://google.com/test");
 		CHttpUrl httpsUrl("https://google.com/test");
+
+		BOOST_CHECK(httpUrl.GetProtocol() == CHttpUrl::Protocol::HTTP);
+		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);
+	}
+
+	BOOST_AUTO_TEST_CASE(able_use_any_case)
+	{
+		CHttpUrl httpUrl("hTtP://google.com/test");
+		CHttpUrl httpsUrl("HtTPs://google.com/test");
 
 		BOOST_CHECK(httpUrl.GetProtocol() == CHttpUrl::Protocol::HTTP);
 		BOOST_CHECK(httpsUrl.GetProtocol() == CHttpUrl::Protocol::HTTPS);

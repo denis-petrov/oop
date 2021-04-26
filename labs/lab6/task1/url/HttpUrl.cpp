@@ -2,8 +2,7 @@
 #include "HttpUrl.h"
 #include "UrlParsingError.h"
 
-//const std::regex URL_REGEX("(http|https)://([^/:]+):?([^/]*)(/?[^#?]*)");
-const std::regex URL_REGEX("(?i)(http|https):\/\/([^\/:]+)(:\/d+)?(\/[^]+)?$");
+const std::regex URL_REGEX("(http|https)://([^/:]+)(:\\d+)?(/[^\\?\\#]*)*", std::regex_constants::icase);
 const int DEFAULT_HTTP_PORT = 80;
 const int DEFAULT_HTTPS_PORT = 443;
 const std::string HTTP = "http";
@@ -32,11 +31,11 @@ unsigned short ParsePortFromString(string const& userPort)
 {
 	try
 	{
-		int intPort = boost::lexical_cast<int>(userPort);
+		int intPort = boost::lexical_cast<int>(userPort.substr(1));
 		if ((intPort < MIN_PORT) || (intPort > MAX_PORT))
 			throw CUrlParsingError("Not valid port.");
 
-		return boost::lexical_cast<unsigned short>(userPort);
+		return boost::lexical_cast<unsigned short>(intPort);
 	}
 	catch (const bad_cast&)
 	{
@@ -60,7 +59,7 @@ CHttpUrl::CHttpUrl(string const& url)
 	m_protocol = ParseProtocolFromString(matches[1].str());
 	m_domain = matches[2].str();
 	m_port = matches[3].str().empty() ? SetDefaultPort() : ParsePortFromString(matches[3].str());
-	m_document = matches[4].str();
+	m_document = matches[4].str().empty() ? string(1, '/') : matches[4].str();
 }
 
 CHttpUrl::CHttpUrl(string const& domain, string const& document, Protocol protocol)

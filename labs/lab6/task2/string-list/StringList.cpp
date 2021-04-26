@@ -13,7 +13,7 @@ CStringList::CStringList(CStringList const& other)
 		auto currNode = other.m_firstNode.get();
 		while (currNode)
 		{
-			Append(currNode->data);
+			PushBack(currNode->data);
 			currNode = currNode->next.get();
 		}
 	}
@@ -36,7 +36,16 @@ CStringList::~CStringList()
 	Clear();
 }
 
-void CStringList::Append(string const& data)
+void CStringList::PushFront(string const& data) // TODO
+{
+	auto newNode = make_unique<Node>(data, nullptr, move(m_firstNode));
+	m_firstNode->prev = newNode.get();
+	m_firstNode = move(newNode);
+	
+	++m_size;
+}
+
+void CStringList::PushBack(string const& data)
 {
 	auto newNode = make_unique<Node>(data, m_lastNode, nullptr);
 	Node* newLastNode = newNode.get();
