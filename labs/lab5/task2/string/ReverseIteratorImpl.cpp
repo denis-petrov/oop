@@ -3,7 +3,7 @@
 CReverseIteratorImpl::CReverseIteratorImpl(char* ptr)
 	: m_ptr(ptr)
 {
-}
+}//std::reverse_iterator
 
 CReverseIteratorImpl::operator bool() const
 {

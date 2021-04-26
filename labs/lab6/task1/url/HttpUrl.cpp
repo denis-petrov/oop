@@ -2,14 +2,57 @@
 #include "HttpUrl.h"
 #include "UrlParsingError.h"
 
+//const std::regex URL_REGEX("(http|https)://([^/:]+):?([^/]*)(/?[^#?]*)");
+const std::regex URL_REGEX("(?i)(http|https):\/\/([^\/:]+)(:\/d+)?(\/[^]+)?$");
+const int DEFAULT_HTTP_PORT = 80;
+const int DEFAULT_HTTPS_PORT = 443;
+const std::string HTTP = "http";
+const std::string HTTPS = "https";
+
+const int MIN_PORT = 1;
+const int MAX_PORT = 65535;
+
 using namespace std;
+
+CHttpUrl::Protocol ParseProtocolFromString(string const& userProtocol)
+{
+	string protocol(userProtocol);
+	boost::algorithm::to_lower(protocol);
+
+	if (protocol == HTTP)
+		return CHttpUrl::Protocol::HTTP;
+
+	if (protocol == HTTPS)
+		return CHttpUrl::Protocol::HTTPS;
+
+	throw CUrlParsingError("Not valid protocol.");
+}
+
+unsigned short ParsePortFromString(string const& userPort)
+{
+	try
+	{
+		int intPort = boost::lexical_cast<int>(userPort);
+		if ((intPort < MIN_PORT) || (intPort > MAX_PORT))
+			throw CUrlParsingError("Not valid port.");
+
+		return boost::lexical_cast<unsigned short>(userPort);
+	}
+	catch (const bad_cast&)
+	{
+		throw CUrlParsingError("Not valid port.");
+	}
+}
+
+string EnsureDocumentCorrect(string const& document)
+{
+	return (document[0] == '/') ? document : string(1, '/') + document;
+}
 
 CHttpUrl::CHttpUrl(string const& url)
 {
-	string search(url);
-
 	smatch matches;
-	if (!regex_match(search, matches, URL_REGEX))
+	if (!regex_match(url, matches, URL_REGEX))
 	{
 		throw CUrlParsingError("Not valid URL string.");
 	}
@@ -38,7 +81,10 @@ CHttpUrl::CHttpUrl(string const& domain, string const& document, Protocol protoc
 
 string CHttpUrl::GetURL() const
 {
-	return ProtocolToString() + "://" + m_domain + m_document;
+	if (m_port == DEFAULT_HTTP_PORT || m_port == DEFAULT_HTTPS_PORT)
+		return ProtocolToString() + "://" + m_domain + m_document;
+	else
+		return ProtocolToString() + "://" + m_domain + string(1, ':') + to_string(m_port) + m_document;
 }
 
 string CHttpUrl::GetDomain() const
@@ -61,11 +107,6 @@ unsigned short CHttpUrl::GetPort() const
 	return m_port;
 }
 
-string CHttpUrl::GetFullURL() const
-{
-	return ProtocolToString() + "://" + m_domain + string(1, ':') + to_string(m_port) + m_document;
-}
-
 string CHttpUrl::ProtocolToString() const
 {
 	if (m_protocol == Protocol::HTTP)
@@ -78,41 +119,6 @@ string CHttpUrl::ProtocolToString() const
 }
 
 /* PRIVATE */
-CHttpUrl::Protocol CHttpUrl::ParseProtocolFromString(string const& userProtocol) const
-{
-	string protocol(userProtocol);
-	boost::algorithm::to_lower(protocol);
-
-	if (protocol == HTTP)
-		return CHttpUrl::Protocol::HTTP;
-
-	if (protocol == HTTPS)
-		return CHttpUrl::Protocol::HTTPS;
-
-	throw CUrlParsingError("Not valid protocol.");
-}
-
-unsigned short CHttpUrl::ParsePortFromString(string const& userPort) const
-{
-	try
-	{
-		int intPort = boost::lexical_cast<int>(userPort);
-		if ((intPort < MIN_PORT) || (intPort > MAX_PORT))
-			throw CUrlParsingError("Not valid port.");
-
-		return boost::lexical_cast<unsigned short>(userPort);
-	}
-	catch (const bad_cast&)
-	{
-		throw CUrlParsingError("Not valid port.");
-	}
-}
-
-string CHttpUrl::EnsureDocumentCorrect(string const& document) const
-{
-	return (document[0] == SLASH) ? document : string(1, SLASH) + document;
-}
-
 unsigned short CHttpUrl::SetDefaultPort() const
 {
 	return (m_protocol == CHttpUrl::Protocol::HTTP) ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;

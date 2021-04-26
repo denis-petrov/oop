@@ -81,24 +81,4 @@ BOOST_FIXTURE_TEST_SUITE(My_String_initialization_and_clear_and_substring, MyStr
 		BOOST_CHECK(str == "test");
 	}
 
-	BOOST_AUTO_TEST_CASE(able_clear_mystring_instance)
-	{
-		CMyString zeroStr = generateEmptyItem();
-		BOOST_CHECK(zeroStr.GetLength() == 0);
-		BOOST_CHECK(zeroStr == "");
-		
-		zeroStr.Clear();
-		BOOST_CHECK(zeroStr.GetLength() == 0);
-		BOOST_CHECK(zeroStr == "");
-
-		
-		CMyString str = generateItem("test");
-		BOOST_CHECK(str.GetLength() == 4);
-		BOOST_CHECK(str == "test");
-		
-		str.Clear();
-		BOOST_CHECK(str.GetLength() == 0);
-		BOOST_CHECK(str == "");
-	}
-
 BOOST_AUTO_TEST_SUITE_END()

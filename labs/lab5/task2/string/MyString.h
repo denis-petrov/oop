@@ -1,9 +1,9 @@
 #pragma once
 #include "stdafx.h"
-#include "Iterator.h"
-#include "ReverseIterator.h"
 #include "ConstIterator.h"
 #include "ConstReverseIterator.h"
+#include "Iterator.h"
+#include "ReverseIterator.h"
 
 class CMyString
 {
@@ -21,20 +21,19 @@ public:
 
 	size_t GetLength() const;
 	const char* GetStringData() const;
-	CMyString SubString(size_t start, size_t length = SIZE_MAX) const;
-	void Clear();
+	CMyString SubString(size_t start, size_t end = SIZE_MAX) const;
 
 	CIterator begin();
 	CIterator end();
 
-	const CConstIterator cbegin();
-	const CConstIterator cend();
+	CConstIterator cbegin() const;
+	CConstIterator cend() const;
 
 	CReverseIterator rbegin();
 	CReverseIterator rend();
 
-	const CConstReverseIterator crbegin();
-	const CConstReverseIterator crend();
+	CConstReverseIterator crbegin() const;
+	CConstReverseIterator crend() const;
 
 public:
 	CMyString& operator=(CMyString const& other);
@@ -52,7 +51,6 @@ private:
 	size_t m_length;
 
 	char* Allocate(size_t size) const;
-	char* CopyString(const char* str, size_t size);
 };
 
 CMyString operator+(CMyString lhs, CMyString const& rhs);

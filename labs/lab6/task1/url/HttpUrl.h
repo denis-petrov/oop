@@ -29,8 +29,6 @@ public:
 	Protocol GetProtocol() const;
 	unsigned short GetPort() const;
 
-	std::string GetFullURL() const;
-
 	std::string ProtocolToString() const;
 
 private:
@@ -39,8 +37,5 @@ private:
 	unsigned short m_port;
 	std::string m_document;
 
-	Protocol ParseProtocolFromString(std::string const& userProtocol) const;
-	unsigned short ParsePortFromString(std::string const& userPort) const;
-	std::string EnsureDocumentCorrect(std::string const& document) const;
 	unsigned short SetDefaultPort() const;
 };
