@@ -100,31 +100,67 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		std::string res;
 		for (auto&& elem : list)
 		{
-			res += elem.data;
+			res += elem;
 		}
 		BOOST_CHECK(res == "Hello world");
 		res.clear();
 
 		for (auto it = list.cbegin(); it != list.cend(); it++)
 		{
-			res += it->data;
+			res += *it;
 		}
 		BOOST_CHECK(res == "Hello world");
 		std::sort(res.begin(), res.end());
 	}
 
-	BOOST_AUTO_TEST_CASE(able_use_reverse_iterator)
+	BOOST_AUTO_TEST_CASE(able_use_operations_with_begin_and_end)
 	{
 		CStringList list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
 		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
-		//std::string res;
-		//for (auto it = list.rbegin(); it != list.rend(); it++)
-		//{
-		//	res += it->data;
-		//}
-		//BOOST_CHECK(res == " worldHello");
+		list.PushBack(" iterator test.");
+
+		auto it = list.begin();
+		it++;
+		BOOST_CHECK(*it == " world");
+		++it;
+		BOOST_CHECK(*it == " iterator test.");
+		--it;
+		BOOST_CHECK(*it == " world");
+		it--;
+		BOOST_CHECK(*it == "Hello");
+		it += 2;
+		BOOST_CHECK(*it == " iterator test.");
+		it -= 2;
+		BOOST_CHECK(*it == "Hello");
 	}
+
+	BOOST_AUTO_TEST_CASE(throw_invalid_argument_if_not_correct_offset_in_operation)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		list.PushBack(" iterator test.");
+
+		auto it = list.begin();
+		BOOST_CHECK_THROW(it += 10, std::invalid_argument);
+		BOOST_CHECK_THROW(it -= 10, std::invalid_argument);
+	}
+
+	/*BOOST_AUTO_TEST_CASE(able_use_reverse_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		std::string res;
+		for (auto it = list.rbegin(); it != list.rend(); it++)
+		{
+			res += *it;
+		}
+		BOOST_CHECK(res == " worldHello");
+	}*/
 
 BOOST_AUTO_TEST_SUITE_END()

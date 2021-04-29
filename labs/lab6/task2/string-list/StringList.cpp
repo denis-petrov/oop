@@ -121,56 +121,54 @@ ostream& operator<<(ostream& os, CStringList const& rhs)
 	return os;
 }
 
-CStringList::CIterator::CIterator(CStringList::Node* node)
-	: m_node(node)
-{
-}
-
-CStringList::CIterator::reference CStringList::CIterator::operator*() const
-{
-	return *m_node;
-}
-
-CStringList::CIterator::pointer CStringList::CIterator::operator->()
-{
-	return m_node;
-}
-
-CStringList::CIterator& CStringList::CIterator::operator++()
-{
-	assert(m_node != nullptr);
-	m_node = m_node->next;
-	return *this;
-}
-
-CStringList::CIterator& CStringList::CIterator::operator++(int)
-{
-	assert(m_node != nullptr);
-	m_node = m_node->next;
-	return *this;
-}
-
-CStringList::CIterator& CStringList::CIterator::operator--()
-{
-	assert(m_node != nullptr);
-	m_node = m_node->prev;
-	return *this;
-}
-
-CStringList::CIterator& CStringList::CIterator::operator--(int)
-{
-	assert(m_node != nullptr);
-	m_node = m_node->prev;
-	return *this;
-}
-
-bool CStringList::CIterator::operator!=(CStringList::CIterator const& other) const
-{
-	return m_node != other.m_node;
-}
-
-
-	//CStringList::Iterator CStringList::begin()
+//CStringList::CIterator::CIterator(CStringList::Node* node)
+//	: m_node(node)
+//{
+//}
+//
+//CStringList::CIterator::reference CStringList::CIterator::operator*() const
+//{
+//	return *m_node;
+//}
+//
+//CStringList::CIterator::pointer CStringList::CIterator::operator->()
+//{
+//	return m_node;
+//}
+//
+//CStringList::CIterator& CStringList::CIterator::operator++()
+//{
+//	assert(m_node != nullptr);
+//	m_node = m_node->next;
+//	return *this;
+//}
+//
+//CStringList::CIterator& CStringList::CIterator::operator++(int)
+//{
+//	assert(m_node != nullptr);
+//	m_node = m_node->next;
+//	return *this;
+//}
+//
+//CStringList::CIterator& CStringList::CIterator::operator--()
+//{
+//	assert(m_node != nullptr);
+//	m_node = m_node->prev;
+//	return *this;
+//}
+//
+//CStringList::CIterator& CStringList::CIterator::operator--(int)
+//{
+//	assert(m_node != nullptr);
+//	m_node = m_node->prev;
+//	return *this;
+//}
+//
+//bool CStringList::CIterator::operator!=(CStringList::CIterator const& other) const
+//{
+//	return m_node != other.m_node;
+//}
+//CStringList::Iterator CStringList::begin()
 //{
 //	return Iterator(m_firstNode);
 //}
@@ -200,32 +198,32 @@ bool CStringList::CIterator::operator!=(CStringList::CIterator const& other) con
 //	return make_reverse_iterator(end());
 //}
 
-CStringList::CIterator CStringList::begin()
-{
-	return CIterator(m_firstNode);
-}
-
-CStringList::CIterator CStringList::end()
-{
-	return CIterator(m_lastNode->next);
-}
-
-CStringList::CIterator CStringList::cbegin() const
-{
-	return CIterator(m_firstNode);
-}
-
-CStringList::CIterator CStringList::cend() const
-{
-	return CIterator(m_lastNode->next);
-}
-
-reverse_iterator<CStringList::CIterator> CStringList::rbegin()
-{
-	return make_reverse_iterator(begin());
-}
-
-reverse_iterator<CStringList::CIterator> CStringList::rend()
-{
-	return make_reverse_iterator(end());
-}
+//CIterator<false> CStringList::begin()
+//{
+//	return CIterator<false>(m_firstNode);
+//}
+//
+//CIterator<false> CStringList::end()
+//{
+//	return CIterator<false>(m_lastNode->next);
+//}
+//
+//CIterator<true> CStringList::cbegin() const
+//{
+//	return CIterator<true>(m_firstNode);
+//}
+//
+//CIterator<true> CStringList::cend() const
+//{
+//	return CIterator<true>(m_lastNode->next);
+//}
+//
+//reverse_iterator<CIterator<true>> CStringList::rbegin()
+//{
+//	return make_reverse_iterator(begin());
+//}
+//
+//reverse_iterator<CIterator<true>> CStringList::rend()
+//{
+//	return make_reverse_iterator(end());
+//}

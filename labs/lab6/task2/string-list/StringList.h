@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+//#include "Iterator.h"
 
 class CStringList
 {
@@ -17,71 +18,101 @@ public:
 		Node* next;
 	};
 
-	class CIterator : public std::iterator<std::forward_iterator_tag, Node*>
+	template <bool IsConst>
+	class CIterator
 	{
-		using iterator_category = std::forward_iterator_tag;
-	    using difference_type = std::ptrdiff_t;
-		using value_type = Node;
-		using pointer = Node*;
-		using reference = Node&;
-
-		friend CStringList;
-		CIterator(Node* node);
+		friend class CIterator<true>;
+		friend class CStringList;
 
 	public:
+		using Iterator = CIterator<IsConst>;
+		using value_type = std::conditional_t<IsConst, const std::string, std::string>;
+		using reference = value_type&;
+		using pointer = value_type*;
+		using difference_type = ptrdiff_t;
+		using iterator_category = std::random_access_iterator_tag;
+
 		CIterator() = default;
-		reference operator*() const;
-		pointer operator->();
-		CIterator& operator++();
-		CIterator& operator++(int);
-		CIterator& operator--();
-		CIterator& operator--(int);
-		bool operator!=(CIterator const& other) const;
-
-	private:
-		Node* m_node = nullptr;
-	};
-
-	/*struct Iterator
-	{
-		using iterator_category = std::forward_iterator_tag;
-		using value_type = Node;
-		using pointer = Node*;
-		using reference = Node&;
-
-		Iterator(pointer node)
-			: m_node(node)
+		CIterator(const CIterator<false>& other)
+			: m_node(other.m_node)
 		{
 		}
 
-		std::string* operator*() const { return &m_node->data; }
-		std::string& operator->() { return m_node->data; }
+		pointer& operator->() 
+		{
+			return &m_node->data; 
+		}
+
+		reference& operator*() const 
+		{
+			return m_node->data;
+		}
+
 		Iterator& operator++()
 		{
 			m_node = m_node->next;
 			return *this;
 		}
+
 		Iterator operator++(int)
 		{
 			m_node = m_node->next;
 			return *this;
 		}
+
 		Iterator& operator--()
 		{
 			m_node = m_node->prev;
 			return *this;
 		}
+
 		Iterator operator--(int)
 		{
 			m_node = m_node->prev;
 			return *this;
 		}
-		friend bool operator==(Iterator const& a, Iterator const& b) { return a.m_node == b.m_node; };
-		friend bool operator!=(Iterator const& a, Iterator const& b) { return a.m_node != b.m_node; };
 
-	private:
-		pointer m_node = nullptr;
-	};*/
+		Iterator& operator+=(size_t offset)
+		{
+			for (size_t i = 0; i < offset; i++)
+			{
+				if (m_node == nullptr)
+					throw std::invalid_argument("Not correct right side operand in += operation.");
+				m_node = m_node->next;
+			}
+			return *this;
+		}
+
+		Iterator& operator-=(size_t offset)
+		{
+			for (size_t i = 0; i < offset; i++)
+			{
+				if (m_node == nullptr)
+					throw std::invalid_argument("Not correct right side operand in -= operation.");
+				m_node = m_node->prev;
+			}
+			return *this;
+		}
+
+		friend bool operator==(Iterator const& lhs, Iterator const& rhs) 
+		{
+			return lhs.m_node == rhs.m_node; 
+		}
+
+		friend bool operator!=(Iterator const& lhs, Iterator const& rhs) 
+		{
+			return lhs.m_node != rhs.m_node; 
+		}
+
+	public:
+		CIterator(Node* node)
+			: m_node(node)
+		{
+		}
+
+	protected:
+		Node* m_node = nullptr;
+	};
 
 public:
 	CStringList() = default;
@@ -101,14 +132,60 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, CStringList const& rhs);
 
-	CIterator begin();
-	CIterator end();
+	/*CIterator<false> begin();
+	CIterator<false> end();
 
-	CIterator cbegin() const;
-	CIterator cend() const;
+	CIterator<true> cbegin() const;
+	CIterator<true> cend() const;
 
-	std::reverse_iterator<CIterator> rbegin();
-	std::reverse_iterator<CIterator> rend();
+	std::reverse_iterator<CIterator<false>> rbegin();
+	std::reverse_iterator<CIterator<false>> rend();*/
+
+	using iterator = CIterator<false>;
+	using const_iterator = CIterator<true>;
+
+	using reverse_iterator = std::reverse_iterator<CIterator<false>>;
+	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
+
+	iterator begin()
+	{
+		return { m_firstNode };
+	}
+
+	const_iterator end()
+	{
+		return { m_lastNode->next };
+	}
+
+	const_iterator cbegin() const
+	{
+		return { m_firstNode };
+	}
+
+	const_iterator cend() const
+	{
+		return { m_lastNode->next };
+	}
+
+	reverse_iterator rbegin() 
+	{
+		return std::make_reverse_iterator(begin());
+	}
+
+	reverse_iterator rend()
+	{
+		return std::make_reverse_iterator(CIterator<false>(m_lastNode->next));
+	}
+
+	/*const_reverse_iterator crbegin() 
+	{
+		return std::make_reverse_iterator(cbegin());
+	}
+
+	const_reverse_iterator crend()
+	{
+		return std::make_reverse_iterator(cend());
+	}*/
 
 private:
 	size_t m_size = 0;
