@@ -149,18 +149,132 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		BOOST_CHECK_THROW(it -= 10, std::invalid_argument);
 	}
 
-	/*BOOST_AUTO_TEST_CASE(able_use_reverse_iterator)
+	BOOST_AUTO_TEST_CASE(able_use_reverse_iterator)
 	{
 		CStringList list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
 		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		list.PushBack("test");
 		std::string res;
+
+		auto it = list.rbegin();
 		for (auto it = list.rbegin(); it != list.rend(); it++)
 		{
-			res += *it;
+			res += *it.base();
 		}
-		BOOST_CHECK(res == " worldHello");
-	}*/
+		BOOST_CHECK(res == "test worldHello");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_use_const_reverse_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		list.PushBack("test");
+		std::string res;
+
+		auto it = list.rbegin();
+		for (auto it = list.crbegin(); it != list.crend(); it++)
+		{
+			res += *it.base();
+		}
+		BOOST_CHECK(res == "test worldHello");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_get_node_from_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		list.PushBack("test");
+		std::string res;
+
+		auto it = list.rbegin();
+		BOOST_CHECK(it.base().GetNode()->data == "test");
+
+		auto it2 = list.begin();
+		BOOST_CHECK(it2.GetNode()->data == "Hello");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_insert_element_by_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		list.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test");
+
+		auto it = list.begin();
+		list.Insert(it, std::string("Ok "));
+		BOOST_CHECK(GetListAsString(list) == "Ok Hello world test");
+		BOOST_CHECK(list.GetSize() == 4);
+		it += 2;
+		list.Insert(it, std::string(" lol "));
+		BOOST_CHECK(GetListAsString(list) == "Ok Hello world lol  test");
+		BOOST_CHECK(list.GetSize() == 5);
+
+		std::string res;
+		for (auto&& elem : list)
+		{
+			res += elem;
+		}
+		BOOST_CHECK(res == "Ok Hello world lol  test");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_insert_element_by_reverse_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		list.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test");
+
+		auto it = list.rbegin();
+		list.Insert(it, std::string(" Ok"));
+		BOOST_CHECK(GetListAsString(list) == "Hello world Ok test");
+		BOOST_CHECK(list.GetSize() == 4);
+		it += 2;
+		list.Insert(it, std::string(" lol "));
+		BOOST_CHECK(GetListAsString(list) == "Hello lol  world Ok test");
+		BOOST_CHECK(list.GetSize() == 5);
+
+		std::string res;
+		for (auto&& elem : list)
+		{
+			res += elem;
+		}
+		BOOST_CHECK(res == "Hello lol  world Ok test");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_delete_element_by_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		list.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test");
+
+		auto it = list.begin();
+		list.Delete(it);
+		BOOST_CHECK(GetListAsString(list) == " world test");
+		BOOST_CHECK(list.GetSize() == 2);
+	}
+
+	BOOST_AUTO_TEST_CASE(able_delete_element_by_reverse_iterator)
+	{
+		CStringList list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		BOOST_CHECK(list.GetBackElement() == " world");
+		list.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test");
+
+		auto it = list.rbegin();
+		list.Delete(it);
+		BOOST_CHECK(GetListAsString(list) == "Hello world");
+		BOOST_CHECK(list.GetSize() == 2);
+	}
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -96,6 +96,18 @@ string const& CStringList::GetBackElement() const
 	return m_lastNode->data;
 }
 
+string& CStringList::GetFirstElement()
+{
+	assert(m_firstNode);
+	return m_firstNode->data;
+}
+
+string const& CStringList::GetFirstElement() const
+{
+	assert(m_firstNode);
+	return m_firstNode->data;
+}
+
 void CStringList::Clear() 
 {
 	auto curr = m_firstNode;
@@ -121,109 +133,150 @@ ostream& operator<<(ostream& os, CStringList const& rhs)
 	return os;
 }
 
-//CStringList::CIterator::CIterator(CStringList::Node* node)
-//	: m_node(node)
-//{
-//}
-//
-//CStringList::CIterator::reference CStringList::CIterator::operator*() const
-//{
-//	return *m_node;
-//}
-//
-//CStringList::CIterator::pointer CStringList::CIterator::operator->()
-//{
-//	return m_node;
-//}
-//
-//CStringList::CIterator& CStringList::CIterator::operator++()
-//{
-//	assert(m_node != nullptr);
-//	m_node = m_node->next;
-//	return *this;
-//}
-//
-//CStringList::CIterator& CStringList::CIterator::operator++(int)
-//{
-//	assert(m_node != nullptr);
-//	m_node = m_node->next;
-//	return *this;
-//}
-//
-//CStringList::CIterator& CStringList::CIterator::operator--()
-//{
-//	assert(m_node != nullptr);
-//	m_node = m_node->prev;
-//	return *this;
-//}
-//
-//CStringList::CIterator& CStringList::CIterator::operator--(int)
-//{
-//	assert(m_node != nullptr);
-//	m_node = m_node->prev;
-//	return *this;
-//}
-//
-//bool CStringList::CIterator::operator!=(CStringList::CIterator const& other) const
-//{
-//	return m_node != other.m_node;
-//}
-//CStringList::Iterator CStringList::begin()
-//{
-//	return Iterator(m_firstNode);
-//}
+void CStringList::Insert(iterator const& it, string const& data)
+{
+	if (it.m_node->prev)
+	{
+		Node* newNode = new Node(data, it.m_node->prev, it.m_node);
+		it.m_node->prev->next = newNode;
+		it.m_node->prev = newNode;
+	}
+	else
+	{
+		Node* newNode = new Node(data, nullptr, it.m_node);
+		it.m_node->prev = newNode;
+		m_firstNode = newNode;
+	}
+	m_size++;
+}
 
-//CStringList::Iterator CStringList::end()
-//{
-//	return Iterator(m_lastNode->next);
-//}
-//
-//CStringList::Iterator CStringList::cbegin() const
-//{
-//	return Iterator(m_firstNode);
-//}
-//
-//CStringList::Iterator CStringList::cend() const
-//{
-//	return Iterator(m_lastNode->next);
-//}
-//
-//reverse_iterator<CStringList::Iterator> CStringList::rbegin()
-//{
-//	return make_reverse_iterator(begin());
-//}
-//
-//reverse_iterator<CStringList::Iterator> CStringList::rend()
-//{
-//	return make_reverse_iterator(end());
-//}
+void CStringList::Insert(const_iterator const& it, string const& data)
+{
+	if (it.m_node->prev)
+	{
+		Node* newNode = new Node(data, it.m_node->prev, it.m_node);
+		it.m_node->prev->next = newNode;
+		it.m_node->prev = newNode;
+	}
+	else
+	{
+		Node* newNode = new Node(data, nullptr, it.m_node);
+		it.m_node->prev = newNode;
+		m_firstNode = newNode;
+	}
+	m_size++;
+}
 
-//CIterator<false> CStringList::begin()
-//{
-//	return CIterator<false>(m_firstNode);
-//}
-//
-//CIterator<false> CStringList::end()
-//{
-//	return CIterator<false>(m_lastNode->next);
-//}
-//
-//CIterator<true> CStringList::cbegin() const
-//{
-//	return CIterator<true>(m_firstNode);
-//}
-//
-//CIterator<true> CStringList::cend() const
-//{
-//	return CIterator<true>(m_lastNode->next);
-//}
-//
-//reverse_iterator<CIterator<true>> CStringList::rbegin()
-//{
-//	return make_reverse_iterator(begin());
-//}
-//
-//reverse_iterator<CIterator<true>> CStringList::rend()
-//{
-//	return make_reverse_iterator(end());
-//}
+void CStringList::Insert(reverse_iterator const& it, string const& data)
+{
+	if (it.base().m_node->prev)
+	{
+		Node* newNode = new Node(data, it.base().m_node->prev, it.base().m_node);
+		it.base().m_node->prev->next = newNode;
+		it.base().m_node->prev = newNode;
+	}
+	else
+	{
+		Node* newNode = new Node(data, nullptr, it.base().m_node);
+		it.base().m_node->prev = newNode;
+		m_firstNode = newNode;
+	}
+	m_size++;
+}
+
+void CStringList::Insert(const_reverse_iterator const& it, string const& data)
+{
+	if (it.base().m_node->prev)
+	{
+		Node* newNode = new Node(data, it.base().m_node->prev, it.base().m_node);
+		it.base().m_node->prev->next = newNode;
+		it.base().m_node->prev = newNode;
+	}
+	else
+	{
+		Node* newNode = new Node(data, nullptr, it.base().m_node);
+		it.base().m_node->prev = newNode;
+		m_firstNode = newNode;
+	}
+	m_size++;
+}
+
+void CStringList::Delete(iterator& it) 
+{
+	if (it.m_node->prev)
+		it.m_node->prev->next = it.m_node->next;
+
+	if (it.m_node->next)
+		it.m_node->next->prev = it.m_node->prev;
+
+	if (m_firstNode == it.m_node)
+		m_firstNode = it.m_node->next;
+
+	if (m_lastNode == it.m_node)
+		m_lastNode = it.m_node->prev;
+
+	m_size--;
+	auto temp = it.m_node->next;
+	delete it.m_node;
+	it = temp;
+}
+
+void CStringList::Delete(const_iterator& it)
+{
+	if (it.m_node->prev)
+		it.m_node->prev->next = it.m_node->next;
+
+	if (it.m_node->next)
+		it.m_node->next->prev = it.m_node->prev;
+
+	if (m_firstNode == it.m_node)
+		m_firstNode = it.m_node->next;
+
+	if (m_lastNode == it.m_node)
+		m_lastNode = it.m_node->prev;
+
+	m_size--;
+	auto temp = it.m_node->next;
+	delete it.m_node;
+	it = temp;
+}
+
+void CStringList::Delete(reverse_iterator& it)
+{
+	if (it.base().m_node->prev)
+		it.base().m_node->prev->next = it.base().m_node->next;
+
+	if (it.base().m_node->next)
+		it.base().m_node->next->prev = it.base().m_node->prev;
+
+	if (m_firstNode == it.base().m_node)
+		m_firstNode = it.base().m_node->next;
+
+	if (m_lastNode == it.base().m_node)
+		m_lastNode = it.base().m_node->prev;
+
+	m_size--;
+	auto temp = it.base().m_node->next;
+	delete it.base().m_node;
+	it.base()= temp;
+}
+
+void CStringList::Delete(const_reverse_iterator& it)
+{
+	if (it.base().m_node->prev)
+		it.base().m_node->prev->next = it.base().m_node->next;
+
+	if (it.base().m_node->next)
+		it.base().m_node->next->prev = it.base().m_node->prev;
+
+	if (m_firstNode == it.base().m_node)
+		m_firstNode = it.base().m_node->next;
+
+	if (m_lastNode == it.base().m_node)
+		m_lastNode = it.base().m_node->prev;
+
+	m_size--;
+	auto temp = it.base().m_node->next;
+	delete it.base().m_node;
+	it.base() = temp;
+}

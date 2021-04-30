@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-//#include "Iterator.h"
 
 class CStringList
 {
@@ -36,6 +35,11 @@ public:
 		CIterator(const CIterator<false>& other)
 			: m_node(other.m_node)
 		{
+		}
+
+		Node* GetNode() 
+		{
+			return m_node;
 		}
 
 		pointer& operator->() 
@@ -128,18 +132,12 @@ public:
 	std::string& GetBackElement();
 	std::string const& GetBackElement() const;
 
+	std::string& GetFirstElement();
+	std::string const& GetFirstElement() const;
+
 	void Clear();
 
 	friend std::ostream& operator<<(std::ostream& os, CStringList const& rhs);
-
-	/*CIterator<false> begin();
-	CIterator<false> end();
-
-	CIterator<true> cbegin() const;
-	CIterator<true> cend() const;
-
-	std::reverse_iterator<CIterator<false>> rbegin();
-	std::reverse_iterator<CIterator<false>> rend();*/
 
 	using iterator = CIterator<false>;
 	using const_iterator = CIterator<true>;
@@ -169,23 +167,33 @@ public:
 
 	reverse_iterator rbegin() 
 	{
-		return std::make_reverse_iterator(begin());
+		return std::make_reverse_iterator(CIterator<false>(m_lastNode));
 	}
 
 	reverse_iterator rend()
 	{
-		return std::make_reverse_iterator(CIterator<false>(m_lastNode->next));
+		return std::make_reverse_iterator(CIterator<false>(m_firstNode->prev));
 	}
 
-	/*const_reverse_iterator crbegin() 
+	const_reverse_iterator crbegin() 
 	{
-		return std::make_reverse_iterator(cbegin());
+		return std::make_reverse_iterator(CIterator<true>(m_lastNode));
 	}
 
 	const_reverse_iterator crend()
 	{
-		return std::make_reverse_iterator(cend());
-	}*/
+		return std::make_reverse_iterator(CIterator<true>(m_firstNode->prev));
+	}
+
+	void Insert(iterator const& it, std::string const& data);
+	void Insert(const_iterator const& it, std::string const& data);
+	void Insert(reverse_iterator const& it, std::string const& data);
+	void Insert(const_reverse_iterator const& it, std::string const& data);
+
+	void Delete(iterator& it);
+	void Delete(const_iterator& it);
+	void Delete(reverse_iterator& it);
+	void Delete(const_reverse_iterator& it);
 
 private:
 	size_t m_size = 0;
