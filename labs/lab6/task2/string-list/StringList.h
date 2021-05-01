@@ -42,12 +42,12 @@ public:
 			return m_node;
 		}
 
-		pointer& operator->() 
+		pointer operator->() 
 		{
 			return &m_node->data; 
 		}
 
-		reference& operator*() const 
+		reference operator*() const 
 		{
 			return m_node->data;
 		}
@@ -63,6 +63,18 @@ public:
 			m_node = m_node->next;
 			return *this;
 		}
+		
+		Iterator operator+(difference_type offset) const
+		{
+			Iterator temp(m_node);
+			temp += offset;
+			return temp;
+		}
+
+		friend Iterator operator+(difference_type offset, Iterator const& it)
+		{
+			return it + offset;
+		}
 
 		Iterator& operator--()
 		{
@@ -76,26 +88,32 @@ public:
 			return *this;
 		}
 
-		Iterator& operator+=(size_t offset)
+		Iterator& operator+=(difference_type offset)
 		{
-			for (size_t i = 0; i < offset; i++)
+			for (difference_type i = 0; i < std::abs(offset); i++)
 			{
 				if (m_node == nullptr)
 					throw std::invalid_argument("Not correct right side operand in += operation.");
-				m_node = m_node->next;
+				m_node = (offset > 0) ? m_node->next : m_node->prev;
 			}
 			return *this;
 		}
 
-		Iterator& operator-=(size_t offset)
+		Iterator& operator-=(difference_type offset)
 		{
-			for (size_t i = 0; i < offset; i++)
-			{
-				if (m_node == nullptr)
-					throw std::invalid_argument("Not correct right side operand in -= operation.");
-				m_node = m_node->prev;
-			}
-			return *this;
+			return (*this += -offset);
+		}
+
+		Iterator operator-(difference_type offset) const
+		{
+			Iterator temp(m_node);
+			temp -= offset;
+			return temp;
+		}
+
+		friend Iterator operator-(difference_type offset, Iterator const& it)
+		{
+			return it + (-offset);
 		}
 
 		friend bool operator==(Iterator const& lhs, Iterator const& rhs) 
@@ -121,13 +139,16 @@ public:
 public:
 	CStringList() = default;
 	CStringList(CStringList const& other);
-	CStringList(CStringList&& other) noexcept;
+	CStringList(CStringList&& rvalue) noexcept;
 	~CStringList();
 
 	size_t GetSize() const;
 	bool IsEmpty() const;
 	void PushFront(std::string const& data);
 	void PushBack(std::string const& data);
+
+	Node* GetFirstNode() const;
+	Node* GetLastNode() const;
 
 	std::string& GetBackElement();
 	std::string const& GetBackElement() const;
@@ -145,45 +166,17 @@ public:
 	using reverse_iterator = std::reverse_iterator<CIterator<false>>;
 	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
 
-	iterator begin()
-	{
-		return { m_firstNode };
-	}
+	iterator begin();
+	const_iterator end();
 
-	const_iterator end()
-	{
-		return { m_lastNode->next };
-	}
+	const_iterator cbegin() const;
+	const_iterator cend() const;
 
-	const_iterator cbegin() const
-	{
-		return { m_firstNode };
-	}
+	reverse_iterator rbegin();
+	reverse_iterator rend();
 
-	const_iterator cend() const
-	{
-		return { m_lastNode->next };
-	}
-
-	reverse_iterator rbegin() 
-	{
-		return std::make_reverse_iterator(CIterator<false>(m_lastNode));
-	}
-
-	reverse_iterator rend()
-	{
-		return std::make_reverse_iterator(CIterator<false>(m_firstNode->prev));
-	}
-
-	const_reverse_iterator crbegin() 
-	{
-		return std::make_reverse_iterator(CIterator<true>(m_lastNode));
-	}
-
-	const_reverse_iterator crend()
-	{
-		return std::make_reverse_iterator(CIterator<true>(m_firstNode->prev));
-	}
+	const_reverse_iterator crbegin(); 
+	const_reverse_iterator crend();
 
 	void Insert(iterator const& it, std::string const& data);
 	void Insert(const_iterator const& it, std::string const& data);
