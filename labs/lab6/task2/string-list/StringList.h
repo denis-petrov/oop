@@ -51,23 +51,27 @@ public:
 
 		Iterator& operator++()
 		{
+			assert(m_node->next);
 			m_node = m_node->next;
 			return *this;
 		}
 
 		Iterator operator++(int)
 		{
+			assert(m_node->next);
 			return Iterator(m_node->next);
 		}
 
 		Iterator& operator--()
 		{
+			assert(m_node->prev);
 			m_node = m_node->prev;
 			return *this;
 		}
 
 		Iterator operator--(int)
 		{
+			assert(m_node->prev);
 			return Iterator(m_node->prev);
 		}
 
@@ -122,7 +126,7 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
 
 	iterator begin();
-	const_iterator end();
+	iterator end();
 
 	const_iterator cbegin() const;
 	const_iterator cend() const;
@@ -143,4 +147,5 @@ private:
 	size_t m_size = 0;
 	Node* m_firstNode = nullptr;
 	Node* m_lastNode = nullptr;
+	Node* m_sentryNode = new Node("", m_lastNode, nullptr);
 };

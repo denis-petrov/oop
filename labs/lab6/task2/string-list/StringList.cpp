@@ -3,17 +3,15 @@
 
 using namespace std;
 
-const string INEXIST_NODE = "Node does not exis";
-
 CStringList::CStringList(CStringList const& other)
 {
-	if (!other.m_lastNode)
+	if (!other.m_sentryNode->prev)
 		return;
 
 	try
 	{
 		auto currNode = other.m_firstNode;
-		while (currNode)
+		while (currNode && currNode != other.m_sentryNode)
 		{
 			PushBack(currNode->data);
 			currNode = currNode->next;
@@ -29,13 +27,14 @@ CStringList::CStringList(CStringList const& other)
 CStringList::CStringList(CStringList&& rvalue) noexcept
 {
 	swap(m_firstNode, rvalue.m_firstNode);
-	swap(m_lastNode, rvalue.m_lastNode);
+	swap(m_sentryNode, rvalue.m_sentryNode);
 	swap(m_size, rvalue.m_size);
 }
 
 CStringList::~CStringList()
 {
 	Clear();
+	delete m_sentryNode;
 }
 
 void CStringList::PushFront(string const& data) 
@@ -44,24 +43,21 @@ void CStringList::PushFront(string const& data)
 	if (m_firstNode)
 		m_firstNode->prev = newNode;
 	else
-		m_lastNode = newNode;
+		m_sentryNode->prev = newNode;
 	
 	m_firstNode = newNode;
-	
-	if (!m_lastNode)
-		m_firstNode = m_firstNode;
 	++m_size;
 }
 
 void CStringList::PushBack(string const& data)
 {
-	Node* newNode = new Node(data, m_lastNode, nullptr);
-	if (m_lastNode)
-		m_lastNode->next = newNode;
+	Node* newNode = new Node(data, m_sentryNode->prev, m_sentryNode);
+	if (m_sentryNode->prev)
+		m_sentryNode->prev->next = newNode;
 	else
 		m_firstNode = newNode;
 
-	m_lastNode = newNode;
+	m_sentryNode->prev = newNode;
 	++m_size;
 }
 
@@ -77,14 +73,14 @@ bool CStringList::IsEmpty() const
 
 string& CStringList::GetBackElement()
 {
-	assert(m_lastNode);
-	return m_lastNode->data;
+	assert(m_sentryNode->prev);
+	return m_sentryNode->prev->data;
 }
 
 string const& CStringList::GetBackElement() const
 {
-	assert(m_lastNode);
-	return m_lastNode->data;
+	assert(m_sentryNode->prev);
+	return m_sentryNode->prev->data;
 }
 
 string& CStringList::GetFirstElement()
@@ -114,7 +110,7 @@ CStringList::Node* CStringList::GetLastNode() const
 void CStringList::Clear() 
 {
 	auto curr = m_firstNode;
-	while (curr)
+	while (curr && curr != m_sentryNode)
 	{
 		auto next = curr->next;
 		delete curr;
@@ -138,58 +134,42 @@ ostream& operator<<(ostream& os, CStringList const& rhs)
 
 CStringList::iterator CStringList::begin()
 {
-	if (!m_firstNode)
-		throw invalid_argument(INEXIST_NODE);
 	return iterator(m_firstNode);
 }
 
-CStringList::const_iterator CStringList::end()
+CStringList::iterator CStringList::end()
 {
-	if (!m_lastNode)
-		throw invalid_argument(INEXIST_NODE);
-	return iterator(m_lastNode->next);
+	return iterator(m_sentryNode);
 }
 
 CStringList::const_iterator CStringList::cbegin() const
 {
-	if (!m_firstNode)
-		throw invalid_argument(INEXIST_NODE);
 	return const_iterator(m_firstNode);
 }
 
 CStringList::const_iterator CStringList::cend() const
 {
-	if (!m_lastNode)
-		throw invalid_argument(INEXIST_NODE);
-	return const_iterator(m_lastNode->next);
+	return const_iterator(m_sentryNode);
 }
 
 CStringList::reverse_iterator CStringList::rbegin()
 {
-	if (!m_lastNode)
-		throw invalid_argument(INEXIST_NODE);
-	return make_reverse_iterator(CIterator<false>(m_lastNode));
+	return make_reverse_iterator(end());
 }
 
 CStringList::reverse_iterator CStringList::rend()
 {
-	if (!m_firstNode)
-		throw invalid_argument(INEXIST_NODE);
-	return make_reverse_iterator(CIterator<false>(m_firstNode->prev));
-}//std::aligned_storege lab7 task2
+	return make_reverse_iterator(begin());
+}
 
 CStringList::const_reverse_iterator CStringList::crbegin()
 {
-	if (!m_lastNode)
-		throw invalid_argument(INEXIST_NODE);
-	return make_reverse_iterator(CIterator<true>(m_lastNode));
+	return make_reverse_iterator(cend());
 }
 
 CStringList::const_reverse_iterator CStringList::crend()
 {
-	if (!m_firstNode)
-		throw invalid_argument(INEXIST_NODE);
-	return make_reverse_iterator(CIterator<true>(m_firstNode->prev));
+	return make_reverse_iterator(cbegin());
 }
 
 void CStringList::Insert(iterator const& it, string const& data)
@@ -217,6 +197,12 @@ void CStringList::Insert(reverse_iterator const& it, string const& data)
 
 void CStringList::Delete(iterator& it) 
 {
+	if (!it.m_node)
+		throw invalid_argument("Node does not exist.");
+
+	if (it.m_node == m_sentryNode)
+		throw invalid_argument("Sentry Node can not be deleted.");
+
 	if (it.m_node->prev)
 		it.m_node->prev->next = it.m_node->next;
 
@@ -226,21 +212,20 @@ void CStringList::Delete(iterator& it)
 	if (m_firstNode == it.m_node)
 		m_firstNode = it.m_node->next;
 
-	if (m_lastNode == it.m_node)
-		m_lastNode = it.m_node->prev;
+	if (m_sentryNode->prev == it.m_node)
+		m_sentryNode->prev = it.m_node->prev;
 
-	if (it.m_node)
-	{
-		m_size--;
-		auto temp = it.m_node->next;
-		delete it.m_node;
-		it = temp;
-	}
+	m_size--;
+	auto temp = it.m_node->next;
+	delete it.m_node;
+	it = temp;
 }
 
 void CStringList::Delete(reverse_iterator& it)
 {
-	auto itDel = iterator(it.base().m_node);
+	if (!it.base().m_node || !it.base().m_node->prev)
+		throw invalid_argument("Node does not exist.");
+	auto itDel = --it.base();
 	Delete(itDel);
 	it.base() = itDel.m_node;
 }

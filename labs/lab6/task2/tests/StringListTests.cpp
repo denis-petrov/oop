@@ -90,19 +90,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 	}
 
-	BOOST_AUTO_TEST_CASE(iterator_throw_error_if_node_null)
-	{
-		CStringList list;
-		BOOST_CHECK_THROW(list.begin(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.end(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.rbegin(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.rend(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.cbegin(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.cend(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.crbegin(), std::invalid_argument);
-		BOOST_CHECK_THROW(list.crend(), std::invalid_argument);
-	}
-
 	BOOST_AUTO_TEST_CASE(able_use_iterator)
 	{
 		CStringList list = CreatNewOne();
@@ -116,6 +103,14 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 			res += elem;
 		}
 		BOOST_CHECK(res == "Hello world");
+		res.clear();
+
+		for (auto it = list.begin(); it != list.end(); ++it)
+		{
+			res += *it;
+		}
+		BOOST_CHECK(res == "Hello world");
+
 		res.clear();
 
 		for (auto it = list.cbegin(); it != list.cend(); ++it)
@@ -133,16 +128,16 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 
 		std::string res;
-		for (auto it = list.rbegin(); it != list.rend(); ++it)
+		for (auto it = list.rbegin(); it != list.rend(); it++)
 		{
-			res += *it.base();
+			res += *it;
 		}
 		BOOST_CHECK(res == " worldHello");
 		res.clear();
 
-		for (auto it = list.crbegin(); it != list.crend(); ++it)
+		for (auto it = list.crbegin(); it != list.crend(); it++)
 		{
-			res += *it.base();
+			res += *it;
 		}
 		BOOST_CHECK(res == " worldHello");
 	}
@@ -157,6 +152,29 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 
 		auto it = list.begin();
 		BOOST_CHECK(*(it++) == " world");
+
+		auto itEnd = list.end();
+		BOOST_CHECK(*(--itEnd) == " iterator test.");
+		BOOST_CHECK(*(itEnd--) == " world");
+	}
+
+	BOOST_AUTO_TEST_CASE(able_insert_element_to_empty_list_by_iterator)
+	{
+		CStringList list;
+		BOOST_CHECK(list.GetSize() == 0);
+		BOOST_CHECK(GetListAsString(list) == "");
+
+		auto it = list.begin();
+		list.Insert(it, std::string("Ok "));
+		BOOST_CHECK(GetListAsString(list) == "Ok ");
+		BOOST_CHECK(list.GetSize() == 1);
+
+		std::string res;
+		for (auto&& elem : list)
+		{
+			res += elem;
+		}
+		BOOST_CHECK(res == "Ok ");
 	}
 
 	BOOST_AUTO_TEST_CASE(able_insert_element_by_iterator)
@@ -180,6 +198,25 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		BOOST_CHECK(res == "Ok Hello world test");
 	}
 
+	BOOST_AUTO_TEST_CASE(able_insert_element_to_empty_list_by_reverse_iterator)
+	{
+		CStringList list;
+		BOOST_CHECK(list.GetSize() == 0);
+		BOOST_CHECK(GetListAsString(list) == "");
+
+		auto it = list.rbegin();
+		list.Insert(it, std::string("Ok "));
+		BOOST_CHECK(GetListAsString(list) == "Ok ");
+		BOOST_CHECK(list.GetSize() == 1);
+
+		std::string res;
+		for (auto&& elem : list)
+		{
+			res += elem;
+		}
+		BOOST_CHECK(res == "Ok ");
+	}
+
 	BOOST_AUTO_TEST_CASE(able_insert_element_by_reverse_iterator)
 	{
 		CStringList list = CreatNewOne();
@@ -190,7 +227,7 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 
 		auto it = list.rbegin();
 		list.Insert(it, std::string(" Ok"));
-		BOOST_CHECK(GetListAsString(list) == "Hello world Ok test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test Ok");
 		BOOST_CHECK(list.GetSize() == 4);
 
 		std::string res;
@@ -198,7 +235,16 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		{
 			res += elem;
 		}
-		BOOST_CHECK(res == "Hello world Ok test");
+		BOOST_CHECK(res == "Hello world test Ok");
+	}
+
+	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_iterator)
+	{
+		CStringList list;
+		auto itB = list.begin();
+		BOOST_CHECK_THROW(list.Delete(itB), std::invalid_argument);
+		auto itE = list.end();
+		BOOST_CHECK_THROW(list.Delete(itE), std::invalid_argument);
 	}
 
 	BOOST_AUTO_TEST_CASE(able_delete_element_by_iterator)
@@ -213,6 +259,15 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, StringList_)
 		list.Delete(it);
 		BOOST_CHECK(GetListAsString(list) == " world test");
 		BOOST_CHECK(list.GetSize() == 2);
+	}
+
+	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_reverse_iterator)
+	{
+		CStringList list;
+		auto itRB = list.rbegin();
+		BOOST_CHECK_THROW(list.Delete(itRB), std::invalid_argument);
+		auto itRE = list.rend();
+		BOOST_CHECK_THROW(list.Delete(itRE), std::invalid_argument);
 	}
 
 	BOOST_AUTO_TEST_CASE(able_delete_element_by_reverse_iterator)
