@@ -29,7 +29,7 @@ public:
 		using reference = value_type&;
 		using pointer = value_type*;
 		using difference_type = ptrdiff_t;
-		using iterator_category = std::random_access_iterator_tag;
+		using iterator_category = std::bidirectional_iterator_tag;
 
 		CIterator() = default;
 		CIterator(const CIterator<false>& other)
@@ -37,18 +37,15 @@ public:
 		{
 		}
 
-		Node* GetNode() 
-		{
-			return m_node;
-		}
-
 		pointer operator->() 
 		{
+			assert(m_node);
 			return &m_node->data; 
 		}
 
 		reference operator*() const 
 		{
+			assert(m_node);
 			return m_node->data;
 		}
 
@@ -60,20 +57,7 @@ public:
 
 		Iterator operator++(int)
 		{
-			m_node = m_node->next;
-			return *this;
-		}
-		
-		Iterator operator+(difference_type offset) const
-		{
-			Iterator temp(m_node);
-			temp += offset;
-			return temp;
-		}
-
-		friend Iterator operator+(difference_type offset, Iterator const& it)
-		{
-			return it + offset;
+			return Iterator(m_node->next);
 		}
 
 		Iterator& operator--()
@@ -84,36 +68,7 @@ public:
 
 		Iterator operator--(int)
 		{
-			m_node = m_node->prev;
-			return *this;
-		}
-
-		Iterator& operator+=(difference_type offset)
-		{
-			for (difference_type i = 0; i < std::abs(offset); i++)
-			{
-				if (m_node == nullptr)
-					throw std::invalid_argument("Not correct right side operand in += operation.");
-				m_node = (offset > 0) ? m_node->next : m_node->prev;
-			}
-			return *this;
-		}
-
-		Iterator& operator-=(difference_type offset)
-		{
-			return (*this += -offset);
-		}
-
-		Iterator operator-(difference_type offset) const
-		{
-			Iterator temp(m_node);
-			temp -= offset;
-			return temp;
-		}
-
-		friend Iterator operator-(difference_type offset, Iterator const& it)
-		{
-			return it + (-offset);
+			return Iterator(m_node->prev);
 		}
 
 		friend bool operator==(Iterator const& lhs, Iterator const& rhs) 
@@ -179,14 +134,10 @@ public:
 	const_reverse_iterator crend();
 
 	void Insert(iterator const& it, std::string const& data);
-	void Insert(const_iterator const& it, std::string const& data);
 	void Insert(reverse_iterator const& it, std::string const& data);
-	void Insert(const_reverse_iterator const& it, std::string const& data);
 
 	void Delete(iterator& it);
-	void Delete(const_iterator& it);
 	void Delete(reverse_iterator& it);
-	void Delete(const_reverse_iterator& it);
 
 private:
 	size_t m_size = 0;

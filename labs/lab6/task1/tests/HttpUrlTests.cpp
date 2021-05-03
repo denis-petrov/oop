@@ -35,8 +35,8 @@ BOOST_FIXTURE_TEST_SUITE(HttpUrl_tests, HttpUrl_)
 
 	BOOST_AUTO_TEST_CASE(able_initialize_instance_by_string)
 	{
-		const std::string httpStr = "http://vk.com/"; 
-		const std::string httpsStr = "https://google.com/"; 
+		const std::string httpStr = "http://vk.com/";
+		const std::string httpsStr = "https://google.com/";
 		CHttpUrl httpUrl(httpStr);
 		CHttpUrl httpsUrl(httpsStr);
 
