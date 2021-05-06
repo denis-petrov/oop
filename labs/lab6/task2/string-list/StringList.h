@@ -106,9 +106,6 @@ public:
 	void PushFront(std::string const& data);
 	void PushBack(std::string const& data);
 
-	Node* GetFirstNode() const;
-	Node* GetLastNode() const;
-
 	std::string& GetBackElement();
 	std::string const& GetBackElement() const;
 
@@ -146,6 +143,5 @@ public:
 private:
 	size_t m_size = 0;
 	Node* m_firstNode = nullptr;
-	Node* m_lastNode = nullptr;
-	Node* m_sentryNode = new Node("", m_lastNode, nullptr);
+	Node* m_sentryNode = new Node("", nullptr, nullptr);
 };

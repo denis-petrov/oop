@@ -95,18 +95,6 @@ string const& CStringList::GetFirstElement() const
 	return m_firstNode->data;
 }
 
-CStringList::Node* CStringList::GetFirstNode() const
-{
-	assert(m_firstNode);
-	return m_firstNode;
-}
-
-CStringList::Node* CStringList::GetLastNode() const
-{
-	assert(m_lastNode);
-	return m_lastNode;
-}
-
 void CStringList::Clear() 
 {
 	auto curr = m_firstNode;
@@ -117,7 +105,6 @@ void CStringList::Clear()
 		curr = next;
 	}
 	m_firstNode = nullptr;
-	m_lastNode = nullptr;
 	m_size = 0;
 }
 
