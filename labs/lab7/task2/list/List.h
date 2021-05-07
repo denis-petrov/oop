@@ -7,7 +7,7 @@ class CList
 public:
 	struct Node
 	{
-		Node(const T& data, Node* prev, Node* next)
+		Node(std::optional<T> const& data, Node* prev, Node* next)
 			: data(data)
 			, prev(prev)
 			, next(next)
@@ -121,15 +121,16 @@ public:
 
 	CList(CList&& rvalue) noexcept
 	{
-		swap(m_firstNode, rvalue.m_firstNode);
-		swap(m_sentryNode, rvalue.m_sentryNode);
-		swap(m_size, rvalue.m_size);
+		std::swap(m_firstNode, rvalue.m_firstNode);
+		std::swap(m_sentryNode, rvalue.m_sentryNode);
+		std::swap(m_size, rvalue.m_size);
 	}
 
 	~CList()
 	{
 		Clear();
 		delete m_sentryNode;
+		std::cout << m_size << "\n";
 	}
 
 	size_t GetSize() const
@@ -165,16 +166,16 @@ public:
 		++m_size;
 	}
 
-	T& GetBackElement()
+	std::optional<T>& GetBackElement()
 	{
 		assert(m_sentryNode->prev);
-		return m_sentryNode->prev->data.has_value() ? m_sentryNode->prev->data.value() : nullptr;
+		return m_sentryNode->prev->data;
 	}
 
-	T const& GetBackElement() const
+	std::optional<T> const& GetBackElement() const
 	{
 		assert(m_sentryNode->prev);
-		return m_sentryNode->prev->data.has_value() ? m_sentryNode->prev->data.value() : nullptr;
+		return m_sentryNode->prev->data;
 	}
 
 	T& GetFirstElement()
@@ -199,17 +200,6 @@ public:
 		}
 		m_firstNode = nullptr;
 		m_size = 0;
-	}
-
-	friend std::ostream& operator<<(std::ostream& os, CList const& rhs)
-	{
-		auto currNode = rhs.m_firstNode;
-		for (size_t i = 0; i < rhs.GetSize(); i++)
-		{
-			os << std::to_string(currNode->data.value());
-			currNode = currNode->next;
-		}
-		return os;
 	}
 
 	using iterator = CIterator<false>;
@@ -271,6 +261,7 @@ public:
 		it.m_node->prev = newNode;
 		m_size++;
 	}
+
 	void Insert(reverse_iterator const& it, T const& data)
 	{
 		Insert(it.base(), data);
@@ -313,5 +304,5 @@ public:
 private:
 	size_t m_size = 0;
 	Node* m_firstNode = nullptr;
-	Node* m_sentryNode = new Node(nullptr, nullptr, nullptr);
+	Node* m_sentryNode = new Node({ nullptr }, nullptr, nullptr);
 };
