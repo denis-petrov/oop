@@ -73,26 +73,22 @@ bool CStringList::IsEmpty() const
 
 string& CStringList::GetBackElement()
 {
-	assert(m_sentryNode->prev);
-	return m_sentryNode->prev->data;
+	return *(--end());
 }
 
 string const& CStringList::GetBackElement() const
 {
-	assert(m_sentryNode->prev);
-	return m_sentryNode->prev->data;
+	return *(--cend());
 }
 
 string& CStringList::GetFirstElement()
 {
-	assert(m_firstNode);
-	return m_firstNode->data;
+	return *(begin());
 }
 
 string const& CStringList::GetFirstElement() const
 {
-	assert(m_firstNode);
-	return m_firstNode->data;
+	return *(cbegin());
 }
 
 void CStringList::Clear() 

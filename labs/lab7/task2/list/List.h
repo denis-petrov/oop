@@ -175,7 +175,7 @@ public:
 
 	T const& GetBackElement() const
 	{
-		return *(--end());
+		return *(--cend());
 	}
 
 	T& GetFirstElement()
@@ -184,7 +184,7 @@ public:
 	}
 	T const& GetFirstElement() const
 	{
-		return *(begin());
+		return *(cbegin());
 	}
 
 	void Clear()

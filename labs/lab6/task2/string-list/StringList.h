@@ -82,7 +82,7 @@ public:
 
 		friend bool operator!=(Iterator const& lhs, Iterator const& rhs) 
 		{
-			return lhs.m_node != rhs.m_node; 
+			return !(lhs == rhs); 
 		}
 
 	public:
