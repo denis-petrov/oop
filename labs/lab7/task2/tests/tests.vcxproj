@@ -155,6 +155,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IntListTests.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="StringListTests.cpp" />
     <ClCompile Include="tests.cpp" />

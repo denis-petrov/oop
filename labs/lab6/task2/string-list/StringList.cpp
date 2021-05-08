@@ -31,7 +31,7 @@ CStringList::CStringList(CStringList&& rvalue) noexcept
 	swap(m_size, rvalue.m_size);
 }
 
-CStringList::~CStringList()
+CStringList::~CStringList() noexcept
 {
 	Clear();
 	delete m_sentryNode;

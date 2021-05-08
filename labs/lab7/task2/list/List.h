@@ -7,10 +7,10 @@ class CList
 public:
 	struct Node
 	{
-		Node(std::optional<T> const& data, Node* prev, Node* next)
-			: data(data)
-			, prev(prev)
-			, next(next)
+		Node(T const& newData, Node* newPrev, Node* newNext)
+			: data(std::make_optional<T>(newData))
+			, prev(newPrev)
+			, next(newNext)
 		{
 		}
 		std::optional<T> data;
@@ -41,7 +41,7 @@ public:
 		pointer operator->()
 		{
 			assert(m_node);
-			return &m_node->data.value();
+			return *m_node->data.value();
 		}
 
 		reference operator*() const
@@ -78,12 +78,12 @@ public:
 
 		friend bool operator==(Iterator const& lhs, Iterator const& rhs)
 		{
-			return lhs.m_node == rhs.m_node;
+			return (lhs.m_node == rhs.m_node);
 		}
 
 		friend bool operator!=(Iterator const& lhs, Iterator const& rhs)
 		{
-			return lhs.m_node != rhs.m_node;
+			return !(lhs == rhs);
 		}
 
 	public:
@@ -108,7 +108,7 @@ public:
 			auto currNode = other.m_firstNode;
 			while (currNode && currNode != other.m_sentryNode)
 			{
-				PushBack(currNode->data);
+				PushBack(currNode->data.value());
 				currNode = currNode->next;
 			}
 		}
@@ -126,11 +126,10 @@ public:
 		std::swap(m_size, rvalue.m_size);
 	}
 
-	~CList()
+	~CList() noexcept
 	{
 		Clear();
 		delete m_sentryNode;
-		std::cout << m_size << "\n";
 	}
 
 	size_t GetSize() const
@@ -144,11 +143,14 @@ public:
 
 	void PushFront(T const& data)
 	{
-		Node* newNode = new Node(std::make_optional(data), nullptr, m_firstNode);
+		Node* newNode = new Node(data, nullptr, m_firstNode);
 		if (m_firstNode)
 			m_firstNode->prev = newNode;
 		else
+		{
+			newNode->next = m_sentryNode;
 			m_sentryNode->prev = newNode;
+		}
 
 		m_firstNode = newNode;
 		++m_size;
@@ -156,7 +158,7 @@ public:
 
 	void PushBack(T const& data)
 	{
-		Node* newNode = new Node(std::make_optional(data), m_sentryNode->prev, m_sentryNode);
+		Node* newNode = new Node(data, m_sentryNode->prev, m_sentryNode);
 		if (m_sentryNode->prev)
 			m_sentryNode->prev->next = newNode;
 		else
@@ -166,27 +168,23 @@ public:
 		++m_size;
 	}
 
-	std::optional<T>& GetBackElement()
+	T& GetBackElement()
 	{
-		assert(m_sentryNode->prev);
-		return m_sentryNode->prev->data;
+		return *(--end());
 	}
 
-	std::optional<T> const& GetBackElement() const
+	T const& GetBackElement() const
 	{
-		assert(m_sentryNode->prev);
-		return m_sentryNode->prev->data;
+		return *(--end());
 	}
 
 	T& GetFirstElement()
 	{
-		assert(m_firstNode);
-		return m_firstNode->data.has_value() ? m_firstNode->data.value() : nullptr;
+		return *(begin());
 	}
 	T const& GetFirstElement() const
 	{
-		assert(m_firstNode);
-		return m_firstNode->data.has_value() ? m_firstNode->data.value() : nullptr;
+		return *(begin());
 	}
 
 	void Clear()
@@ -195,6 +193,7 @@ public:
 		while (curr && curr != m_sentryNode)
 		{
 			auto next = curr->next;
+			curr->data.reset();
 			delete curr;
 			curr = next;
 		}
@@ -252,7 +251,7 @@ public:
 			return;
 		}
 
-		Node* newNode = new Node(std::make_optional(data), it.m_node->prev, it.m_node);
+		Node* newNode = new Node(data, it.m_node->prev, it.m_node);
 		if (it.m_node->prev)
 			it.m_node->prev->next = newNode;
 		else
@@ -304,5 +303,5 @@ public:
 private:
 	size_t m_size = 0;
 	Node* m_firstNode = nullptr;
-	Node* m_sentryNode = new Node({ nullptr }, nullptr, nullptr);
+	Node* m_sentryNode = new Node({}, nullptr, nullptr);
 };

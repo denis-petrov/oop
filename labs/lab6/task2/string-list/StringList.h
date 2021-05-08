@@ -99,7 +99,7 @@ public:
 	CStringList() = default;
 	CStringList(CStringList const& other);
 	CStringList(CStringList&& rvalue) noexcept;
-	~CStringList();
+	~CStringList() noexcept;
 
 	size_t GetSize() const;
 	bool IsEmpty() const;
