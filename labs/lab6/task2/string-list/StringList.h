@@ -96,7 +96,7 @@ public:
 	};
 
 public:
-	CStringList() = default;
+	CStringList();
 	CStringList(CStringList const& other);
 	CStringList(CStringList&& rvalue) noexcept;
 	~CStringList() noexcept;
@@ -106,15 +106,7 @@ public:
 	void PushFront(std::string const& data);
 	void PushBack(std::string const& data);
 
-	std::string& GetBackElement();
-	std::string const& GetBackElement() const;
-
-	std::string& GetFirstElement();
-	std::string const& GetFirstElement() const;
-
 	void Clear();
-
-	friend std::ostream& operator<<(std::ostream& os, CStringList const& rhs);
 
 	using iterator = CIterator<false>;
 	using const_iterator = CIterator<true>;
@@ -122,17 +114,17 @@ public:
 	using reverse_iterator = std::reverse_iterator<CIterator<false>>;
 	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
 
-	iterator begin();
-	iterator end();
+	iterator begin() const;
+	iterator end() const;
 
 	const_iterator cbegin() const;
 	const_iterator cend() const;
 
-	reverse_iterator rbegin();
-	reverse_iterator rend();
+	reverse_iterator rbegin() const;
+	reverse_iterator rend() const; 
 
-	const_reverse_iterator crbegin(); 
-	const_reverse_iterator crend();
+	const_reverse_iterator crbegin() const; 
+	const_reverse_iterator crend() const;
 
 	void Insert(iterator const& it, std::string const& data);
 	void Insert(reverse_iterator const& it, std::string const& data);
@@ -141,7 +133,9 @@ public:
 	void Delete(reverse_iterator& it);
 
 private:
-	size_t m_size = 0;
-	Node* m_firstNode = nullptr;
-	Node* m_sentryNode = new Node("", nullptr, nullptr);
+	size_t m_size;
+	Node* m_baseNode;
+
+	Node* GetFirstNode() const;
+	Node* GetLastNode() const;
 };

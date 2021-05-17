@@ -97,108 +97,11 @@ public:
 	};
 
 public:
-	CList() = default;
-	CList(CList const& other)
+	CList()
+		: m_size(0)
 	{
-		if (!other.m_sentryNode->prev)
-			return;
-
-		try
-		{
-			auto currNode = other.m_firstNode;
-			while (currNode && currNode != other.m_sentryNode)
-			{
-				PushBack(currNode->data.value());
-				currNode = currNode->next;
-			}
-		}
-		catch (...)
-		{
-			Clear();
-			throw;
-		}
-	}
-
-	CList(CList&& rvalue) noexcept
-	{
-		std::swap(m_firstNode, rvalue.m_firstNode);
-		std::swap(m_sentryNode, rvalue.m_sentryNode);
-		std::swap(m_size, rvalue.m_size);
-	}
-
-	~CList() noexcept
-	{
-		Clear();
-		delete m_sentryNode;
-	}
-
-	size_t GetSize() const
-	{
-		return m_size;
-	}
-	bool IsEmpty() const
-	{
-		return (m_size == 0);
-	}
-
-	void PushFront(T const& data)
-	{
-		Node* newNode = new Node(data, nullptr, m_firstNode);
-		if (m_firstNode)
-			m_firstNode->prev = newNode;
-		else
-		{
-			newNode->next = m_sentryNode;
-			m_sentryNode->prev = newNode;
-		}
-
-		m_firstNode = newNode;
-		++m_size;
-	}
-
-	void PushBack(T const& data)
-	{
-		Node* newNode = new Node(data, m_sentryNode->prev, m_sentryNode);
-		if (m_sentryNode->prev)
-			m_sentryNode->prev->next = newNode;
-		else
-			m_firstNode = newNode;
-
-		m_sentryNode->prev = newNode;
-		++m_size;
-	}
-
-	T& GetBackElement()
-	{
-		return *(--end());
-	}
-
-	T const& GetBackElement() const
-	{
-		return *(--cend());
-	}
-
-	T& GetFirstElement()
-	{
-		return *(begin());
-	}
-	T const& GetFirstElement() const
-	{
-		return *(cbegin());
-	}
-
-	void Clear()
-	{
-		auto curr = m_firstNode;
-		while (curr && curr != m_sentryNode)
-		{
-			auto next = curr->next;
-			curr->data.reset();
-			delete curr;
-			curr = next;
-		}
-		m_firstNode = nullptr;
-		m_size = 0;
+		m_baseNode = new Node(nullptr, nullptr, nullptr);
+		m_baseNode->prev = m_baseNode->next = m_baseNode;
 	}
 
 	using iterator = CIterator<false>;
@@ -209,26 +112,29 @@ public:
 
 	iterator begin()
 	{
-		return iterator(m_firstNode);
+		return iterator(GetFirstNode());
 	}
+
 	iterator end()
 	{
-		return iterator(m_sentryNode);
+		return iterator(GetLastNode()->next);
 	}
 
 	const_iterator cbegin() const
 	{
-		return const_iterator(m_firstNode);
+		return const_iterator(GetFirstNode());
 	}
+
 	const_iterator cend() const
 	{
-		return const_iterator(m_sentryNode);
+		return const_iterator(GetLastNode()->next);
 	}
 
 	reverse_iterator rbegin()
 	{
 		return std::make_reverse_iterator(end());
 	}
+
 	reverse_iterator rend()
 	{
 		return std::make_reverse_iterator(begin());
@@ -238,9 +144,86 @@ public:
 	{
 		return std::make_reverse_iterator(cend());
 	}
+
 	const_reverse_iterator crend()
 	{
 		return std::make_reverse_iterator(cbegin());
+	}
+
+	CList(CList<T> const& other)
+	{
+		for (T& currNode : other)
+		{
+			try
+			{
+				PushBack(currNode->data.value());
+			}
+			catch (...)
+			{
+				Clear();
+				delete m_baseNode;
+				throw;
+			}
+		}
+	}
+
+	CList(CList<T>&& rvalue) noexcept
+	{
+		std::swap(m_baseNode, rvalue.m_baseNode);
+		std::swap(m_size, rvalue.m_size);
+	}
+
+	~CList() noexcept
+	{
+		Clear();
+		delete m_baseNode;
+	}
+
+	size_t GetSize() const
+	{
+		return m_size;
+	}
+
+	bool IsEmpty() const
+	{
+		return (m_size == 0);
+	}
+
+	void PushFront(T const& data)
+	{
+		Node* newNode = new Node(data, nullptr, m_baseNode->next);
+		if (m_baseNode->next)
+			m_baseNode->next->prev = newNode;
+		else
+			m_baseNode->prev = newNode;
+
+		m_baseNode->next = newNode;
+		++m_size;
+	}
+
+	void PushBack(T const& data)
+	{
+		Node* newNode = new Node(data, m_baseNode->prev, m_baseNode);
+		if (m_baseNode->prev)
+			m_baseNode->prev->next = newNode;
+		else
+			m_baseNode->next = newNode;
+
+		m_baseNode->prev = newNode;
+		++m_size;
+	}
+
+	void Clear()
+	{
+		auto curr = m_baseNode->next;
+		while (curr != m_baseNode)
+		{
+			auto next = curr->next;
+			delete curr;
+			curr = next;
+		}
+		m_baseNode->next = m_baseNode->prev = m_baseNode;
+		m_size = 0;
 	}
 
 	void Insert(iterator const& it, T const& data)
@@ -255,7 +238,7 @@ public:
 		if (it.m_node->prev)
 			it.m_node->prev->next = newNode;
 		else
-			m_firstNode = newNode;
+			m_baseNode->next = newNode;
 
 		it.m_node->prev = newNode;
 		m_size++;
@@ -271,7 +254,7 @@ public:
 		if (!it.m_node)
 			throw std::invalid_argument("Node does not exist.");
 
-		if (it.m_node == m_sentryNode)
+		if (it.m_node == m_baseNode)
 			throw std::invalid_argument("Sentry Node can not be deleted.");
 
 		if (it.m_node->prev)
@@ -280,17 +263,18 @@ public:
 		if (it.m_node->next)
 			it.m_node->next->prev = it.m_node->prev;
 
-		if (m_firstNode == it.m_node)
-			m_firstNode = it.m_node->next;
+		if (m_baseNode->next == it.m_node)
+			m_baseNode->next = it.m_node->next;
 
-		if (m_sentryNode->prev == it.m_node)
-			m_sentryNode->prev = it.m_node->prev;
+		if (m_baseNode->prev == it.m_node)
+			m_baseNode->prev = it.m_node->prev;
 
 		m_size--;
 		auto temp = it.m_node->next;
 		delete it.m_node;
 		it = temp;
 	}
+
 	void Delete(reverse_iterator& it)
 	{
 		if (!it.base().m_node || !it.base().m_node->prev)
@@ -301,7 +285,18 @@ public:
 	}
 
 private:
-	size_t m_size = 0;
-	Node* m_firstNode = nullptr;
-	Node* m_sentryNode = new Node({}, nullptr, nullptr);
+	size_t m_size;
+	Node* m_baseNode;
+
+	Node* GetFirstNode() const
+	{
+		return m_baseNode->next;
+	}
+
+	Node* GetLastNode() const
+	{
+		return m_baseNode->prev;
+	}
 };
+
+

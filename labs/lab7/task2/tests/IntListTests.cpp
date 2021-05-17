@@ -30,11 +30,9 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		CList<int> list;
 		list.PushBack(1);
 		BOOST_CHECK(list.GetSize() == 1);
-		BOOST_CHECK(list.GetBackElement() == 1);
 
 		list.PushBack(2);
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 	}
 
@@ -43,11 +41,9 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		CList<int> list;
 		list.PushFront(1);
 		BOOST_CHECK(list.GetSize() == 1);
-		BOOST_CHECK(list.GetBackElement() == 1);
 
 		list.PushFront(2);
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 1);
 
 		BOOST_CHECK(GetListAsInt(list) == 3);
 	}
@@ -58,7 +54,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		list.PushBack(1);
 		list.PushBack(2);
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 		list.Clear();
 		BOOST_CHECK(list.GetSize() == 0);
@@ -70,17 +65,14 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		list.PushBack(1);
 		list.PushBack(2);
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 
 		CList<int> list2(list);
 		BOOST_CHECK(list2.GetSize() == 2);
-		BOOST_CHECK(list2.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list2) == 3);
 
 		CList<int> list3(list2);
 		BOOST_CHECK(list3.GetSize() == 2);
-		BOOST_CHECK(list3.GetBackElement() == 2);
 		list3.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list3) == 6);
 	}
@@ -89,7 +81,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 	}
 
@@ -97,7 +88,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 
 		int res = 0;
@@ -127,7 +117,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 
 		int res = 0;
@@ -149,7 +138,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 		list.PushBack(3);
 
@@ -183,7 +171,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		list.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list) == 6);
 
@@ -222,7 +209,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		list.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list) == 6);
 
@@ -252,7 +238,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		list.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list) == 6);
 
@@ -275,7 +260,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 	{
 		CList<int> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == 2);
 		list.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list) == 6);
 

@@ -30,11 +30,9 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		CList<std::string> list;
 		list.PushBack("Hello");
 		BOOST_CHECK(list.GetSize() == 1);
-		BOOST_CHECK(list.GetBackElement() == "Hello");
 
 		list.PushBack(" world");
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 	}
 
@@ -43,11 +41,9 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		CList<std::string> list;
 		list.PushFront("Hello");
 		BOOST_CHECK(list.GetSize() == 1);
-		BOOST_CHECK(list.GetBackElement() == "Hello");
 
 		list.PushFront(" world");
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == "Hello");
 
 		BOOST_CHECK(GetListAsString(list) == " worldHello");
 	}
@@ -58,7 +54,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		list.PushBack("Hello");
 		list.PushBack(" world");
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 		list.Clear();
 		BOOST_CHECK(list.GetSize() == 0);
@@ -70,17 +65,14 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		list.PushBack("Hello");
 		list.PushBack(" world");
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 
 		CList<std::string> list2(list);
 		BOOST_CHECK(list2.GetSize() == 2);
-		BOOST_CHECK(list2.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list2) == "Hello world");
 
 		CList<std::string> list3(list2);
 		BOOST_CHECK(list3.GetSize() == 2);
-		BOOST_CHECK(list3.GetBackElement() == " world");
 		list3.PushBack(" lol");
 		BOOST_CHECK(GetListAsString(list3) == "Hello world lol");
 	}
@@ -89,7 +81,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 	}
 
@@ -97,7 +88,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 
 		std::string res;
@@ -127,7 +117,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 
 		std::string res;
@@ -149,7 +138,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		BOOST_CHECK(GetListAsString(list) == "Hello world");
 		list.PushBack(" iterator test.");
 
@@ -183,7 +171,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		list.PushBack(" test");
 		BOOST_CHECK(GetListAsString(list) == "Hello world test");
 
@@ -222,7 +209,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		list.PushBack(" test");
 		BOOST_CHECK(GetListAsString(list) == "Hello world test");
 
@@ -252,7 +238,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		list.PushBack(" test");
 		BOOST_CHECK(GetListAsString(list) == "Hello world test");
 
@@ -275,7 +260,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 	{
 		CList<std::string> list = CreatNewOne();
 		BOOST_CHECK(list.GetSize() == 2);
-		BOOST_CHECK(list.GetBackElement() == " world");
 		list.PushBack(" test");
 		BOOST_CHECK(GetListAsString(list) == "Hello world test");
 
