@@ -7,14 +7,8 @@ class CList
 public:
 	struct Node
 	{
-		Node(T const& newData, Node* newPrev, Node* newNext)
-			: data(std::make_optional<T>(newData))
-			, prev(newPrev)
-			, next(newNext)
-		{
-		}
-		std::optional<T> data;
 		Node* prev;
+		std::unique_ptr<T> data;
 		Node* next;
 	};
 
@@ -38,16 +32,16 @@ public:
 		{
 		}
 
-		pointer operator->()
+		pointer operator->() const
 		{
 			assert(m_node);
-			return *m_node->data.value();
+			return m_node->data.get();
 		}
 
 		reference operator*() const
 		{
 			assert(m_node);
-			return m_node->data.value();
+			return *m_node->data;
 		}
 
 		Iterator& operator++()
@@ -83,7 +77,7 @@ public:
 
 		friend bool operator!=(Iterator const& lhs, Iterator const& rhs)
 		{
-			return !(lhs == rhs);
+			return (lhs.m_node != rhs.m_node);
 		}
 
 	public:
@@ -100,74 +94,31 @@ public:
 	CList()
 		: m_size(0)
 	{
-		m_baseNode = new Node(nullptr, nullptr, nullptr);
+		m_baseNode = new Node;
 		m_baseNode->prev = m_baseNode->next = m_baseNode;
-	}
-
-	using iterator = CIterator<false>;
-	using const_iterator = CIterator<true>;
-
-	using reverse_iterator = std::reverse_iterator<CIterator<false>>;
-	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
-
-	iterator begin()
-	{
-		return iterator(GetFirstNode());
-	}
-
-	iterator end()
-	{
-		return iterator(GetLastNode()->next);
-	}
-
-	const_iterator cbegin() const
-	{
-		return const_iterator(GetFirstNode());
-	}
-
-	const_iterator cend() const
-	{
-		return const_iterator(GetLastNode()->next);
-	}
-
-	reverse_iterator rbegin()
-	{
-		return std::make_reverse_iterator(end());
-	}
-
-	reverse_iterator rend()
-	{
-		return std::make_reverse_iterator(begin());
-	}
-
-	const_reverse_iterator crbegin()
-	{
-		return std::make_reverse_iterator(cend());
-	}
-
-	const_reverse_iterator crend()
-	{
-		return std::make_reverse_iterator(cbegin());
+		m_baseNode->data = nullptr;
 	}
 
 	CList(CList<T> const& other)
+		: CList()
 	{
-		for (T& currNode : other)
+		try
 		{
-			try
+			for (const auto& curr : other)
 			{
-				PushBack(currNode->data.value());
+				PushBack(curr);
 			}
-			catch (...)
-			{
-				Clear();
-				delete m_baseNode;
-				throw;
-			}
+		}
+		catch (...)
+		{
+			Clear();
+			delete m_baseNode;
+			throw;
 		}
 	}
 
 	CList(CList<T>&& rvalue) noexcept
+		: CList()
 	{
 		std::swap(m_baseNode, rvalue.m_baseNode);
 		std::swap(m_size, rvalue.m_size);
@@ -191,26 +142,12 @@ public:
 
 	void PushFront(T const& data)
 	{
-		Node* newNode = new Node(data, nullptr, m_baseNode->next);
-		if (m_baseNode->next)
-			m_baseNode->next->prev = newNode;
-		else
-			m_baseNode->prev = newNode;
-
-		m_baseNode->next = newNode;
-		++m_size;
+		Insert(begin(), data);
 	}
 
 	void PushBack(T const& data)
 	{
-		Node* newNode = new Node(data, m_baseNode->prev, m_baseNode);
-		if (m_baseNode->prev)
-			m_baseNode->prev->next = newNode;
-		else
-			m_baseNode->next = newNode;
-
-		m_baseNode->prev = newNode;
-		++m_size;
+		Insert(end(), data);
 	}
 
 	void Clear()
@@ -225,31 +162,64 @@ public:
 		m_baseNode->next = m_baseNode->prev = m_baseNode;
 		m_size = 0;
 	}
+	
+	using iterator = CIterator<false>;
+	using const_iterator = CIterator<true>;
 
-	void Insert(iterator const& it, T const& data)
+	using reverse_iterator = std::reverse_iterator<CIterator<false>>;
+	using const_reverse_iterator = std::reverse_iterator<CIterator<true>>;
+
+	iterator begin() const
 	{
-		if (!it.m_node)
-		{
-			PushBack(data);
-			return;
-		}
-
-		Node* newNode = new Node(data, it.m_node->prev, it.m_node);
-		if (it.m_node->prev)
-			it.m_node->prev->next = newNode;
-		else
-			m_baseNode->next = newNode;
-
-		it.m_node->prev = newNode;
-		m_size++;
+		return iterator(GetFirstNode());
 	}
 
-	void Insert(reverse_iterator const& it, T const& data)
+	iterator end() const
 	{
-		Insert(it.base(), data);
+		return iterator(GetLastNode()->next);
 	}
 
-	void Delete(iterator& it)
+	const_iterator cbegin() const
+	{
+		return const_iterator(GetFirstNode());
+	}
+
+	const_iterator cend() const
+	{
+		return const_iterator(GetLastNode()->next);
+	}
+
+	reverse_iterator rbegin() const
+	{
+		return std::make_reverse_iterator(end());
+	}
+
+	reverse_iterator rend() const
+	{
+		return std::make_reverse_iterator(begin());
+	}
+
+	const_reverse_iterator crbegin() const
+	{
+		return std::make_reverse_iterator(cend());
+	}
+
+	const_reverse_iterator crend() const
+	{
+		return std::make_reverse_iterator(cbegin());
+	}
+
+	void Insert(const_iterator const& it, T const& data)
+	{
+		Node* nodeBeforeNewNode = it.m_node->prev;
+		Node* nodeAfterNewNode = it.m_node;
+
+		Node* newNode = new Node{ nodeBeforeNewNode, std::make_unique<T>(data),	nodeAfterNewNode };
+		nodeBeforeNewNode->next = nodeAfterNewNode->prev = newNode;
+		++m_size;
+	}
+
+	void Delete(const const_iterator& it)
 	{
 		if (!it.m_node)
 			throw std::invalid_argument("Node does not exist.");
@@ -257,31 +227,15 @@ public:
 		if (it.m_node == m_baseNode)
 			throw std::invalid_argument("Sentry Node can not be deleted.");
 
-		if (it.m_node->prev)
-			it.m_node->prev->next = it.m_node->next;
+		Node* prevNode = it.m_node->prev;
+		Node* nodeForDeleting = it.m_node;
+		Node* nextNode = it.m_node->next;
+		prevNode->next = nextNode;
+		nextNode->prev = prevNode;
 
-		if (it.m_node->next)
-			it.m_node->next->prev = it.m_node->prev;
+		delete nodeForDeleting;
 
-		if (m_baseNode->next == it.m_node)
-			m_baseNode->next = it.m_node->next;
-
-		if (m_baseNode->prev == it.m_node)
-			m_baseNode->prev = it.m_node->prev;
-
-		m_size--;
-		auto temp = it.m_node->next;
-		delete it.m_node;
-		it = temp;
-	}
-
-	void Delete(reverse_iterator& it)
-	{
-		if (!it.base().m_node || !it.base().m_node->prev)
-			throw std::invalid_argument("Node does not exist.");
-		auto itDel = --it.base();
-		Delete(itDel);
-		it.base() = itDel.m_node;
+		--m_size;
 	}
 
 private:

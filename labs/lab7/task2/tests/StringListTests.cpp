@@ -187,44 +187,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		BOOST_CHECK(res == "Ok Hello world test");
 	}
 
-	BOOST_AUTO_TEST_CASE(able_insert_element_to_empty_list_by_reverse_iterator)
-	{
-		CList<std::string> list;
-		BOOST_CHECK(list.GetSize() == 0);
-
-		auto it = list.rbegin();
-		list.Insert(it, std::string("Ok "));
-		BOOST_CHECK(GetListAsString(list) == "Ok ");
-		BOOST_CHECK(list.GetSize() == 1);
-
-		std::string res;
-		for (auto&& elem : list)
-		{
-			res += elem;
-		}
-		BOOST_CHECK(res == "Ok ");
-	}
-
-	BOOST_AUTO_TEST_CASE(able_insert_element_by_reverse_iterator)
-	{
-		CList<std::string> list = CreatNewOne();
-		BOOST_CHECK(list.GetSize() == 2);
-		list.PushBack(" test");
-		BOOST_CHECK(GetListAsString(list) == "Hello world test");
-
-		auto it = list.rbegin();
-		list.Insert(it, std::string(" Ok"));
-		BOOST_CHECK(GetListAsString(list) == "Hello world test Ok");
-		BOOST_CHECK(list.GetSize() == 4);
-
-		std::string res;
-		for (auto&& elem : list)
-		{
-			res += elem;
-		}
-		BOOST_CHECK(res == "Hello world test Ok");
-	}
-
 	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_iterator)
 	{
 		CList<std::string> list;
@@ -244,28 +206,6 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		auto it = list.begin();
 		list.Delete(it);
 		BOOST_CHECK(GetListAsString(list) == " world test");
-		BOOST_CHECK(list.GetSize() == 2);
-	}
-
-	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_reverse_iterator)
-	{
-		CList<std::string> list;
-		auto itRB = list.rbegin();
-		BOOST_CHECK_THROW(list.Delete(itRB), std::invalid_argument);
-		auto itRE = list.rend();
-		BOOST_CHECK_THROW(list.Delete(itRE), std::invalid_argument);
-	}
-
-	BOOST_AUTO_TEST_CASE(able_delete_element_by_reverse_iterator)
-	{
-		CList<std::string> list = CreatNewOne();
-		BOOST_CHECK(list.GetSize() == 2);
-		list.PushBack(" test");
-		BOOST_CHECK(GetListAsString(list) == "Hello world test");
-
-		auto it = list.rbegin();
-		list.Delete(it);
-		BOOST_CHECK(GetListAsString(list) == "Hello world");
 		BOOST_CHECK(list.GetSize() == 2);
 	}
 

@@ -187,43 +187,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		BOOST_CHECK(res == 9);
 	}
 
-	BOOST_AUTO_TEST_CASE(able_insert_element_to_empty_list_by_reverse_iterator)
-	{
-		CList<int> list;
-		BOOST_CHECK(list.GetSize() == 0);
-
-		auto it = list.rbegin();
-		list.Insert(it, 1);
-		BOOST_CHECK(GetListAsInt(list) == 1);
-		BOOST_CHECK(list.GetSize() == 1);
-
-		int res = 0;
-		for (auto&& elem : list)
-		{
-			res += elem;
-		}
-		BOOST_CHECK(res == 1);
-	}
-
-	BOOST_AUTO_TEST_CASE(able_insert_element_by_reverse_iterator)
-	{
-		CList<int> list = CreatNewOne();
-		BOOST_CHECK(list.GetSize() == 2);
-		list.PushBack(3);
-		BOOST_CHECK(GetListAsInt(list) == 6);
-
-		auto it = list.rbegin();
-		list.Insert(it, 3);
-		BOOST_CHECK(GetListAsInt(list) == 9);
-		BOOST_CHECK(list.GetSize() == 4);
-
-		int res = 0;
-		for (auto&& elem : list)
-		{
-			res += elem;
-		}
-		BOOST_CHECK(res == 9);
-	}
 
 	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_iterator)
 	{
@@ -244,28 +207,6 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		auto it = list.begin();
 		list.Delete(it);
 		BOOST_CHECK(GetListAsInt(list) == 5);
-		BOOST_CHECK(list.GetSize() == 2);
-	}
-
-	BOOST_AUTO_TEST_CASE(throw_when_delete_null_element_by_reverse_iterator)
-	{
-		CList<int> list;
-		auto itRB = list.rbegin();
-		BOOST_CHECK_THROW(list.Delete(itRB), std::invalid_argument);
-		auto itRE = list.rend();
-		BOOST_CHECK_THROW(list.Delete(itRE), std::invalid_argument);
-	}
-
-	BOOST_AUTO_TEST_CASE(able_delete_element_by_reverse_iterator)
-	{
-		CList<int> list = CreatNewOne();
-		BOOST_CHECK(list.GetSize() == 2);
-		list.PushBack(3);
-		BOOST_CHECK(GetListAsInt(list) == 6);
-
-		auto it = list.rbegin();
-		list.Delete(it);
-		BOOST_CHECK(GetListAsInt(list) == 3);
 		BOOST_CHECK(list.GetSize() == 2);
 	}
 
