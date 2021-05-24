@@ -1,5 +1,6 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "../list/List.h"
+#include <list>
 
 struct List_
 {
@@ -24,6 +25,15 @@ int const GetListAsInt(CList<int> const& list)
 }
 
 BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
+
+	BOOST_AUTO_TEST_CASE(all_iterators_is_equal_on_empty_list)
+	{
+		CList<int> list;
+		BOOST_CHECK(list.begin() == list.end());
+		BOOST_CHECK(list.cbegin() == list.cend());
+		BOOST_CHECK(list.rbegin() == list.rend());
+		BOOST_CHECK(list.crbegin() == list.crend());
+	}
 
 	BOOST_AUTO_TEST_CASE(able_PushBack_node)
 	{
@@ -67,11 +77,13 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		BOOST_CHECK(list.GetSize() == 2);
 		BOOST_CHECK(GetListAsInt(list) == 3);
 
-		CList<int> list2(list);
+		CList<int> list2 = list;	
+		std::cout << list2.GetSize()
+		<< "\n";
 		BOOST_CHECK(list2.GetSize() == 2);
 		BOOST_CHECK(GetListAsInt(list2) == 3);
 
-		CList<int> list3(list2);
+		CList<int> list3 = list2;
 		BOOST_CHECK(list3.GetSize() == 2);
 		list3.PushBack(3);
 		BOOST_CHECK(GetListAsInt(list3) == 6);
@@ -208,6 +220,19 @@ BOOST_FIXTURE_TEST_SUITE(IntList_tests, List_)
 		list.Delete(it);
 		BOOST_CHECK(GetListAsInt(list) == 5);
 		BOOST_CHECK(list.GetSize() == 2);
+	}
+
+	BOOST_AUTO_TEST_CASE(able_use_equal_operator)
+	{
+		CList<int> list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		list.PushBack(3);
+		BOOST_CHECK(GetListAsInt(list) == 6);
+
+		auto list2 = list;
+		BOOST_CHECK(list2.GetSize() == 3);
+		list2.PushBack(3);
+		BOOST_CHECK(GetListAsInt(list2) == 9);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

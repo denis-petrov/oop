@@ -34,39 +34,33 @@ public:
 
 		pointer operator->() const
 		{
-			assert(m_node);
 			return m_node->data.get();
 		}
 
 		reference operator*() const
 		{
-			assert(m_node);
 			return *m_node->data;
 		}
 
 		Iterator& operator++()
 		{
-			assert(m_node->next);
 			m_node = m_node->next;
 			return *this;
 		}
 
 		Iterator operator++(int)
 		{
-			assert(m_node->next);
 			return Iterator(m_node->next);
 		}
 
 		Iterator& operator--()
 		{
-			assert(m_node->prev);
 			m_node = m_node->prev;
 			return *this;
 		}
 
 		Iterator operator--(int)
 		{
-			assert(m_node->prev);
 			return Iterator(m_node->prev);
 		}
 
@@ -99,17 +93,14 @@ public:
 		m_baseNode->data = nullptr;
 	}
 
-	CList(CList<T> const& other)
+	CList(CList<T> const& other) 
 		: CList()
 	{
 		try
 		{
-			for (const auto& curr : other)
-			{
-				PushBack(curr);
-			}
+			*this = other;
 		}
-		catch (...)
+		catch (const std::bad_alloc&)
 		{
 			Clear();
 			delete m_baseNode;
@@ -117,11 +108,19 @@ public:
 		}
 	}
 
-	CList(CList<T>&& rvalue) noexcept
+	CList(CList<T>&& rvalue) 
 		: CList()
 	{
-		std::swap(m_baseNode, rvalue.m_baseNode);
-		std::swap(m_size, rvalue.m_size);
+		try
+		{
+			*this = rvalue;
+		}
+		catch (const std::bad_alloc&)
+		{
+			Clear();
+			delete m_baseNode;
+			throw;
+		}
 	}
 
 	~CList() noexcept
@@ -162,7 +161,34 @@ public:
 		m_baseNode->next = m_baseNode->prev = m_baseNode;
 		m_size = 0;
 	}
-	
+
+	CList<T>& operator=(CList<T> const& other)
+	{
+		if (std::addressof(*this) == std::addressof(other))
+		{
+			return *this;
+		}
+
+		CList<T> temp;
+		for (auto const& curr : other)
+		{
+			temp.PushBack(curr);
+		}
+		*this = std::move(temp);
+		return *this;
+	}
+
+	CList<T>& operator=(CList<T>&& rvalue) noexcept
+	{
+		Clear();
+		if (std::addressof(rvalue) != std::addressof(*this))
+		{
+			std::swap(m_baseNode, rvalue.m_baseNode);
+			std::swap(m_size, rvalue.m_size);
+		}
+		return *this;
+	}
+
 	using iterator = CIterator<false>;
 	using const_iterator = CIterator<true>;
 
@@ -211,11 +237,11 @@ public:
 
 	void Insert(const_iterator const& it, T const& data)
 	{
-		Node* nodeBeforeNewNode = it.m_node->prev;
-		Node* nodeAfterNewNode = it.m_node;
+		Node* beforeNewOne = it.m_node->prev;
+		Node* afterNewOne = it.m_node;
 
-		Node* newNode = new Node{ nodeBeforeNewNode, std::make_unique<T>(data),	nodeAfterNewNode };
-		nodeBeforeNewNode->next = nodeAfterNewNode->prev = newNode;
+		Node* newNode = new Node{ beforeNewOne, std::make_unique<T>(data), afterNewOne };
+		beforeNewOne->next = afterNewOne->prev = newNode;
 		++m_size;
 	}
 

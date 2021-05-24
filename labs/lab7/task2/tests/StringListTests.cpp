@@ -25,6 +25,15 @@ std::string const GetListAsString(CList<std::string> const& list)
 
 BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 
+	BOOST_AUTO_TEST_CASE(all_iterators_is_equal_on_empty_list) 
+	{
+		CList<std::string> list;
+		BOOST_CHECK(list.begin() == list.end());
+		BOOST_CHECK(list.cbegin() == list.cend());
+		BOOST_CHECK(list.rbegin() == list.rend());
+		BOOST_CHECK(list.crbegin() == list.crend());
+	}
+
 	BOOST_AUTO_TEST_CASE(able_PushBack_node)
 	{
 		CList<std::string> list;
@@ -207,6 +216,19 @@ BOOST_FIXTURE_TEST_SUITE(StringList_tests, List_)
 		list.Delete(it);
 		BOOST_CHECK(GetListAsString(list) == " world test");
 		BOOST_CHECK(list.GetSize() == 2);
+	}
+
+	BOOST_AUTO_TEST_CASE(able_use_equal_operator)
+	{
+		CList<std::string> list = CreatNewOne();
+		BOOST_CHECK(list.GetSize() == 2);
+		list.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list) == "Hello world test");
+
+		auto list2 = list;
+		BOOST_CHECK(list2.GetSize() == 3);
+		list2.PushBack(" test");
+		BOOST_CHECK(GetListAsString(list2) == "Hello world test test");
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
